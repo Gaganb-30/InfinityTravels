@@ -1,0 +1,35 @@
+/* src/index.css */
+@import "tailwindcss";
+@tailwind utilities;
+
+@layer components {
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(24px);
+  }
+  .hero-gradient {
+    background: linear-gradient(135deg, rgba(0, 119, 190, 0.1) 0%, rgba(0, 94, 151, 0.2) 100%);
+  }
+  .cta-gradient {
+    background: linear-gradient(135deg, #0077BE 0%, #005E97 100%);
+  }
+  .editorial-shadow {
+    box-shadow: 0 32px 64px -12px rgba(25, 28, 29, 0.08);
+  }
+}
+
+/* custom scroll smooth */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.editorial-shadow {
+  box-shadow: 0 32px 64px -12px rgba(25, 28, 29, 0.08);
+}
