@@ -1,0 +1,39 @@
+Home search bar (same like tripees)
+Packages in footer
+Packages sidebar change
+Destination -> packages(multiple)
+
+itenary field ion form
+
+image slide in destination and package
+highlughts hatane hai aur starting city add krni hai
+Booking terms and conditions
+
+cancellation points
+
+4 star hotels
+tour type ke liye input field add krna hai jo comma ke basis pe set ho jaye 
+
+FAQ har package pe
+
+itenary accordian me karna hai
+page ka logo plus naam
+
+
+dummy data me :
+Kerala
+Goa
+Himachal Pradessh
+Andaman and Nicobar Islands
+Rajasthan
+Uttarakhand
+Jammu and Kashmir
+Uttar Pradesh
+Gujarat
+Lakshadweep
+Indonesia
+Thailand
+Singapore
+Malaysia
+Maldives
+Dubai

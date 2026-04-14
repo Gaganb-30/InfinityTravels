@@ -1,512 +1,290 @@
 // src/pages/DestinationDetail.js
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, Link } from "react-router-dom";
+import { api } from "../utils/api";
+import { generateWhatsAppLink, formatPriceRange } from "../utils/whatsapp";
+
+/* ──────────── Image Carousel Component ──────────── */
+const ImageCarousel = ({ images, altText }) => {
+  const [current, setCurrent] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  const nextSlide = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % images.length);
+  }, [images.length]);
+
+  const prevSlide = () => {
+    setCurrent((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  useEffect(() => {
+    if (!isAutoPlaying || images.length <= 1) return;
+    const timer = setInterval(nextSlide, 5000);
+    return () => clearInterval(timer);
+  }, [isAutoPlaying, images.length, nextSlide]);
+
+  if (!images || images.length === 0) return null;
+  if (images.length === 1) {
+    return (
+      <div className="h-[500px] overflow-hidden rounded-xl bg-surface-container">
+        <img className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt={altText} src={images[0]} />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="relative h-[500px] overflow-hidden rounded-xl bg-surface-container group"
+      onMouseEnter={() => setIsAutoPlaying(false)}
+      onMouseLeave={() => setIsAutoPlaying(true)}
+    >
+      <div
+        className="flex h-full transition-transform duration-700 ease-in-out"
+        style={{ transform: `translateX(-${current * 100}%)` }}
+      >
+        {images.map((img, i) => (
+          <img
+            key={i}
+            className="w-full h-full object-cover flex-shrink-0"
+            alt={`${altText} ${i + 1}`}
+            src={img}
+          />
+        ))}
+      </div>
+
+      {/* Nav Arrows */}
+      <button
+        onClick={prevSlide}
+        className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-white cursor-pointer"
+      >
+        <span className="material-symbols-outlined text-slate-800">chevron_left</span>
+      </button>
+      <button
+        onClick={nextSlide}
+        className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-white cursor-pointer"
+      >
+        <span className="material-symbols-outlined text-slate-800">chevron_right</span>
+      </button>
+
+      {/* Dots */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        {images.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
+              i === current ? "bg-white w-8" : "bg-white/50 hover:bg-white/80"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Counter */}
+      <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+        {current + 1} / {images.length}
+      </div>
+    </div>
+  );
+};
 
 const DestinationDetail = () => {
-  const [guests, setGuests] = useState(2);
-  const [hotelStandard, setHotelStandard] = useState("5-Star Elite");
+  const { slug } = useParams();
+  const [destination, setDestination] = useState(null);
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [whatsappNumber, setWhatsappNumber] = useState("919876543210");
 
-  const basePrice = 4850;
-  const totalPrice = basePrice * guests + 150; // service fee $150
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await api.getDestination(slug);
+        setDestination(data.destination);
+        setPackages(data.packages || []);
+        const config = await api.getWhatsAppNumber();
+        setWhatsappNumber(config.whatsappNumber);
+      } catch (err) {
+        console.error("Failed to fetch destination:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [slug]);
 
-  const incrementGuests = () => setGuests((prev) => Math.min(prev + 1, 8));
-  const decrementGuests = () => setGuests((prev) => Math.max(prev - 1, 1));
+  if (loading) {
+    return (
+      <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12">
+        <div className="h-12 w-60 bg-surface-container-low animate-pulse rounded mb-4" />
+        <div className="h-16 w-96 bg-surface-container-low animate-pulse rounded mb-8" />
+        <div className="h-[500px] bg-surface-container-low animate-pulse rounded-xl" />
+      </main>
+    );
+  }
+
+  if (!destination) {
+    return (
+      <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12 text-center py-32">
+        <span className="material-symbols-outlined text-6xl text-slate-300 mb-4 block">travel_explore</span>
+        <h2 className="font-headline text-3xl text-slate-400">Destination not found</h2>
+        <Link to="/destinations" className="text-primary font-semibold mt-4 inline-block hover:underline">
+          ← Back to Destinations
+        </Link>
+      </main>
+    );
+  }
+
+  // Collect all unique images for carousel
+  const allImages = [destination.heroImage, ...(destination.galleryImages || [])].filter(Boolean);
+  const hasMultipleImages = allImages.length > 1;
 
   return (
     <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12">
       {/* Header Section */}
       <header className="mb-12">
         <nav className="flex items-center gap-2 mb-4 text-on-surface-variant text-sm font-label uppercase tracking-widest">
-          <span>Europe</span>
-          <span className="material-symbols-outlined text-xs">
-            chevron_right
-          </span>
-          <span>Italy</span>
-          <span className="material-symbols-outlined text-xs">
-            chevron_right
-          </span>
-          <span className="text-primary font-semibold">Amalfi Coast</span>
+          <Link to="/destinations" className="hover:text-primary transition-colors">{destination.continent}</Link>
+          <span className="material-symbols-outlined text-xs">chevron_right</span>
+          <span>{destination.country}</span>
+          <span className="material-symbols-outlined text-xs">chevron_right</span>
+          <span className="text-primary font-semibold">{destination.name}</span>
         </nav>
         <h1 className="font-headline text-5xl md:text-6xl text-on-surface font-bold tracking-tight mb-4">
-          The Amalfi Coast: A Curated Horizon
+          {destination.name}: {destination.tagline || 'A Curated Horizon'}
         </h1>
-        <div className="flex items-center gap-6 text-on-surface-variant">
-          <div className="flex items-center gap-1">
-            <span
-              className="material-symbols-outlined text-secondary"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              star
-            </span>
-            <span className="font-semibold text-on-surface">4.9</span>
-            <span className="text-sm">(124 Reviews)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined">calendar_today</span>
-            <span className="text-sm font-medium">8 Days / 7 Nights</span>
-          </div>
+        <div className="flex items-center gap-6 text-on-surface-variant flex-wrap">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined">location_on</span>
-            <span className="text-sm font-medium">
-              Positano, Amalfi, Ravello
-            </span>
+            <span className="text-sm font-medium">{destination.country}, {destination.continent}</span>
           </div>
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined">category</span>
+            <span className="text-sm font-medium">{destination.type}</span>
+          </div>
+          <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${
+            destination.category === 'Domestic' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'
+          }`}>
+            {destination.category}
+          </span>
+          <span className="bg-secondary-container/10 text-on-secondary-container px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">
+            {destination.tier}
+          </span>
         </div>
       </header>
 
-      {/* Gallery Grid */}
-      <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-16">
-        <div className="md:col-span-3 h-[500px] overflow-hidden rounded-xl bg-surface-container">
-          <img
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-            alt="Breathtaking wide view of Positano colorful houses on cliffside"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCh4g2x_nB5uyF5SzkCeWGnOhwQOuHwHWtnOdftn1snyU1Tw9bG_ykdfo_AwEKr4yo7O2p872AONY_HX_HP2oUoR2xsoo6V6_8wA62SVCV1N2QBBzBQNf6NNzfyjE0x9vWsgUV7K72X3g_yZmCDuuk3ilPvRpxr1xXMJTb0r1YGvDrR6J2Qzpzw3cla-iTn0PoJ47l2l3btjXIQJlK2fPGo57Qe-AlLx8-xN5fJtKlmSi057aNGiUpKtPXfA4RZYQUsxcmkzeVudP5"
-          />
-        </div>
-        <div className="flex flex-col gap-4 h-[500px]">
-          <div className="flex-1 overflow-hidden rounded-xl bg-surface-container">
-            <img
-              className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-              alt="Classic Italian wooden boat on turquoise water"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXT3aZU5ML7k2d3eOpEIJI5mNG09PFONIjFxZzQuIz0nm5LWWMfrDo_j-EHDR7weQyG5lIFoEWEWtskGos6mbBfZtYXewVXM4acD6sNN5kENRdR1JSo5FvB453BLzo3OcXqCaUwjdiZo3RedT8Tcx8mSi_rNQ2W6wFCzffFZq8YnScepJGZr6zsFOJvym1w4jfsUNJW5gIA5djP_Bn0jWlV-LS5Cm80IrpqThCUoxYxyrp-lB9MS5xaHflT-Uroo6Y0mKbAbDsZ96L"
-            />
+      {/* Gallery — Carousel when multiple images, single image otherwise */}
+      <section className="mb-16">
+        {hasMultipleImages ? (
+          <ImageCarousel images={allImages} altText={destination.name} />
+        ) : (
+          <div className="h-[500px] overflow-hidden rounded-xl bg-surface-container">
+            <img className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt={destination.name} src={destination.heroImage} />
           </div>
-          <div className="flex-1 overflow-hidden rounded-xl bg-surface-container">
-            <img
-              className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-              alt="Terrace overlook with lemon trees and sea view"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSP0w6aRchjavAFAO3QDjs4srq5jVmxtA__jmuTAT7v2-fZhQlUpFvqisQPBCgEIw3Uc8okQhFjemh7MIjb_eJMGXRQNcsIyEhaVNiqjaHE5B4iowWZHicAJvIfoutdvS4rblrvHauA5JK2yPFwCUMZBPmP-aIkf_H6iaZMeHMen2BXJt1lZZuAKMbWxbEkF5-lIziAHX8AQtSbmLeij8nR8wG4R0FFSUq-LaFfj0vIeTxlfN3vIYYe76TOva4z0OiGnhMnl2Jfsxq"
-            />
-          </div>
-          <div className="relative flex-1 overflow-hidden rounded-xl bg-surface-container cursor-pointer group">
-            <img
-              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-              alt="Al fresco dining table with local Italian pasta"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJnHlJIo1NLva6qGeqrSyS7sBqzcuqriz6L_AuqXUB9ihkW_ZPBIJny3NlK2UVoMB4hiqh59NLnTvkEixT2CObrWdHWzrS5AL8T6yDnwHjd7BBbozJd69xV7428bFngFWGijv1rnWz6UF4muZ3w2P4PKMQgDv2HC2kVoRSvwmkyYwGwgwlhCBSnREMNJ7LHkTEMKQ42Xk8bZx8fjFD_xlqnSptPHGsbUH4iKaaLTfcl1adFwwmbXJOsB-ki2YqZ9ehn2nBebfzXFD4"
-            />
-            <div className="absolute inset-0 flex items-center justify-center bg-on-surface/30">
-              <span className="text-white font-label font-bold text-lg">
-                +12 Photos
-              </span>
-            </div>
-          </div>
-        </div>
+        )}
       </section>
 
-      {/* Main Content & Sidebar Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-start">
-        {/* Left: Details */}
-        <div className="lg:col-span-2 space-y-16">
-          {/* Tabs Navigation */}
-          <div className="flex gap-10 border-b border-outline-variant/20 pb-4 overflow-x-auto no-scrollbar">
-            <a
-              href="#overview"
-              className="text-primary font-semibold border-b-2 border-primary pb-4 whitespace-nowrap"
-            >
-              Overview
-            </a>
-            <a
-              href="#itinerary"
-              className="text-on-surface-variant hover:text-primary transition-colors pb-4 whitespace-nowrap"
-            >
-              Itinerary
-            </a>
-            <a
-              href="#highlights"
-              className="text-on-surface-variant hover:text-primary transition-colors pb-4 whitespace-nowrap"
-            >
-              Highlights
-            </a>
-            <a
-              href="#inclusions"
-              className="text-on-surface-variant hover:text-primary transition-colors pb-4 whitespace-nowrap"
-            >
-              What's Included
-            </a>
-            <a
-              href="#reviews"
-              className="text-on-surface-variant hover:text-primary transition-colors pb-4 whitespace-nowrap"
-            >
-              Reviews
-            </a>
+      {/* Description */}
+      <section className="mb-16 max-w-4xl">
+        <h2 className="font-headline text-3xl font-bold mb-6">About {destination.name}</h2>
+        <p className="text-lg text-on-surface-variant leading-relaxed">{destination.description}</p>
+        {destination.seasons?.length > 0 && (
+          <div className="flex gap-2 mt-6">
+            <span className="text-sm font-semibold text-on-surface-variant mr-2">Best Seasons:</span>
+            {destination.seasons.map((s) => (
+              <span key={s} className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">{s}</span>
+            ))}
           </div>
+        )}
+      </section>
 
-          {/* Overview */}
-          <section className="space-y-6" id="overview">
-            <h2 className="font-headline text-3xl font-bold">
-              The Amalfi Experience
-            </h2>
-            <p className="text-lg text-on-surface-variant leading-relaxed">
-              Surrender to the vertical charm of Italy's most celebrated
-              coastline. This curated horizon journey takes you beyond the
-              typical tourist path, blending the high-glamour of Positano with
-              the secret terrace gardens of Ravello. Stay in restored
-              12th-century monasteries and navigate the shimmering Tyrrhenian
-              Sea on a private vintage gozzo boat.
-            </p>
-            <p className="text-lg text-on-surface-variant leading-relaxed">
-              Every detail is choreographed for immersion—from sun-drenched
-              lemon grove lunches to sunset aperitivos overlooking the
-              Faraglioni rocks. This is not just travel; it is an editorial life
-              experienced in real-time.
-            </p>
-          </section>
-
-          {/* Highlights Bento */}
-          <section className="space-y-8" id="highlights">
-            <h2 className="font-headline text-3xl font-bold">
-              Journey Highlights
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-surface-container-low p-8 rounded-xl space-y-4">
-                <span className="material-symbols-outlined text-secondary text-4xl">
-                  hotel
-                </span>
-                <h3 className="font-headline text-xl font-bold">
-                  Luxury Stays
-                </h3>
-                <p className="text-on-surface-variant">
-                  Hand-picked iconic hotels with panoramic balconies and
-                  Michelin-starred breakfast spreads.
-                </p>
-              </div>
-              <div className="bg-surface-container-low p-8 rounded-xl space-y-4">
-                <span className="material-symbols-outlined text-secondary text-4xl">
-                  sailing
-                </span>
-                <h3 className="font-headline text-xl font-bold">
-                  Private Boat Tours
-                </h3>
-                <p className="text-on-surface-variant">
-                  A full-day exploration of the Capri grottos and hidden
-                  swimming coves accessible only by water.
-                </p>
-              </div>
-              <div className="bg-surface-container-low p-8 rounded-xl md:col-span-2 flex flex-col md:flex-row gap-8 items-center">
-                <div className="md:w-1/3 overflow-hidden rounded-xl h-40">
-                  <img
-                    className="w-full h-full object-cover"
-                    alt="Traditional Italian ceramic plates with fresh seafood"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRidDJ4FwqsoVY1bUfMUZjAfDXEt_e_sSqqOMor-t6DzDRg1ifPUFh26n3H4emAwYMGVP6YwZBn-IWenmhA-DGafFwdyPrtAMJrHHyR89M5WNvaHbNew0uRWuezc8yZhuTk59sxdKlGWs_hPY_p7Z6noYJNmBXP4ZaKuDU4XX9XqykjgTJ8KhCo3uHx4lbarGnVorwgL17K1LYmkpXppXB3u3FT9PIU8E5t1sm-f4Brm0SDi7wCNEnhKgWfdQFQBgCadvIu5ypJLKP"
-                  />
-                </div>
-                <div className="flex-1 space-y-2">
-                  <span className="material-symbols-outlined text-secondary text-4xl">
-                    restaurant
-                  </span>
-                  <h3 className="font-headline text-xl font-bold">
-                    Culinary Experiences
-                  </h3>
-                  <p className="text-on-surface-variant">
-                    Private cooking class in a clifftop lemon grove followed by
-                    a seven-course tasting menu paired with local Ravello wines.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Itinerary */}
-          <section className="space-y-10" id="itinerary">
-            <h2 className="font-headline text-3xl font-bold">Your Itinerary</h2>
-            <div className="space-y-0">
-              <div className="flex gap-8 group">
-                <div className="flex flex-col items-center">
-                  <div className="w-4 h-4 rounded-full bg-secondary-container mt-2"></div>
-                  <div className="w-0.5 h-full bg-surface-container-highest/50 my-2"></div>
-                </div>
-                <div className="pb-12">
-                  <span className="font-label text-sm text-secondary font-bold tracking-widest uppercase">
-                    Day 01
-                  </span>
-                  <h3 className="font-headline text-2xl font-bold mt-1 mb-3">
-                    Welcome to the vertical city
-                  </h3>
-                  <p className="text-on-surface-variant">
-                    Arrival in Naples and private chauffeur transfer to
-                    Positano. Afternoon check-in at Le Sirenuse. Sunset
-                    aperitivos on the terrace.
-                  </p>
-                  <div className="flex gap-3 mt-4">
-                    <span className="px-3 py-1 rounded-full bg-surface-bright border border-outline-variant/30 text-xs font-medium">
-                      Transfer Included
-                    </span>
-                    <span className="px-3 py-1 rounded-full bg-surface-bright border border-outline-variant/30 text-xs font-medium">
-                      Welcome Dinner
-                    </span>
+      {/* Packages for this destination */}
+      {packages.length > 0 && (
+        <section className="mb-16">
+          <h2 className="font-headline text-3xl font-bold mb-8">
+            Packages in {destination.name}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {packages.map((pkg) => (
+              <div key={pkg._id} className="bg-surface-container-lowest rounded-xl overflow-hidden editorial-shadow transition-all hover:shadow-2xl">
+                <div className="h-52 overflow-hidden relative">
+                  <img alt={pkg.name} className="w-full h-full object-cover" src={pkg.image} />
+                  {pkg.badge && (
+                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">
+                      {pkg.badge}
+                    </div>
+                  )}
+                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">
+                    {pkg.duration}
                   </div>
                 </div>
-              </div>
-              <div className="flex gap-8 group">
-                <div className="flex flex-col items-center">
-                  <div className="w-4 h-4 rounded-full bg-secondary-container mt-2"></div>
-                  <div className="w-0.5 h-full bg-surface-container-highest/50 my-2"></div>
-                </div>
-                <div className="pb-12">
-                  <span className="font-label text-sm text-secondary font-bold tracking-widest uppercase">
-                    Day 02
-                  </span>
-                  <h3 className="font-headline text-2xl font-bold mt-1 mb-3">
-                    Cobblestones & Caravaggios
-                  </h3>
-                  <p className="text-on-surface-variant">
-                    Guided morning walk through the narrow boutiques of
-                    Positano. Afternoon ferry to Amalfi Town to visit the
-                    historic Duomo.
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-8 group">
-                <div className="flex flex-col items-center">
-                  <div className="w-4 h-4 rounded-full bg-secondary-container mt-2"></div>
-                  <div className="w-0.5 h-full bg-surface-container-highest/50 my-2"></div>
-                </div>
-                <div className="pb-12">
-                  <span className="font-label text-sm text-secondary font-bold tracking-widest uppercase">
-                    Day 03
-                  </span>
-                  <h3 className="font-headline text-2xl font-bold mt-1 mb-3">
-                    Sailing the Azure
-                  </h3>
-                  <p className="text-on-surface-variant">
-                    Private boat charter to Capri. Swimming at the Green Grotto
-                    and a leisurely lunch at La Fontelina Beach Club.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
+                <div className="p-6">
+                  <h3 className="font-headline text-xl font-bold mb-2">{pkg.name}</h3>
+                  <p className="text-on-surface-variant text-sm mb-4 leading-relaxed line-clamp-2">{pkg.description}</p>
 
-        {/* Right: Sticky Booking Sidebar */}
-        <aside className="sticky top-32">
-          <div className="bg-surface-container-lowest editorial-shadow rounded-xl p-8 space-y-8 border border-outline-variant/10">
-            <div className="space-y-1">
-              <span className="text-on-surface-variant text-sm font-label">
-                Starting from
-              </span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-headline font-bold text-primary">
-                  ${basePrice.toLocaleString()}
-                </span>
-                <span className="text-on-surface-variant">/ per person</span>
-              </div>
-            </div>
-            <div className="space-y-6">
-              {/* Travelers Selector */}
-              <div className="space-y-3">
-                <label className="font-label text-sm font-semibold uppercase tracking-wider text-on-surface-variant">
-                  Travelers
-                </label>
-                <div className="flex items-center justify-between bg-surface-container-low p-4 rounded-lg">
-                  <button
-                    onClick={decrementGuests}
-                    className="material-symbols-outlined cursor-pointer text-on-surface-variant hover:text-primary transition-colors"
-                  >
-                    remove_circle
-                  </button>
-                  <span className="font-bold text-lg">
-                    {guests} Guest{guests !== 1 && "s"}
-                  </span>
-                  <button
-                    onClick={incrementGuests}
-                    className="material-symbols-outlined cursor-pointer text-primary hover:opacity-80 transition-colors"
-                  >
-                    add_circle
-                  </button>
-                </div>
-              </div>
-              {/* Hotel Toggle */}
-              <div className="space-y-3">
-                <label className="font-label text-sm font-semibold uppercase tracking-wider text-on-surface-variant">
-                  Hotel Standard
-                </label>
-                <div className="flex p-1 bg-surface-container-low rounded-lg">
-                  <button
-                    onClick={() => setHotelStandard("3-Star")}
-                    className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                      hotelStandard === "3-Star"
-                        ? "bg-primary-container text-white shadow-md"
-                        : "text-on-surface-variant hover:bg-surface-container"
-                    }`}
-                  >
-                    3-Star
-                  </button>
-                  <button
-                    onClick={() => setHotelStandard("5-Star Elite")}
-                    className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                      hotelStandard === "5-Star Elite"
-                        ? "bg-primary-container text-white shadow-md"
-                        : "text-on-surface-variant hover:bg-surface-container"
-                    }`}
-                  >
-                    5-Star Elite
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="pt-6 border-t border-outline-variant/20 space-y-4">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-on-surface-variant">
-                  ${basePrice.toLocaleString()} x {guests} Guest
-                  {guests !== 1 && "s"}
-                </span>
-                <span className="font-medium">
-                  ${(basePrice * guests).toLocaleString()}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-on-surface-variant">Service Fee</span>
-                <span className="font-medium">$150</span>
-              </div>
-              <div className="flex justify-between items-center pt-2">
-                <span className="font-bold text-xl">Total Estimate</span>
-                <span className="font-headline font-bold text-2xl text-primary">
-                  ${totalPrice.toLocaleString()}
-                </span>
-              </div>
-            </div>
-            <button className="w-full py-5 bg-gradient-to-br from-primary-container to-primary text-white rounded-full font-bold text-lg shadow-lg hover:opacity-90 transition-all active:scale-[0.98]">
-              Confirm Your Selection
-            </button>
-            <p className="text-center text-xs text-on-surface-variant font-medium">
-              Free cancellation up to 30 days before departure.
-            </p>
-          </div>
-          <div className="mt-8 flex flex-col items-center gap-4 bg-secondary-fixed/30 p-6 rounded-xl">
-            <span className="material-symbols-outlined text-secondary text-3xl">
-              electric_bolt
-            </span>
-            <p className="text-center text-sm font-medium text-secondary-container">
-              Only 3 slots remaining for the September window.
-            </p>
-          </div>
-        </aside>
-      </div>
+                  {/* Package Tags */}
+                  {pkg.tags?.length > 0 && (
+                    <div className="flex gap-1.5 mb-4 flex-wrap">
+                      {pkg.tags.slice(0, 3).map((tag, i) => (
+                        <span key={i} className="px-2 py-0.5 rounded-full bg-sky-50 text-sky-600 text-[10px] font-semibold">{tag}</span>
+                      ))}
+                      {pkg.tags.length > 3 && (
+                        <span className="px-2 py-0.5 rounded-full bg-slate-50 text-slate-500 text-[10px] font-semibold">+{pkg.tags.length - 3}</span>
+                      )}
+                    </div>
+                  )}
 
-      {/* Reviews Section */}
-      <section
-        className="mt-24 pt-16 border-t border-outline-variant/10"
-        id="reviews"
-      >
-        <div className="flex justify-between items-end mb-12">
-          <div className="space-y-2">
-            <h2 className="font-headline text-3xl font-bold">
-              Voices of the Horizon
-            </h2>
-            <p className="text-on-surface-variant">
-              Authentic experiences from our global travelers.
-            </p>
+                  <div className="flex justify-between items-center pt-4 border-t border-slate-100">
+                    <div className="flex flex-col">
+                      <span className="text-xs text-slate-400">Estimate</span>
+                      <span className="text-lg font-bold text-primary">{formatPriceRange(pkg.priceRange)}</span>
+                    </div>
+                    <Link to={`/packages/${pkg.slug}`} className="text-primary font-bold text-sm uppercase tracking-widest hover:underline">
+                      Details
+                    </Link>
+                  </div>
+                  <a
+                    href={generateWhatsAppLink({
+                      whatsappNumber,
+                      packageName: pkg.name,
+                      destination: destination.name,
+                      priceRange: pkg.priceRange,
+                    })}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 w-full py-3 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    Book via WhatsApp
+                  </a>
+                </div>
+              </div>
+            ))}
           </div>
-          <button className="px-6 py-2 border border-primary text-primary rounded-full font-medium hover:bg-primary/5">
-            Write a Review
-          </button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Review 1 */}
-          <div className="bg-surface-container-lowest p-8 rounded-xl space-y-4 editorial-shadow border border-outline-variant/5">
-            <div className="flex gap-1 text-secondary">
-              {[...Array(5)].map((_, i) => (
-                <span
-                  key={i}
-                  className="material-symbols-outlined"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  star
-                </span>
-              ))}
-            </div>
-            <p className="italic text-on-surface-variant">
-              "The attention to detail was unlike any other tour I've booked.
-              The private boat day was the highlight of our entire Italian
-              honeymoon."
-            </p>
-            <div className="flex items-center gap-4 pt-4">
-              <div className="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
-                <img
-                  className="w-full h-full object-cover"
-                  alt="User profile portrait"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmmKjcKxxBz5M2rrjHEd9kPL8QFsWVRRynojANesLLInfepGay4OHnDuu_Cj6Txj1RNNec3zRL20NiWgS7siw2q19Tbx5o2UuJWxZWaEYn5bavPR8WqULHWS9gfTUCEU4jb2OzxjU05Fr_Vg-BPwLN_iH_Ko7h8kLg3DxRZUTR2iXzM-RlMspVXPTN0s39nzSdduebQV7rdr1SwUDpTzPDlXjya19-zBfBDmhixV94zIqFBA9a2Kp7jjjQfpPTqr9OBz7vfDxie6X1"
-                />
-              </div>
-              <div>
-                <p className="font-bold text-sm">Elena Rodriguez</p>
-                <p className="text-xs text-on-surface-variant">
-                  Travelled Oct 2023
-                </p>
-              </div>
-            </div>
-          </div>
-          {/* Review 2 */}
-          <div className="bg-surface-container-lowest p-8 rounded-xl space-y-4 editorial-shadow border border-outline-variant/5">
-            <div className="flex gap-1 text-secondary">
-              {[...Array(4)].map((_, i) => (
-                <span
-                  key={i}
-                  className="material-symbols-outlined"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  star
-                </span>
-              ))}
-              <span
-                className="material-symbols-outlined"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                star_half
-              </span>
-            </div>
-            <p className="italic text-on-surface-variant">
-              "Infinity Miles truly understands luxury. Ravello was a dream. The
-              only thing I'd change is staying two more days!"
-            </p>
-            <div className="flex items-center gap-4 pt-4">
-              <div className="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
-                <img
-                  className="w-full h-full object-cover"
-                  alt="User profile portrait"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcDbwWDImIIZ9sMJ9xpkbFZnEt0XnzwK00D2c-wg0y4PIg2KgI-vY3E6oWZEJz_FxvERpeQhfiyp52ULwpTVJBTp9pDHcjWrahnJ2uj_gpPlloyUPZUZld-gR7zvl1e6zrT_KHkRBAWOu901BCap1vM0KGWJQgVTASXNw47mHwAve_A4pdHrAmFxo_PBjK-Fl36tajU623kCId-bViYVo9G-HOskhMZHkYz3ZmzhAflssLn8nFZQiue8KTHwYIRvWIqvzXYcIgRGtj"
-                />
-              </div>
-              <div>
-                <p className="font-bold text-sm">Marcus Sterling</p>
-                <p className="text-xs text-on-surface-variant">
-                  Travelled Sep 2023
-                </p>
-              </div>
-            </div>
-          </div>
-          {/* Review 3 */}
-          <div className="bg-surface-container-lowest p-8 rounded-xl space-y-4 editorial-shadow border border-outline-variant/5">
-            <div className="flex gap-1 text-secondary">
-              {[...Array(5)].map((_, i) => (
-                <span
-                  key={i}
-                  className="material-symbols-outlined"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  star
-                </span>
-              ))}
-            </div>
-            <p className="italic text-on-surface-variant">
-              "Exceeded expectations. The hotel selections were architectural
-              masterpieces. Worth every single penny for the peace of mind."
-            </p>
-            <div className="flex items-center gap-4 pt-4">
-              <div className="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
-                <img
-                  className="w-full h-full object-cover"
-                  alt="User profile portrait"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8cRa0xnIINO_rz4t7IDYYZvdqUC5DQ-ZylUIDBS_JSkNARE9geP8TIh8Z2yXGAlsGd8-M3fRYEF3mjbkdu6rJHcL-26TEW_gnAQ7KtgoigCoagNXkJupeuw6tpLzubsYL9DNW3gVD4QZOHPTKGiASjmam4U79NrD1s6eEmhry40zKtMwcXMtGeOxbvBHfNYYcIxdXKzs_dt7d9IJ7IWaAPxNTF2Hw4OtIpSB81J36TS5PY5VPX0sVXjsuQEZjaiHIglOEmKH8BwMO"
-                />
-              </div>
-              <div>
-                <p className="font-bold text-sm">Sarah Jenkins</p>
-                <p className="text-xs text-on-surface-variant">
-                  Travelled July 2023
-                </p>
-              </div>
-            </div>
+        </section>
+      )}
+
+      {/* CTA */}
+      <section className="bg-slate-900 rounded-3xl p-12 md:p-16 text-center relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 20% 30%, #0077be 0%, transparent 50%)" }}></div>
+        <div className="relative z-10 max-w-2xl mx-auto">
+          <h2 className="font-headline text-3xl md:text-4xl text-white mb-4">Interested in {destination.name}?</h2>
+          <p className="text-slate-400 text-lg mb-8">Contact us to plan your perfect trip to {destination.name}, {destination.country}.</p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <Link to="/contact" className="bg-primary-container text-on-primary-container px-10 py-4 rounded-full font-bold hover:brightness-110 transition-all">
+              Contact Us
+            </Link>
+            <a
+              href={generateWhatsAppLink({
+                whatsappNumber,
+                destination: `${destination.name}, ${destination.country}`,
+                packageName: 'Custom Trip',
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-green-600 text-white px-10 py-4 rounded-full font-bold hover:bg-green-700 transition-all flex items-center gap-2"
+            >
+              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              WhatsApp Us
+            </a>
           </div>
         </div>
       </section>
