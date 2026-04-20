@@ -72,9 +72,8 @@ const ImageCarousel = ({ images, altText }) => {
           <button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
-              i === current ? "bg-white w-8" : "bg-white/50 hover:bg-white/80"
-            }`}
+            className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${i === current ? "bg-white w-8" : "bg-white/50 hover:bg-white/80"
+              }`}
           />
         ))}
       </div>
@@ -93,14 +92,12 @@ const AccordionItem = ({ day, isOpen, onToggle, isLast }) => {
     <div className={`border border-outline-variant/20 rounded-xl overflow-hidden transition-all mb-3 ${isOpen ? 'shadow-md shadow-primary/5' : ''}`}>
       <button
         onClick={onToggle}
-        className={`w-full flex items-center justify-between p-5 text-left transition-colors cursor-pointer ${
-          isOpen ? 'bg-primary/5' : 'bg-surface-container-lowest hover:bg-surface-container-low'
-        }`}
+        className={`w-full flex items-center justify-between p-5 text-left transition-colors cursor-pointer ${isOpen ? 'bg-primary/5' : 'bg-surface-container-lowest hover:bg-surface-container-low'
+          }`}
       >
         <div className="flex items-center gap-4">
-          <span className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
-            isOpen ? 'bg-primary text-white' : 'bg-surface-container-highest text-on-surface-variant'
-          }`}>
+          <span className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${isOpen ? 'bg-primary text-white' : 'bg-surface-container-highest text-on-surface-variant'
+            }`}>
             {String(day.day).padStart(2, '0')}
           </span>
           <div>
@@ -116,9 +113,8 @@ const AccordionItem = ({ day, isOpen, onToggle, isLast }) => {
       </button>
 
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}
       >
         <div className="px-5 pb-5 pt-2 ml-14">
           <p className="text-on-surface-variant leading-relaxed">{day.description}</p>
@@ -136,6 +132,209 @@ const AccordionItem = ({ day, isOpen, onToggle, isLast }) => {
     </div>
   );
 };
+
+/* ──────────── Policy Section Accordion ──────────── */
+const PolicySection = ({ icon, title, items, colorScheme, id }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const schemes = {
+    blue: {
+      bg: 'bg-blue-50',
+      headerBg: 'hover:bg-blue-100/60',
+      activeBg: 'bg-blue-100/40',
+      iconBg: 'bg-blue-100',
+      iconColor: 'text-blue-600',
+      titleColor: 'text-blue-900',
+      bulletColor: 'text-blue-500',
+      textColor: 'text-blue-800',
+      borderColor: 'border-blue-200/60',
+    },
+    amber: {
+      bg: 'bg-amber-50',
+      headerBg: 'hover:bg-amber-100/60',
+      activeBg: 'bg-amber-100/40',
+      iconBg: 'bg-amber-100',
+      iconColor: 'text-amber-600',
+      titleColor: 'text-amber-900',
+      bulletColor: 'text-amber-500',
+      textColor: 'text-amber-800',
+      borderColor: 'border-amber-200/60',
+    },
+    rose: {
+      bg: 'bg-rose-50',
+      headerBg: 'hover:bg-rose-100/60',
+      activeBg: 'bg-rose-100/40',
+      iconBg: 'bg-rose-100',
+      iconColor: 'text-rose-600',
+      titleColor: 'text-rose-900',
+      bulletColor: 'text-rose-500',
+      textColor: 'text-rose-800',
+      borderColor: 'border-rose-200/60',
+    },
+  };
+
+  const s = schemes[colorScheme] || schemes.blue;
+
+  return (
+    <div className={`${s.bg} rounded-xl border ${s.borderColor} overflow-hidden transition-all ${isOpen ? 'shadow-md' : ''}`} id={id}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between p-6 text-left transition-colors cursor-pointer ${isOpen ? s.activeBg : s.headerBg}`}
+      >
+        <div className="flex items-center gap-4">
+          <span className={`w-11 h-11 rounded-xl ${s.iconBg} flex items-center justify-center`}>
+            <span className={`material-symbols-outlined ${s.iconColor}`}>{icon}</span>
+          </span>
+          <h3 className={`font-headline text-xl font-bold ${s.titleColor}`}>{title}</h3>
+        </div>
+        <span className={`material-symbols-outlined ${s.iconColor} transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+          expand_more
+        </span>
+      </button>
+      <div className={`transition-all duration-400 ease-in-out overflow-hidden ${isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className="px-6 pb-6 pt-2">
+          <ul className="space-y-3">
+            {items.map((item, i) => (
+              <li key={i} className={`flex items-start gap-3 ${s.textColor}`}>
+                <span className={`material-symbols-outlined text-sm mt-0.5 flex-shrink-0 ${s.bulletColor}`}>
+                  arrow_circle_right
+                </span>
+                <span className="leading-relaxed text-[15px]">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ──────────── FAQ Accordion ──────────── */
+const FAQItem = ({ question, answer, isOpen, onToggle }) => (
+  <div className={`border border-outline-variant/15 rounded-xl overflow-hidden transition-all ${isOpen ? 'shadow-md shadow-primary/5 border-primary/20' : ''}`}>
+    <button
+      onClick={onToggle}
+      className={`w-full flex items-center justify-between p-5 text-left transition-colors cursor-pointer ${isOpen ? 'bg-primary/5' : 'bg-surface-container-lowest hover:bg-surface-container-low'
+        }`}
+    >
+      <div className="flex items-center gap-3 flex-1 pr-4">
+        <span className={`material-symbols-outlined text-lg flex-shrink-0 transition-colors ${isOpen ? 'text-primary' : 'text-on-surface-variant'}`}>
+          help
+        </span>
+        <span className={`font-semibold text-[15px] ${isOpen ? 'text-primary' : 'text-on-surface'}`}>
+          {question}
+        </span>
+      </div>
+      <span className={`material-symbols-outlined text-on-surface-variant transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}>
+        expand_more
+      </span>
+    </button>
+    <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className="px-5 pb-5 pt-1 ml-9">
+        <p className="text-on-surface-variant leading-relaxed text-[15px]">{answer}</p>
+      </div>
+    </div>
+  </div>
+);
+
+const FAQSection = () => {
+  const [openFAQ, setOpenFAQ] = useState(null);
+
+  const faqs = [
+    {
+      question: "How do I book a package?",
+      answer: "You can book any package by clicking the 'Book via WhatsApp' button on the package page. Our travel expert will connect with you to finalize the itinerary, travel dates, and payment details. A 30% advance is required to confirm your booking."
+    },
+    {
+      question: "Can I customize the itinerary?",
+      answer: "Absolutely! All our packages are fully customizable. You can modify the number of days, destinations, hotel categories, activities, and more. Just let our travel expert know your preferences during the booking process."
+    },
+    {
+      question: "What is included in the package price?",
+      answer: "The package price typically includes accommodation, sightseeing as per itinerary, transfers, and meals as mentioned. Please refer to the 'What's Included' and 'Not Included' sections on each package page for specific details."
+    },
+    {
+      question: "Is airfare/train fare included in the price?",
+      answer: "Airfare and train fares are generally not included in the package price unless explicitly mentioned. The air fare is calculated at the time of proposal creation and is subject to change at the time of booking. 100% flight fare is required to issue the tickets."
+    },
+    {
+      question: "What is the payment schedule?",
+      answer: "A 30% advance is required at the time of booking. For domestic packages, 100% payment must be completed 10 days before departure. For international packages, full payment is required 15 days before the departure date."
+    },
+    {
+      question: "Can I reschedule my trip?",
+      answer: "Yes, you can prepone or postpone your trip once without additional charges, provided you inform us at least 15 days prior to your travel date in writing (email/SMS). A second reschedule may attract additional charges. Changes within 15 days of travel are generally not accepted."
+    },
+    {
+      question: "What is the cancellation policy?",
+      answer: "Cancellation charges depend on when you cancel: 30+ days before departure \u2014 10% of total cost; 15\u201329 days \u2014 25%; 7\u201314 days \u2014 50%; less than 7 days \u2014 no refund. Non-refundable components like flight tickets and visa fees are excluded from refunds."
+    },
+    {
+      question: "Can I transfer my booking to someone else?",
+      answer: "Yes! Your advance payment and invoice number are transferable. You can pass your booking to a friend or relative, provided the original terms and conditions are met first."
+    },
+    {
+      question: "How are hotel categories selected?",
+      answer: "We offer multiple hotel tier options for most packages. You can choose between standard, premium, or luxury categories. The price adjusts accordingly based on the hotel tier you select. You can see and compare options using the hotel selector on the booking sidebar."
+    },
+    {
+      question: "What happens in case of natural disasters or strikes?",
+      answer: "In rare cases like adverse climatic conditions or strikes, we will inform you in advance, and the package can be postponed without any extra charges. Your safety is our top priority, and we work closely with local authorities to ensure the best alternatives."
+    }
+  ];
+
+  return (
+    <section className="space-y-6" id="faq">
+      <div className="flex items-center gap-3">
+        <span className="w-11 h-11 rounded-xl bg-violet-100 flex items-center justify-center">
+          <span className="material-symbols-outlined text-violet-600">quiz</span>
+        </span>
+        <h2 className="font-headline text-3xl font-bold">Frequently Asked Questions</h2>
+      </div>
+      <div className="space-y-3">
+        {faqs.map((faq, i) => (
+          <FAQItem
+            key={i}
+            question={faq.question}
+            answer={faq.answer}
+            isOpen={openFAQ === i}
+            onToggle={() => setOpenFAQ(openFAQ === i ? null : i)}
+          />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+/* ──────────── Static Policy Data ──────────── */
+const BOOKING_TERMS = [
+  "30% advance to be paid at the time of booking.",
+  "100% flight fare required to issue the tickets.",
+  "Air fare is calculated at the time of proposal creation and is subject to change at the time of booking.",
+  "100% payment is to be made for domestic packages before 10 days of departure date.",
+  "100% payment is to be made for international packages before 15 days of departure date.",
+  "In case of cancellation, standard cancellation policies will be applicable or may be changed as per the policies.",
+];
+
+const TERMS_CONDITIONS = [
+  "In case client wishes to prepone/postpone his or her travel dates, we request you to kindly reach us 15 days prior to journey date via e-mail/SMS.",
+  "The customers can prepone/postpone their tour once without any additional charges (if intimated before 15 days of travel date in written). However, postponing & preponing a second time will attract additional charges.",
+  "Few service providers (Hoteliers, Transporters, etc.) may apply postpone/prepone charges even after meeting the above requirement. In such cases, the charges will be deducted from the advance amount deposited.",
+  "In all prepone or postpone scenarios, the services and the costing will be subject to availability of Hotel/Volvo and season/off-season time.",
+  "We do not accept any changes in plan within 15 days of travel date. However, in rare cases like adverse climatic conditions or strikes, package can be postponed which will be intimated to you beforehand.",
+  "The validity to utilize your advance payment in prepone/postpone scenarios is 1 year from the date of advance payment.",
+  "The advance payment and the invoice number allotted to you are transferable \u2014 you can pass on your booking to any of your friends/relatives (subject to meeting the above terms and conditions first).",
+];
+
+const CANCELLATION_POLICY = [
+  "Cancellation 30 days or more before the departure date \u2014 10% of the total package cost will be charged.",
+  "Cancellation between 15 to 29 days before departure \u2014 25% of the total package cost will be charged.",
+  "Cancellation between 7 to 14 days before departure \u2014 50% of the total package cost will be charged.",
+  "Cancellation less than 7 days before departure \u2014 No refund will be provided.",
+  "Non-refundable components such as airline tickets, visa fees, and travel insurance premiums are excluded from all refund calculations.",
+  "Refunds (if applicable) will be processed within 10\u201315 business days from the date of cancellation confirmation.",
+  "In case of no-show or early departure, no refund will be applicable for the unused portion of the package.",
+];
 
 /* ──────────── Main PackageDetail Component ──────────── */
 const PackageDetail = () => {
@@ -193,7 +392,7 @@ const PackageDetail = () => {
       <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12 text-center py-32">
         <span className="material-symbols-outlined text-6xl text-slate-300 mb-4 block">inventory_2</span>
         <h2 className="font-headline text-3xl text-slate-400">Package not found</h2>
-        <Link to="/packages" className="text-primary font-semibold mt-4 inline-block hover:underline">← Back to Packages</Link>
+        <Link to="/packages" className="text-primary font-semibold mt-4 inline-block hover:underline">&larr; Back to Packages</Link>
       </main>
     );
   }
@@ -207,7 +406,7 @@ const PackageDetail = () => {
     return {
       min: Math.round(pkg.priceRange.min * (1 + adjustment)),
       max: Math.round(pkg.priceRange.max * (1 + adjustment)),
-      currency: pkg.priceRange.currency || "₹",
+      currency: pkg.priceRange.currency || "\u20B9",
     };
   };
 
@@ -291,7 +490,7 @@ const PackageDetail = () => {
           </section>
 
           {/* Highlights */}
-          {pkg.highlights?.length > 0 && (
+          {/* {pkg.highlights?.length > 0 && (
             <section className="space-y-8" id="highlights">
               <h2 className="font-headline text-3xl font-bold">Highlights</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -311,7 +510,7 @@ const PackageDetail = () => {
                 ))}
               </div>
             </section>
-          )}
+          )} */}
 
           {/* Itinerary Accordion */}
           {pkg.itinerary?.length > 0 && (
@@ -374,6 +573,35 @@ const PackageDetail = () => {
               </div>
             )}
           </section>
+
+          {/* ── Booking Terms, T&C, Cancellation Policy ── */}
+          <section className="space-y-4" id="policies">
+            <h2 className="font-headline text-3xl font-bold mb-2">Policies & Terms</h2>
+            <PolicySection
+              icon="receipt_long"
+              title="Booking Terms"
+              items={BOOKING_TERMS}
+              colorScheme="blue"
+              id="booking-terms"
+            />
+            <PolicySection
+              icon="gavel"
+              title="Terms & Conditions"
+              items={TERMS_CONDITIONS}
+              colorScheme="amber"
+              id="terms-conditions"
+            />
+            <PolicySection
+              icon="event_busy"
+              title="Cancellation Policy"
+              items={CANCELLATION_POLICY}
+              colorScheme="rose"
+              id="cancellation-policy"
+            />
+          </section>
+
+          {/* ── FAQ ── */}
+          <FAQSection />
         </div>
 
         {/* Right: Sticky Booking Sidebar */}
@@ -413,15 +641,14 @@ const PackageDetail = () => {
                       <button
                         key={hs.tier}
                         onClick={() => setHotelStandard(hs.tier)}
-                        className={`py-3 px-4 rounded-xl text-sm font-medium transition-all border cursor-pointer ${
-                          hotelStandard === hs.tier
-                            ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
-                            : "bg-surface-container-low text-on-surface-variant border-outline-variant/20 hover:border-primary/30 hover:bg-surface-container"
-                        }`}
+                        className={`py-3 px-4 rounded-xl text-sm font-medium transition-all border cursor-pointer ${hotelStandard === hs.tier
+                          ? "bg-yellow-50 text-black border-primary shadow-md shadow-primary/20"
+                          : "bg-surface-container-low text-on-surface-variant border-outline-variant/20 hover:border-primary/30 hover:bg-surface-container"
+                          }`}
                       >
                         <div className="flex items-center justify-between">
                           <span>{hs.tier}</span>
-                          <span className={`text-xs ${hotelStandard === hs.tier ? 'text-white/80' : 'text-on-surface-variant/60'}`}>
+                          <span className={`text-xs ${hotelStandard === hs.tier ? 'text-black' : 'text-on-surface-variant/60'}`}>
                             {hs.priceAdjustmentPercent === 0 ? 'Base price' : `${hs.priceAdjustmentPercent}%`}
                           </span>
                         </div>
@@ -456,7 +683,7 @@ const PackageDetail = () => {
               rel="noopener noreferrer"
               className="w-full py-5 bg-green-600 text-white rounded-full font-bold text-lg shadow-lg hover:bg-green-700 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
             >
-              <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
               Book via WhatsApp
             </a>
             <p className="text-center text-xs text-on-surface-variant font-medium">
