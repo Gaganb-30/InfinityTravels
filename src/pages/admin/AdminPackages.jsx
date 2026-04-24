@@ -169,7 +169,7 @@ export default function AdminPackages() {
           <h1 style={{ color: '#f1f5f9', fontSize: '24px', fontWeight: 700, margin: 0 }}>Packages</h1>
           <p style={{ color: '#64748b', fontSize: '13px', margin: '4px 0 0' }}>{items.length} packages</p>
         </div>
-        <button onClick={openCreate} style={{ background: 'linear-gradient(135deg, #0077BE, #0096c7)', border: 'none', borderRadius: '10px', padding: '10px 20px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,119,190,0.4)' }}>
+        <button onClick={openCreate} style={{ background: 'linear-gradient(135deg, #1B5E96, #154A78)', border: 'none', borderRadius: '10px', padding: '10px 20px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 14px rgba(27,94,150,0.4)' }}>
           + New Package
         </button>
       </div>
@@ -186,7 +186,7 @@ export default function AdminPackages() {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                   <span style={{ color: '#f1f5f9', fontWeight: 600, fontSize: '15px' }}>{item.name}</span>
-                  {item.badge && <span style={{ background: '#0077BE20', color: '#38bdf8', borderRadius: '6px', padding: '2px 8px', fontSize: '11px' }}>{item.badge}</span>}
+                  {item.badge && <span style={{ background: '#1B5E9620', color: '#38bdf8', borderRadius: '6px', padding: '2px 8px', fontSize: '11px' }}>{item.badge}</span>}
                   {item.isFeatured && <span style={{ background: '#f59e0b20', color: '#fbbf24', borderRadius: '6px', padding: '2px 8px', fontSize: '11px' }}>Featured</span>}
                   {!item.isActive && <span style={{ background: '#ef444420', color: '#f87171', borderRadius: '6px', padding: '2px 8px', fontSize: '11px' }}>Inactive</span>}
                 </div>
@@ -196,7 +196,7 @@ export default function AdminPackages() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-                <button onClick={() => openEdit(item)} style={{ background: 'rgba(0,119,190,0.12)', border: '1px solid rgba(0,119,190,0.25)', borderRadius: '8px', padding: '7px 14px', color: '#38bdf8', fontSize: '13px', cursor: 'pointer' }}>Edit</button>
+                <button onClick={() => openEdit(item)} style={{ background: 'rgba(27,94,150,0.12)', border: '1px solid rgba(27,94,150,0.25)', borderRadius: '8px', padding: '7px 14px', color: '#38bdf8', fontSize: '13px', cursor: 'pointer' }}>Edit</button>
                 <button onClick={() => handleDelete(item._id, item.name)} style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', padding: '7px 14px', color: '#f87171', fontSize: '13px', cursor: 'pointer' }}>Delete</button>
               </div>
             </div>
@@ -265,7 +265,7 @@ export default function AdminPackages() {
                     <label style={{ ...labelStyle, marginBottom: 0, fontSize: '14px', fontWeight: 600 }}>
                       Itinerary ({form.itinerary.length} days)
                     </label>
-                    <button type="button" onClick={addItineraryDay} style={{ background: 'rgba(0,119,190,0.15)', border: '1px solid rgba(0,119,190,0.3)', borderRadius: '8px', padding: '6px 14px', color: '#38bdf8', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}>
+                    <button type="button" onClick={addItineraryDay} style={{ background: 'rgba(27,94,150,0.15)', border: '1px solid rgba(27,94,150,0.3)', borderRadius: '8px', padding: '6px 14px', color: '#38bdf8', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}>
                       + Add Day
                     </button>
                   </div>
@@ -320,7 +320,7 @@ export default function AdminPackages() {
               </div>
               <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
                 <button type="button" onClick={() => setModal(null)} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '10px 20px', color: '#94a3b8', fontSize: '14px', cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" disabled={saving} style={{ background: 'linear-gradient(135deg, #0077BE, #0096c7)', border: 'none', borderRadius: '10px', padding: '10px 24px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
+                <button type="submit" disabled={saving} style={{ background: 'linear-gradient(135deg, #1B5E96, #154A78)', border: 'none', borderRadius: '10px', padding: '10px 24px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
                   {saving ? 'Saving…' : 'Save'}
                 </button>
               </div>

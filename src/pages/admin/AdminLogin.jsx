@@ -42,7 +42,7 @@ export default function AdminLogin() {
       {/* Decorative blobs */}
       <div style={{
         position: 'fixed', top: '-10%', left: '-10%', width: '500px', height: '500px',
-        background: 'radial-gradient(circle, rgba(0,119,190,0.15) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(27,94,150,0.15) 0%, transparent 70%)',
         borderRadius: '50%', pointerEvents: 'none',
       }} />
       <div style={{
@@ -65,11 +65,11 @@ export default function AdminLogin() {
         <div style={{ textAlign: 'center', marginBottom: '36px' }}>
           <div style={{
             width: '56px', height: '56px',
-            background: 'linear-gradient(135deg, #0077BE, #00b4d8)',
+            background: 'linear-gradient(135deg, #1B5E96, #D4782F)',
             borderRadius: '16px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             margin: '0 auto 16px',
-            boxShadow: '0 8px 24px rgba(0,119,190,0.4)',
+            boxShadow: '0 8px 24px rgba(27,94,150,0.4)',
           }}>
             <span style={{ fontSize: '24px' }}>✈️</span>
           </div>
@@ -103,7 +103,7 @@ export default function AdminLogin() {
                 outline: 'none',
                 transition: 'border-color 0.2s',
               }}
-              onFocus={e => e.target.style.borderColor = '#0077BE'}
+              onFocus={e => e.target.style.borderColor = '#1B5E96'}
               onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.12)'}
             />
           </div>
@@ -129,7 +129,7 @@ export default function AdminLogin() {
                 outline: 'none',
                 transition: 'border-color 0.2s',
               }}
-              onFocus={e => e.target.style.borderColor = '#0077BE'}
+              onFocus={e => e.target.style.borderColor = '#1B5E96'}
               onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.12)'}
             />
           </div>
@@ -149,7 +149,7 @@ export default function AdminLogin() {
             disabled={loading}
             style={{
               width: '100%',
-              background: loading ? '#334155' : 'linear-gradient(135deg, #0077BE, #0096c7)',
+              background: loading ? '#334155' : 'linear-gradient(135deg, #1B5E96, #154A78)',
               color: '#fff',
               border: 'none',
               borderRadius: '12px',
@@ -158,7 +158,7 @@ export default function AdminLogin() {
               fontWeight: 600,
               cursor: loading ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s',
-              boxShadow: loading ? 'none' : '0 4px 20px rgba(0,119,190,0.4)',
+              boxShadow: loading ? 'none' : '0 4px 20px rgba(27,94,150,0.4)',
             }}
           >
             {loading ? 'Signing in…' : 'Sign In →'}

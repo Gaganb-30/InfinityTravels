@@ -66,7 +66,7 @@ export default function AdminDashboard() {
           gap: '20px',
           marginBottom: '40px',
         }}>
-          <StatCard icon="🗺️" label="Destinations" value={stats?.destinations} color="#0077BE" />
+          <StatCard icon="🗺️" label="Destinations" value={stats?.destinations} color="#1B5E96" />
           <StatCard icon="📦" label="Packages" value={stats?.packages} color="#0096c7" />
           <StatCard icon="⭐" label="Testimonials" value={stats?.testimonials} color="#f59e0b" />
           <StatCard icon="💬" label="Active Inquiries" value={stats?.inquiries} color="#10b981"
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
         </h2>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           {[
-            { href: '/admin/destinations', label: '+ Add Destination', color: '#0077BE' },
+            { href: '/admin/destinations', label: '+ Add Destination', color: '#1B5E96' },
             { href: '/admin/packages', label: '+ Add Package', color: '#0096c7' },
             { href: '/admin/testimonials', label: '+ Add Testimonial', color: '#f59e0b' },
             { href: '/admin/inquiries', label: 'View Inquiries', color: '#10b981' },

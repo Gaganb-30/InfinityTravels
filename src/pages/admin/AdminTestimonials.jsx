@@ -96,7 +96,7 @@ export default function AdminTestimonials() {
           <h1 style={{ color: '#f1f5f9', fontSize: '24px', fontWeight: 700, margin: 0 }}>Testimonials</h1>
           <p style={{ color: '#64748b', fontSize: '13px', margin: '4px 0 0' }}>{items.length} testimonials</p>
         </div>
-        <button onClick={openCreate} style={{ background: 'linear-gradient(135deg, #0077BE, #0096c7)', border: 'none', borderRadius: '10px', padding: '10px 20px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,119,190,0.4)' }}>
+        <button onClick={openCreate} style={{ background: 'linear-gradient(135deg, #1B5E96, #154A78)', border: 'none', borderRadius: '10px', padding: '10px 20px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 14px rgba(27,94,150,0.4)' }}>
           + New Testimonial
         </button>
       </div>
@@ -109,7 +109,7 @@ export default function AdminTestimonials() {
               borderRadius: '14px', padding: '18px 24px',
               display: 'flex', alignItems: 'flex-start', gap: '16px',
             }}>
-              <div style={{ width: '44px', height: '44px', minWidth: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, #0077BE, #0096c7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', color: '#fff', fontWeight: 700 }}>
+              <div style={{ width: '44px', height: '44px', minWidth: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, #1B5E96, #154A78)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', color: '#fff', fontWeight: 700 }}>
                 {item.avatar ? <img src={item.avatar} alt={item.name} style={{ width: '44px', height: '44px', borderRadius: '50%', objectFit: 'cover' }} /> : item.name?.[0]}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -126,7 +126,7 @@ export default function AdminTestimonials() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-                <button onClick={() => openEdit(item)} style={{ background: 'rgba(0,119,190,0.12)', border: '1px solid rgba(0,119,190,0.25)', borderRadius: '8px', padding: '7px 14px', color: '#38bdf8', fontSize: '13px', cursor: 'pointer' }}>Edit</button>
+                <button onClick={() => openEdit(item)} style={{ background: 'rgba(27,94,150,0.12)', border: '1px solid rgba(27,94,150,0.25)', borderRadius: '8px', padding: '7px 14px', color: '#38bdf8', fontSize: '13px', cursor: 'pointer' }}>Edit</button>
                 <button onClick={() => handleDelete(item._id, item.name)} style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', padding: '7px 14px', color: '#f87171', fontSize: '13px', cursor: 'pointer' }}>Delete</button>
               </div>
             </div>
@@ -175,7 +175,7 @@ export default function AdminTestimonials() {
               </div>
               <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
                 <button type="button" onClick={() => setModal(null)} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '10px 20px', color: '#94a3b8', fontSize: '14px', cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" disabled={saving} style={{ background: 'linear-gradient(135deg, #0077BE, #0096c7)', border: 'none', borderRadius: '10px', padding: '10px 24px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
+                <button type="submit" disabled={saving} style={{ background: 'linear-gradient(135deg, #1B5E96, #154A78)', border: 'none', borderRadius: '10px', padding: '10px 24px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
                   {saving ? 'Saving…' : 'Save'}
                 </button>
               </div>

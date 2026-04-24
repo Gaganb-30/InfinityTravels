@@ -104,10 +104,10 @@ export default function AdminDestinations() {
         <button
           onClick={openCreate}
           style={{
-            background: 'linear-gradient(135deg, #0077BE, #0096c7)',
+            background: 'linear-gradient(135deg, #1B5E96, #154A78)',
             border: 'none', borderRadius: '10px',
             padding: '10px 20px', color: '#fff', fontSize: '14px', fontWeight: 600,
-            cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,119,190,0.4)',
+            cursor: 'pointer', boxShadow: '0 4px 14px rgba(27,94,150,0.4)',
           }}
         >+ New Destination</button>
       </div>
@@ -136,7 +136,7 @@ export default function AdminDestinations() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-                <button onClick={() => openEdit(item)} style={{ background: 'rgba(0,119,190,0.12)', border: '1px solid rgba(0,119,190,0.25)', borderRadius: '8px', padding: '7px 14px', color: '#38bdf8', fontSize: '13px', cursor: 'pointer' }}>Edit</button>
+                <button onClick={() => openEdit(item)} style={{ background: 'rgba(27,94,150,0.12)', border: '1px solid rgba(27,94,150,0.25)', borderRadius: '8px', padding: '7px 14px', color: '#38bdf8', fontSize: '13px', cursor: 'pointer' }}>Edit</button>
                 <button onClick={() => handleDelete(item._id, item.name)} style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', padding: '7px 14px', color: '#f87171', fontSize: '13px', cursor: 'pointer' }}>Delete</button>
               </div>
             </div>
@@ -222,7 +222,7 @@ export default function AdminDestinations() {
               </div>
               <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
                 <button type="button" onClick={() => setModal(null)} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '10px 20px', color: '#94a3b8', fontSize: '14px', cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" disabled={saving} style={{ background: 'linear-gradient(135deg, #0077BE, #0096c7)', border: 'none', borderRadius: '10px', padding: '10px 24px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
+                <button type="submit" disabled={saving} style={{ background: 'linear-gradient(135deg, #1B5E96, #154A78)', border: 'none', borderRadius: '10px', padding: '10px 24px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
                   {saving ? 'Saving…' : 'Save'}
                 </button>
               </div>

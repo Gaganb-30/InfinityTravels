@@ -224,7 +224,7 @@ const DestinationDetail = () => {
                   {pkg.tags?.length > 0 && (
                     <div className="flex gap-1.5 mb-4 flex-wrap">
                       {pkg.tags.slice(0, 3).map((tag, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded-full bg-sky-50 text-sky-600 text-[10px] font-semibold">{tag}</span>
+                        <span key={i} className="px-2 py-0.5 rounded-full bg-blue-50 text-[#1B5E96] text-[10px] font-semibold">{tag}</span>
                       ))}
                       {pkg.tags.length > 3 && (
                         <span className="px-2 py-0.5 rounded-full bg-slate-50 text-slate-500 text-[10px] font-semibold">+{pkg.tags.length - 3}</span>
@@ -264,7 +264,7 @@ const DestinationDetail = () => {
 
       {/* CTA */}
       <section className="bg-slate-900 rounded-3xl p-12 md:p-16 text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 20% 30%, #0077be 0%, transparent 50%)" }}></div>
+        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 20% 30%, #1B5E96 0%, transparent 50%)" }}></div>
         <div className="relative z-10 max-w-2xl mx-auto">
           <h2 className="font-headline text-3xl md:text-4xl text-white mb-4">Interested in {destination.name}?</h2>
           <p className="text-slate-400 text-lg mb-8">Contact us to plan your perfect trip to {destination.name}, {destination.country}.</p>

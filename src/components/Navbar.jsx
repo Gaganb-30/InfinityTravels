@@ -40,12 +40,24 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 w-full z-50 glass-nav shadow-sm">
-      <div className="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
+      <div className="flex justify-between items-center px-8 py-3 max-w-full mx-auto">
         <Link
           to="/"
-          className="text-2xl font-bold font-headline text-sky-900 tracking-tight"
+          className="flex flex-col items-center gap-0"
         >
-          Infinity Miles Travel
+          <img
+            src="/logo3.png"
+            alt="Infinity Miles Logo"
+            className="h-15 w-auto object-contain"
+          />
+          {/* <div className="flex gap-1 leading-tight">
+            <span className="text-sm font-bold font-headline tracking-tight" style={{ color: '#1B5E96' }}>
+              Infinity
+            </span>
+            <span className="text-sm font-bold font-headline tracking-tight" style={{ color: '#D4782F' }}>
+              Miles
+            </span>
+          </div> */}
         </Link>
 
         {/* Desktop Nav */}
@@ -54,11 +66,11 @@ const Navbar = () => {
             <Link
               key={link.path}
               to={link.path}
-              className={`transition-colors duration-300 pb-1 ${
-                isActive(link.path)
-                  ? "text-sky-700 font-semibold border-b-2 border-sky-700"
-                  : "text-slate-600 hover:text-sky-500"
-              }`}
+              className={`transition-colors duration-300 pb-1 ${isActive(link.path)
+                ? "font-semibold border-b-2"
+                : "text-slate-600 hover:text-[#D4782F]"
+                }`}
+              style={isActive(link.path) ? { color: '#1B5E96', borderColor: '#1B5E96' } : {}}
             >
               {link.name}
             </Link>
@@ -73,17 +85,16 @@ const Navbar = () => {
           >
             <button
               onClick={() => setDestDropdownOpen((prev) => !prev)}
-              className={`flex items-center gap-1 transition-colors duration-300 pb-1 cursor-pointer ${
-                isDestinationsActive
-                  ? "text-sky-700 font-semibold border-b-2 border-sky-700"
-                  : "text-slate-600 hover:text-sky-500"
-              }`}
+              className={`flex items-center gap-1 transition-colors duration-300 pb-1 cursor-pointer ${isDestinationsActive
+                ? "font-semibold border-b-2"
+                : "text-slate-600 hover:text-[#D4782F]"
+                }`}
+              style={isDestinationsActive ? { color: '#1B5E96', borderColor: '#1B5E96' } : {}}
             >
               Destinations
               <span
-                className={`material-symbols-outlined text-sm transition-transform duration-200 ${
-                  destDropdownOpen ? "rotate-180" : ""
-                }`}
+                className={`material-symbols-outlined text-sm transition-transform duration-200 ${destDropdownOpen ? "rotate-180" : ""
+                  }`}
               >
                 expand_more
               </span>
@@ -91,19 +102,18 @@ const Navbar = () => {
 
             {/* Dropdown Panel */}
             <div
-              className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transition-all duration-300 origin-top ${
-                destDropdownOpen
-                  ? "opacity-100 scale-100 pointer-events-auto"
-                  : "opacity-0 scale-95 pointer-events-none"
-              }`}
+              className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transition-all duration-300 origin-top ${destDropdownOpen
+                ? "opacity-100 scale-100 pointer-events-auto"
+                : "opacity-0 scale-95 pointer-events-none"
+                }`}
             >
               <div className="p-2">
                 <Link
                   to="/destinations?category=Domestic"
                   onClick={() => setDestDropdownOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-sky-50 transition-colors group"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 transition-colors group"
                 >
-                  <span className="material-symbols-outlined text-sky-600 group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined group-hover:scale-110 transition-transform" style={{ color: '#1B5E96' }}>
                     flag
                   </span>
                   <div>
@@ -118,9 +128,9 @@ const Navbar = () => {
                 <Link
                   to="/destinations?category=International"
                   onClick={() => setDestDropdownOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-sky-50 transition-colors group"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 transition-colors group"
                 >
-                  <span className="material-symbols-outlined text-sky-600 group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined group-hover:scale-110 transition-transform" style={{ color: '#1B5E96' }}>
                     public
                   </span>
                   <div>
@@ -136,9 +146,9 @@ const Navbar = () => {
                   <Link
                     to="/destinations"
                     onClick={() => setDestDropdownOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-sky-50 transition-colors group"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 transition-colors group"
                   >
-                    <span className="material-symbols-outlined text-sky-600 group-hover:scale-110 transition-transform">
+                    <span className="material-symbols-outlined group-hover:scale-110 transition-transform" style={{ color: '#D4782F' }}>
                       travel_explore
                     </span>
                     <div>
@@ -157,9 +167,6 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center space-x-6">
-          <button className="material-symbols-outlined text-slate-600 hover:text-sky-500 transition-colors">
-            search
-          </button>
 
           {/* Mobile hamburger */}
           <button
@@ -171,7 +178,7 @@ const Navbar = () => {
 
           <Link
             to="/contact"
-            className="hidden md:block cta-gradient text-white px-6 py-2.5 rounded-full font-medium transition-transform active:scale-95 shadow-md hover:shadow-lg"
+            className="hidden md:block cta-gradient-warm text-white px-6 py-2.5 rounded-full font-medium transition-transform active:scale-95 shadow-md hover:shadow-lg"
           >
             Book Now
           </Link>
@@ -186,7 +193,7 @@ const Navbar = () => {
           <Link to="/destinations?category=International" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-slate-700 font-medium">🌍 International Destinations</Link>
           <Link to="/packages" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-slate-700 font-medium">Packages</Link>
           <Link to="/about-us" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-slate-700 font-medium">About Us</Link>
-          <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-sky-700 font-semibold">Contact / Book Now</Link>
+          <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-semibold" style={{ color: '#D4782F' }}>Contact / Book Now</Link>
         </div>
       )}
     </nav>

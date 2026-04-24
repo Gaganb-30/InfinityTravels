@@ -60,14 +60,14 @@ const Destinations = () => {
   const pageTitle = filters.category === "Domestic"
     ? "Domestic Destinations"
     : filters.category === "International"
-    ? "International Destinations"
-    : "World Destinations";
+      ? "International Destinations"
+      : "World Destinations";
 
   const pageDescription = filters.category === "Domestic"
     ? "Explore the incredible diversity of India — from snow-capped Himalayas to tropical beaches, royal deserts to serene backwaters."
     : filters.category === "International"
-    ? "Venture beyond borders. Discover stunning international destinations handpicked for unforgettable experiences."
-    : "Discover a world beyond boundaries. From the silent peaks of the Himalayas to the neon pulse of Tokyo, your next chapter begins here.";
+      ? "Venture beyond borders. Discover stunning international destinations handpicked for unforgettable experiences."
+      : "Discover a world beyond boundaries. From the silent peaks of the Himalayas to the neon pulse of Tokyo, your next chapter begins here.";
 
   return (
     <main className="pt-32 pb-24 px-8 max-w-7xl mx-auto">
@@ -90,11 +90,10 @@ const Destinations = () => {
               <button
                 key={cat}
                 onClick={() => setFilters({ ...filters, category: cat })}
-                className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                  filters.category === cat
-                    ? "bg-primary text-white shadow-lg shadow-primary/25"
-                    : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container-highest"
-                }`}
+                className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${filters.category === cat
+                  ? "cta-gradient-warm  text-white shadow-lg shadow-primary/25"
+                  : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container-highest"
+                  }`}
               >
                 {cat === '' ? '🌐 All' : cat === 'Domestic' ? '🇮🇳 Domestic' : '🌍 International'}
               </button>
@@ -148,11 +147,10 @@ const Destinations = () => {
                 <button
                   key={s}
                   onClick={() => setFilters({ ...filters, season: filters.season === s ? "" : s })}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                    filters.season === s
-                      ? "bg-primary text-on-primary"
-                      : "bg-surface-container-highest text-on-surface hover:bg-surface-variant"
-                  }`}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${filters.season === s
+                    ? "bg-primary text-on-primary"
+                    : "bg-surface-container-highest text-on-surface hover:bg-surface-variant"
+                    }`}
                 >
                   {s}
                 </button>
@@ -168,11 +166,10 @@ const Destinations = () => {
                 <span
                   key={t}
                   onClick={() => setFilters({ ...filters, type: filters.type === t ? "" : t })}
-                  className={`px-3 py-1.5 rounded-full border text-xs font-medium cursor-pointer transition-colors ${
-                    filters.type === t
-                      ? "border-primary bg-primary text-white"
-                      : "border-outline-variant/30 hover:bg-surface-container-highest"
-                  }`}
+                  className={`px-3 py-1.5 rounded-full border text-xs font-medium cursor-pointer transition-colors ${filters.type === t
+                    ? "border-primary bg-primary text-white"
+                    : "border-outline-variant/30 hover:bg-surface-container-highest"
+                    }`}
                 >
                   {t}
                 </span>
@@ -319,7 +316,7 @@ const Destinations = () => {
 
       {/* Newsletter CTA */}
       <section className="mt-32 bg-slate-900 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 20% 30%, #0077be 0%, transparent 50%)" }}></div>
+        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 20% 30%, #1B5E96 0%, transparent 50%)" }}></div>
         <div className="relative z-10 max-w-2xl mx-auto">
           <h2 className="font-headline text-4xl md:text-5xl text-white mb-6">Receive Secret Itineraries</h2>
           <p className="text-slate-400 text-lg mb-10">Join 50,000+ wanderers and receive our hand-crafted travel guides once a month.</p>

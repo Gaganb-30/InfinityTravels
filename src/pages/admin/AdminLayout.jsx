@@ -69,7 +69,7 @@ export default function AdminLayout() {
         }}>
           <div style={{
             width: '36px', height: '36px', minWidth: '36px',
-            background: 'linear-gradient(135deg, #0077BE, #00b4d8)',
+            background: 'linear-gradient(135deg, #1B5E96, #D4782F)',
             borderRadius: '10px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '16px', flexShrink: 0,
@@ -108,9 +108,9 @@ export default function AdminLayout() {
                 textDecoration: 'none',
                 fontSize: '14px', fontWeight: 500,
                 whiteSpace: 'nowrap',
-                background: isActive ? 'rgba(0,119,190,0.18)' : 'transparent',
+                background: isActive ? 'rgba(27,94,150,0.18)' : 'transparent',
                 color: isActive ? '#38bdf8' : '#94a3b8',
-                borderLeft: isActive ? '2px solid #0077BE' : '2px solid transparent',
+                borderLeft: isActive ? '2px solid #1B5E96' : '2px solid transparent',
                 transition: 'all 0.15s',
               })}
             >

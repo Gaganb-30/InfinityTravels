@@ -8,10 +8,13 @@
     backdrop-filter: blur(24px);
   }
   .hero-gradient {
-    background: linear-gradient(135deg, rgba(0, 119, 190, 0.1) 0%, rgba(0, 94, 151, 0.2) 100%);
+    background: linear-gradient(135deg, rgba(27, 94, 150, 0.1) 0%, rgba(21, 74, 120, 0.2) 100%);
   }
   .cta-gradient {
-    background: linear-gradient(135deg, #0077BE 0%, #005E97 100%);
+    background: linear-gradient(135deg, #1B5E96 0%, #154A78 100%);
+  }
+  .cta-gradient-warm {
+    background: linear-gradient(135deg, #D4782F 0%, #B8621F 100%);
   }
   .editorial-shadow {
     box-shadow: 0 32px 64px -12px rgba(25, 28, 29, 0.08);
@@ -38,5 +41,11 @@ body {
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 .editorial-gradient {
-  background: linear-gradient(135deg, #0077BE 0%, #005E97 100%);
+  background: linear-gradient(135deg, #1B5E96 0%, #154A78 100%);
 }
+
+/* Brand colors */
+.text-brand-blue { color: #1B5E96; }
+.text-brand-orange { color: #D4782F; }
+.bg-brand-blue { background-color: #1B5E96; }
+.bg-brand-orange { background-color: #D4782F; }

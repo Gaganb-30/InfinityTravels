@@ -59,7 +59,7 @@ const HomePage = () => {
   };
 
   return (
-    <main className="pt-0">
+    <main className="pt-0 bg-amber-50">
       {/* Hero Section */}
       <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -72,48 +72,27 @@ const HomePage = () => {
         </div>
         <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
           <h1 className="text-white font-headline text-5xl md:text-7xl font-extrabold tracking-tight mb-8 drop-shadow-xl">
-            Explore the World with Infinity Miles Travel
+            Explore the World with Infinity Miles
           </h1>
           {/* Floating Search Bar */}
           <div ref={searchRef} className="relative">
-            <div className="bg-white/90 backdrop-blur-xl p-2 rounded-2xl md:rounded-full shadow-2xl max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-2 border border-white/20">
-              <div className="flex-1 w-full px-6 py-3 flex flex-col items-start border-r-0 md:border-r border-slate-200">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
-                  Destination
-                </span>
+            <div className="bg-white/90 backdrop-blur-xl p-2 rounded-full shadow-2xl max-w-2xl mx-auto flex items-center gap-2 border border-white/20">
+              <div className="flex-1 px-6 py-3 flex items-center gap-3">
+                <span className="material-symbols-outlined text-slate-400">search</span>
                 <input
-                  className="bg-transparent border-none p-0 focus:ring-0 text-on-surface placeholder:text-slate-400 w-full font-medium outline-none"
-                  placeholder="Where to?"
+                  className="bg-transparent border-none p-0 focus:ring-0 text-on-surface placeholder:text-slate-400 w-full font-medium outline-none text-lg"
+                  placeholder="Search destinations or packages..."
                   type="text"
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
-                />
-              </div>
-              <div className="flex-1 w-full px-6 py-3 flex flex-col items-start border-r-0 md:border-r border-slate-200">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
-                  Date Range
-                </span>
-                <input
-                  className="bg-transparent border-none p-0 focus:ring-0 text-on-surface placeholder:text-slate-400 w-full font-medium outline-none"
-                  placeholder="Add dates"
-                  type="text"
-                />
-              </div>
-              <div className="flex-1 w-full px-6 py-3 flex flex-col items-start">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
-                  Travelers
-                </span>
-                <input
-                  className="bg-transparent border-none p-0 focus:ring-0 text-on-surface placeholder:text-slate-400 w-full font-medium outline-none"
-                  placeholder="Add guests"
-                  type="text"
+                  onKeyDown={(e) => e.key === 'Enter' && searchQuery && navigate(`/destinations?search=${searchQuery}`)}
                 />
               </div>
               <button
                 onClick={() => searchQuery && navigate(`/destinations?search=${searchQuery}`)}
-                className="w-full md:w-auto cta-gradient text-white p-4 rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-lg"
+                className="cta-gradient text-white p-4 rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-lg"
               >
-                <span className="material-symbols-outlined">search</span>
+                <span className="material-symbols-outlined">arrow_forward</span>
               </button>
             </div>
             {/* Search Dropdown */}

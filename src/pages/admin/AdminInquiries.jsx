@@ -71,8 +71,8 @@ export default function AdminInquiries() {
         <button
           onClick={() => setShowArchived(p => !p)}
           style={{
-            background: showArchived ? 'rgba(0,119,190,0.2)' : 'rgba(255,255,255,0.06)',
-            border: `1px solid ${showArchived ? '#0077BE' : 'rgba(255,255,255,0.1)'}`,
+            background: showArchived ? 'rgba(27,94,150,0.2)' : 'rgba(255,255,255,0.06)',
+            border: `1px solid ${showArchived ? '#1B5E96' : 'rgba(255,255,255,0.1)'}`,
             borderRadius: '10px', padding: '9px 18px',
             color: showArchived ? '#38bdf8' : '#94a3b8',
             fontSize: '13px', fontWeight: 500, cursor: 'pointer',
@@ -88,8 +88,8 @@ export default function AdminInquiries() {
         <div style={{ display: 'grid', gap: '10px' }}>
           {items.map(item => (
             <div key={item._id} style={{
-              background: item.isRead ? 'rgba(255,255,255,0.03)' : 'rgba(0,119,190,0.07)',
-              border: `1px solid ${item.isRead ? 'rgba(255,255,255,0.07)' : 'rgba(0,119,190,0.25)'}`,
+              background: item.isRead ? 'rgba(255,255,255,0.03)' : 'rgba(27,94,150,0.07)',
+              border: `1px solid ${item.isRead ? 'rgba(255,255,255,0.07)' : 'rgba(27,94,150,0.25)'}`,
               borderRadius: '14px', overflow: 'hidden',
             }}>
               {/* Header row */}
@@ -99,8 +99,8 @@ export default function AdminInquiries() {
               >
                 <div style={{
                   width: '10px', height: '10px', minWidth: '10px', borderRadius: '50%',
-                  background: item.isRead ? '#334155' : '#0077BE',
-                  boxShadow: item.isRead ? 'none' : '0 0 8px #0077BE',
+                  background: item.isRead ? '#334155' : '#1B5E96',
+                  boxShadow: item.isRead ? 'none' : '0 0 8px #1B5E96',
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2px' }}>
@@ -140,7 +140,7 @@ export default function AdminInquiries() {
                         📁 Archive
                       </button>
                     )}
-                    <a href={`mailto:${item.email}`} style={{ background: 'rgba(0,119,190,0.12)', border: '1px solid rgba(0,119,190,0.25)', borderRadius: '8px', padding: '7px 14px', color: '#38bdf8', fontSize: '13px', textDecoration: 'none', display: 'inline-block' }}>
+                    <a href={`mailto:${item.email}`} style={{ background: 'rgba(27,94,150,0.12)', border: '1px solid rgba(27,94,150,0.25)', borderRadius: '8px', padding: '7px 14px', color: '#38bdf8', fontSize: '13px', textDecoration: 'none', display: 'inline-block' }}>
                       ✉ Reply
                     </a>
                     {item.phone && (

@@ -425,7 +425,7 @@ const PackageDetail = () => {
   const allImages = [pkg.image, ...(pkg.galleryImages || [])].filter(Boolean);
 
   return (
-    <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12">
+    <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12 bg-amber-50">
       {/* Header */}
       <header className="mb-12">
         <nav className="flex items-center gap-2 mb-4 text-on-surface-variant text-sm font-label uppercase tracking-widest">
@@ -465,7 +465,7 @@ const PackageDetail = () => {
             {pkg.tags.map((tag, i) => (
               <span
                 key={i}
-                className="px-4 py-1.5 rounded-full bg-sky-50 text-sky-700 text-xs font-semibold border border-sky-200/50"
+                className="px-4 py-1.5 rounded-full bg-blue-50 text-[#1B5E96] text-xs font-semibold border border-blue-200/50"
               >
                 {tag}
               </span>
@@ -642,7 +642,7 @@ const PackageDetail = () => {
                         key={hs.tier}
                         onClick={() => setHotelStandard(hs.tier)}
                         className={`py-3 px-4 rounded-xl text-sm font-medium transition-all border cursor-pointer ${hotelStandard === hs.tier
-                          ? "bg-yellow-50 text-black border-primary shadow-md shadow-primary/20"
+                          ? "cta-gradient-warm  text-black border-primary shadow-md shadow-primary/20"
                           : "bg-surface-container-low text-on-surface-variant border-outline-variant/20 hover:border-primary/30 hover:bg-surface-container"
                           }`}
                       >

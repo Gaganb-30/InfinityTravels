@@ -3,20 +3,20 @@ Packages in footer
 Packages sidebar change
 Destination -> packages(multiple)
 
-itenary field ion form
+itenary field icon form
 
-image slide in destination and package
-highlughts hatane hai aur starting city add krni hai
-Booking terms and conditions
+image slide in destination and package  /
+highlughts hatane hai aur starting city add krni hai  /
+Booking terms and conditions /
 
-cancellation points
+cancellation points  /
 
-4 star hotels
+4 star hotels  /
 tour type ke liye input field add krna hai jo comma ke basis pe set ho jaye 
 
 FAQ har package pe
 
-itenary accordian me karna hai
+itenary accordian me karna hai  /
 page ka logo plus naam
 
 
