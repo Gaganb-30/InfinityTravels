@@ -2,7 +2,7 @@
  * Generate a WhatsApp deep link with pre-filled booking message
  */
 export function generateWhatsAppLink({
-  whatsappNumber = '919876543210',
+  whatsappNumber = '919310798965',
   packageName,
   destination,
   travelers = 2,

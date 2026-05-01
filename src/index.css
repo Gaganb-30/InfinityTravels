@@ -1,6 +1,5 @@
 /* src/index.css */
 @import "tailwindcss";
-@tailwind utilities;
 
 @layer components {
   .glass-nav {

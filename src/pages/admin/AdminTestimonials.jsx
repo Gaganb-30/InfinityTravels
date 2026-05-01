@@ -20,6 +20,8 @@ const inputStyle = {
   color: '#f1f5f9', fontSize: '14px', outline: 'none',
 };
 const labelStyle = { display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 500, marginBottom: '6px' };
+const selectStyle = { ...inputStyle, cursor: 'pointer' };
+const optionStyle = { background: '#1e293b', color: '#f1f5f9' };
 
 export default function AdminTestimonials() {
   const [items, setItems] = useState([]);
@@ -152,15 +154,15 @@ export default function AdminTestimonials() {
                 <div><label style={labelStyle}>Travel Date</label><input value={form.travelDate} onChange={e => f('travelDate', e.target.value)} placeholder="e.g. March 2024" style={inputStyle} /></div>
                 <div>
                   <label style={labelStyle}>Rating</label>
-                  <select value={form.rating} onChange={e => f('rating', Number(e.target.value))} style={{ ...inputStyle, cursor: 'pointer' }}>
-                    {[5, 4, 3, 2, 1].map(r => <option key={r} value={r}>{r} ★</option>)}
+                  <select value={form.rating} onChange={e => f('rating', Number(e.target.value))} style={selectStyle}>
+                    {[5, 4, 3, 2, 1].map(r => <option key={r} value={r} style={optionStyle}>{r} ★</option>)}
                   </select>
                 </div>
                 <div>
                   <label style={labelStyle}>Destination</label>
-                  <select value={form.destination} onChange={e => f('destination', e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-                    <option value="">— None —</option>
-                    {destinations.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
+                  <select value={form.destination} onChange={e => f('destination', e.target.value)} style={selectStyle}>
+                    <option value="" style={optionStyle}>— None —</option>
+                    {destinations.map(d => <option key={d._id} value={d._id} style={optionStyle}>{d.name}</option>)}
                   </select>
                 </div>
                 <div style={{ gridColumn: 'span 2' }}>

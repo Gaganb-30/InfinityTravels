@@ -11,12 +11,17 @@ const EMPTY = {
   name: '', slug: '', location: '', description: '',
   duration: '', days: '', nights: '',
   'priceRange.min': '', 'priceRange.max': '',
-  image: '', badge: '', tags: '',
+  image: '', galleryImages: [], badge: '', tags: '',
   type: 'Coastal', destination: '',
   inclusions: '', exclusions: '',
   rating: '', reviewCount: '',
   isPopular: false, isFeatured: false, isActive: true,
   itinerary: [],
+  hotelStandards: [
+    { tier: '3-Star', priceMin: '', priceMax: '' },
+    { tier: '4-Star', priceMin: '', priceMax: '' },
+    { tier: '5-Star Premium', priceMin: '', priceMax: '' },
+  ],
 };
 
 const EMPTY_DAY = { day: '', title: '', description: '', tags: '' };
@@ -30,6 +35,8 @@ const inputStyle = {
 };
 const labelStyle = { display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 500, marginBottom: '6px' };
 const smallInputStyle = { ...inputStyle, padding: '8px 10px', fontSize: '13px' };
+const selectStyle = { ...inputStyle, cursor: 'pointer' };
+const optionStyle = { background: '#1e293b', color: '#f1f5f9' };
 
 export default function AdminPackages() {
   const [items, setItems] = useState([]);
@@ -55,7 +62,7 @@ export default function AdminPackages() {
 
   useEffect(() => { load(); }, []);
 
-  const openCreate = () => { setForm({ ...EMPTY, itinerary: [] }); setEditId(null); setModal('create'); };
+  const openCreate = () => { setForm({ ...EMPTY, itinerary: [], galleryImages: [] }); setEditId(null); setModal('create'); };
   const openEdit = (item) => {
     setForm({
       name: item.name || '', slug: item.slug || '',
@@ -63,7 +70,9 @@ export default function AdminPackages() {
       duration: item.duration || '', days: item.days || '', nights: item.nights || '',
       'priceRange.min': item.priceRange?.min || '',
       'priceRange.max': item.priceRange?.max || '',
-      image: item.image || '', badge: item.badge || '',
+      image: item.image || '',
+      galleryImages: (item.galleryImages || []).filter(Boolean),
+      badge: item.badge || '',
       tags: (item.tags || []).join(', '),
       type: item.type || 'Coastal',
       destination: item.destination?._id || item.destination || '',
@@ -79,6 +88,23 @@ export default function AdminPackages() {
         description: d.description || '',
         tags: (d.tags || []).join(', '),
       })),
+      hotelStandards: [
+        {
+          tier: '3-Star',
+          priceMin: (item.hotelStandards || []).find(h => h.tier === '3-Star')?.priceMin || '',
+          priceMax: (item.hotelStandards || []).find(h => h.tier === '3-Star')?.priceMax || '',
+        },
+        {
+          tier: '4-Star',
+          priceMin: (item.hotelStandards || []).find(h => h.tier === '4-Star')?.priceMin || '',
+          priceMax: (item.hotelStandards || []).find(h => h.tier === '4-Star')?.priceMax || '',
+        },
+        {
+          tier: '5-Star Premium',
+          priceMin: '',
+          priceMax: '',
+        },
+      ],
     });
     setEditId(item._id); setModal('edit');
   };
@@ -95,6 +121,7 @@ export default function AdminPackages() {
         currency: '₹',
       },
       image: form.image, badge: form.badge || undefined,
+      galleryImages: (form.galleryImages || []).map(s => s.trim()).filter(Boolean),
       tags: form.tags ? form.tags.split(',').map(s => s.trim()).filter(Boolean) : [],
       type: form.type,
       destination: form.destination || undefined,
@@ -111,6 +138,16 @@ export default function AdminPackages() {
       rating: Number(form.rating) || 0,
       reviewCount: Number(form.reviewCount) || 0,
       isPopular: form.isPopular, isFeatured: form.isFeatured, isActive: form.isActive,
+      hotelStandards: (form.hotelStandards || []).filter(h => {
+        // Include 5-star always, include 3/4 star only if prices are set
+        if (h.tier === '5-Star Premium') return true;
+        return h.priceMin && h.priceMax;
+      }).map(h => ({
+        tier: h.tier,
+        priceMin: h.tier === '5-Star Premium' ? undefined : (Number(h.priceMin) || undefined),
+        priceMax: h.tier === '5-Star Premium' ? undefined : (Number(h.priceMax) || undefined),
+        priceAdjustmentPercent: 0,
+      })),
     };
     try {
       const url = editId ? `${API}/api/admin/packages/${editId}` : `${API}/api/admin/packages`;
@@ -149,6 +186,11 @@ export default function AdminPackages() {
       itinerary: p.itinerary.map((d, i) => i === index ? { ...d, [key]: val } : d),
     }));
   };
+
+  // Gallery image helpers
+  const addGalleryImage = () => setForm(p => ({ ...p, galleryImages: [...(p.galleryImages || []), ''] }));
+  const removeGalleryImage = (index) => setForm(p => ({ ...p, galleryImages: p.galleryImages.filter((_, i) => i !== index) }));
+  const updateGalleryImage = (index, val) => setForm(p => ({ ...p, galleryImages: p.galleryImages.map((img, i) => i === index ? val : img) }));
 
   const TYPES = ['Coastal', 'Mountain', 'Urban', 'Desert', 'Forest', 'Cultural', 'Adventure', 'Island', 'Heritage'];
   const BADGES = ['', 'Best Seller', 'New', 'Trending'];
@@ -224,23 +266,53 @@ export default function AdminPackages() {
                 <div><label style={labelStyle}>Price Min (₹) *</label><input type="number" value={form['priceRange.min']} onChange={e => f('priceRange.min', e.target.value)} required style={inputStyle} /></div>
                 <div><label style={labelStyle}>Price Max (₹) *</label><input type="number" value={form['priceRange.max']} onChange={e => f('priceRange.max', e.target.value)} required style={inputStyle} /></div>
                 <div><label style={labelStyle}>Type</label>
-                  <select value={form.type} onChange={e => f('type', e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-                    {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  <select value={form.type} onChange={e => f('type', e.target.value)} style={selectStyle}>
+                    {TYPES.map(t => <option key={t} value={t} style={optionStyle}>{t}</option>)}
                   </select>
                 </div>
                 <div><label style={labelStyle}>Badge</label>
-                  <select value={form.badge} onChange={e => f('badge', e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-                    {BADGES.map(b => <option key={b} value={b}>{b || '— None —'}</option>)}
+                  <select value={form.badge} onChange={e => f('badge', e.target.value)} style={selectStyle}>
+                    {BADGES.map(b => <option key={b} value={b} style={optionStyle}>{b || '— None —'}</option>)}
                   </select>
                 </div>
                 <div><label style={labelStyle}>Destination</label>
-                  <select value={form.destination} onChange={e => f('destination', e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-                    <option value="">— None —</option>
-                    {destinations.map(d => <option key={d._id} value={d._id}>{d.name} ({d.category})</option>)}
+                  <select value={form.destination} onChange={e => f('destination', e.target.value)} style={selectStyle}>
+                    <option value="" style={optionStyle}>— None —</option>
+                    {destinations.map(d => <option key={d._id} value={d._id} style={optionStyle}>{d.name} ({d.category})</option>)}
                   </select>
                 </div>
                 <div><label style={labelStyle}>Rating</label><input type="number" min="0" max="5" step="0.1" value={form.rating} onChange={e => f('rating', e.target.value)} style={inputStyle} /></div>
-                <div style={{ gridColumn: 'span 2' }}><label style={labelStyle}>Image URL</label><input value={form.image} onChange={e => f('image', e.target.value)} style={inputStyle} /></div>
+                <div style={{ gridColumn: 'span 2' }}><label style={labelStyle}>Main Image URL</label><input value={form.image} onChange={e => f('image', e.target.value)} style={inputStyle} /></div>
+
+                {/* Gallery Images — Dynamic URL Fields */}
+                <div style={{ gridColumn: 'span 2' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label style={{ ...labelStyle, marginBottom: 0 }}>Gallery Images ({(form.galleryImages || []).length})</label>
+                    <button type="button" onClick={addGalleryImage} style={{ background: 'rgba(27,94,150,0.15)', border: '1px solid rgba(27,94,150,0.3)', borderRadius: '8px', padding: '4px 12px', color: '#38bdf8', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}>
+                      + Add Image
+                    </button>
+                  </div>
+                  {(!form.galleryImages || form.galleryImages.length === 0) && (
+                    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '10px', padding: '16px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
+                      No gallery images added. Click "+ Add Image" to add URLs.
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {(form.galleryImages || []).map((url, i) => (
+                      <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <span style={{ color: '#64748b', fontSize: '12px', minWidth: '18px' }}>{i + 1}.</span>
+                        <input
+                          value={url}
+                          onChange={e => updateGalleryImage(i, e.target.value)}
+                          placeholder="Paste image URL..."
+                          style={{ ...inputStyle, flex: 1 }}
+                        />
+                        {url && <img src={url} alt="" style={{ width: '36px', height: '36px', borderRadius: '6px', objectFit: 'cover', flexShrink: 0 }} onError={e => e.target.style.display = 'none'} />}
+                        <button type="button" onClick={() => removeGalleryImage(i)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', borderRadius: '6px', padding: '6px 8px', color: '#f87171', fontSize: '14px', cursor: 'pointer', flexShrink: 0 }}>✕</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
                 {/* Tags input */}
                 <div style={{ gridColumn: 'span 2' }}>
@@ -306,6 +378,62 @@ export default function AdminPackages() {
                         </div>
                       </div>
                     ))}
+                  </div>
+                </div>
+
+                {/* ──── Hotel Standards Pricing ──── */}
+                <div style={{ gridColumn: 'span 2', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px', marginTop: '8px' }}>
+                  <label style={{ ...labelStyle, marginBottom: '12px', fontSize: '14px', fontWeight: 600 }}>
+                    🏨 Hotel Tier Pricing
+                  </label>
+                  <div style={{ display: 'grid', gap: '12px' }}>
+                    {(form.hotelStandards || []).map((hs, i) => {
+                      const is5Star = hs.tier.includes('5-Star');
+                      return (
+                        <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '14px 16px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: is5Star ? 0 : '10px' }}>
+                            <span style={{ color: is5Star ? '#fbbf24' : '#38bdf8', fontSize: '13px', fontWeight: 700 }}>
+                              {'⭐'.repeat(is5Star ? 5 : (i + 3))} {hs.tier}
+                            </span>
+                            {is5Star && (
+                              <span style={{ color: '#f59e0b', fontSize: '11px', fontStyle: 'italic' }}>Contact for pricing</span>
+                            )}
+                          </div>
+                          {!is5Star && (
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                              <div>
+                                <label style={{ ...labelStyle, fontSize: '11px' }}>Price Min (₹)</label>
+                                <input
+                                  type="number"
+                                  placeholder="e.g. 15000"
+                                  value={hs.priceMin}
+                                  onChange={e => {
+                                    const updated = [...form.hotelStandards];
+                                    updated[i] = { ...updated[i], priceMin: e.target.value };
+                                    f('hotelStandards', updated);
+                                  }}
+                                  style={smallInputStyle}
+                                />
+                              </div>
+                              <div>
+                                <label style={{ ...labelStyle, fontSize: '11px' }}>Price Max (₹)</label>
+                                <input
+                                  type="number"
+                                  placeholder="e.g. 30000"
+                                  value={hs.priceMax}
+                                  onChange={e => {
+                                    const updated = [...form.hotelStandards];
+                                    updated[i] = { ...updated[i], priceMax: e.target.value };
+                                    f('hotelStandards', updated);
+                                  }}
+                                  style={smallInputStyle}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 

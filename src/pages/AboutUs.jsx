@@ -10,7 +10,7 @@ const AboutUs = () => {
           <img
             alt="Luxury travel background"
             className="w-full h-full object-cover opacity-90"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCzA_HLUU0Smq3baXKadEBeLAdT78nYz_UUZ8YCFCPI-65nyHIjP58jCLgOLhbwZQKNIAnn-vAJrvIycz5NKKVhWHyGpv16lOPUVjVbP7TCviB2aKYNECxN2SXDfua7kO_8vFoeGP60FhMZDc4wX9XNpQz1TTMGDq5Xv9IOghHH3GBnVnaHgNsd8_ayKbXjz24S_1wshV0v0emwtZPDZMwt3jLnN8MsHDX8x4SOeJFtJqQFAt8Y-k6Hqr_VKNjnIKoCjt2AvQ1C4M_"
+            src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/40 to-transparent"></div>
         </div>
@@ -59,7 +59,7 @@ const AboutUs = () => {
                 <img
                   alt="Vision image 1"
                   className="rounded-xl w-full h-[400px] object-cover shadow-lg"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfBt4kqo_hByKzJiwHfcSnXVEAWFRtMn5hryCe7BKln_mN7jdBYLHgQ_bAWV-Yg0FE1ZiVghONWzlw3u_GYKr54XAGM7aDv0m_EMxY3eBmkFY-miYSMId6yqjdzxsTi-01_j__DVQa3eF28NNRSXf0MMxJu4bvAEnXUtL2a9zbOX_aP5U3o68lPm3IP4Z8sM2BfVmsllG2hSkOwEU8Z7k6d22vT3_VYMrW5KT6S8eTBq4Bjakc-L_b9iGwGbqd0cqSNRz08Km0BZqa"
+                  src="https://images.unsplash.com/photo-1541410965313-d53b3c16ef17?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3DD"
                 />
                 <h3 className="font-headline text-xl mt-4">Unrivaled Access</h3>
                 <p className="text-sm text-on-surface-variant">
@@ -70,7 +70,7 @@ const AboutUs = () => {
                 <img
                   alt="Vision image 2"
                   className="rounded-xl w-full h-[400px] object-cover shadow-lg"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhlnqKHNBAq8X8I8MGue8DSuzAs0VpSHXnFekhGCP2f6-veqRgHgwqOJCR864Uhst4zv-HiyCPtBK_MswfXU40rN0dstrv_K5MvZtxJvdF05YvnR2xhNUpPkvFLla3unCMwo7s_T_rDGKRumMFYqkXGjkkCb0zQmbPXc_wnPGGHUOqRw7foA4xYIoh3sJVaZ2bZzB1R2BfEnBN1BAnMdec1OviACENyDnJzCQbAmrhle65zdTydDM-xXMVMxKJNO1L2icVY-cY4h3V"
+                  src="https://images.unsplash.com/photo-1516546453174-5e1098a4b4af?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDB8fHRyYXZlbGluZ3xlbnwwfHwwfHx8MA%3D%3D"
                 />
                 <h3 className="font-headline text-xl mt-4">Conscious Luxury</h3>
                 <p className="text-sm text-on-surface-variant">
@@ -89,7 +89,7 @@ const AboutUs = () => {
           <img
             alt="Philosophy Background"
             className="w-full h-full object-cover grayscale brightness-50"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBr2_Sa6y-d-VDPwqVCbz0op8EP3C6RR1RtTyJ1pAGF1aQRWN7jFx7CIioWY5x_zEKjoPSZxDdm6p9EjRP1nUMjcpWHtJyqxl8OUN3htf4u_Yur0TRDDTAjmW4OzpWYpEs8835r_9TtVaBQb-OZx5irumxsqO__9pn-kyWUga64aryrMoxfF_RaR14WFNTLofcwdUejlanPRLMr74tSFyAqqiWc6YQcACOT5UMDr2bNZ-wmkLRo0Tb5mcRJ3p2LLCX9K7efEnmiDQ_0"
+            src="https://images.unsplash.com/photo-1494783367193-149034c05e8f?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzB8fHRyYXZlbGluZ3xlbnwwfHwwfHx8MA%3D%3D"
           />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center px-8">
@@ -194,7 +194,7 @@ const AboutUs = () => {
             <img
               alt="Our Values"
               className="rounded-xl editorial-shadow relative z-10"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjkALy9IxxBdWwWufBz-g90j8n_sTQZjLTIGFq_6-4N5EoSGqWZ9BM_9I74vftFrgQaXKvrjMUHr9bSaFZYOvJLYCKo4RZqPpWBiAgvDZqJaQC4ja2bfIBqKal-ZzH1VPM9OwVnAdacbMJfF_ldqm85zrPamLXs6e9boy2Jm0UbJG6aeDohK7FqXlKm7pfsnS0OxF2omvbMsh60js7U4w67-1EmLf9hdggHMSNszNvhoPHd1KBtbqfph9V6kBtXlylNfC2hfC7cG1Z"
+              src="https://images.unsplash.com/photo-1524842495237-6abc737eae1f?q=80&w=892&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             />
           </div>
           <div>

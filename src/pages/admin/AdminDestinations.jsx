@@ -10,7 +10,7 @@ const authHeader = () => ({
 const EMPTY = {
   name: '', slug: '', country: '', continent: '', category: 'Domestic', tier: 'Premium',
   tagline: '', description: '', type: 'Beach',
-  heroImage: '', galleryImages: '', seasons: '', isFeatured: false, isActive: true,
+  heroImage: '', galleryImages: [], seasons: '', isFeatured: false, isActive: true,
 };
 
 const inputStyle = {
@@ -21,6 +21,8 @@ const inputStyle = {
   color: '#f1f5f9', fontSize: '14px', outline: 'none',
 };
 const labelStyle = { display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 500, marginBottom: '6px' };
+const selectStyle = { ...inputStyle, cursor: 'pointer' };
+const optionStyle = { background: '#1e293b', color: '#f1f5f9' };
 
 export default function AdminDestinations() {
   const [items, setItems] = useState([]);
@@ -47,18 +49,23 @@ export default function AdminDestinations() {
     setForm({
       ...item,
       seasons: (item.seasons || []).join(', '),
-      galleryImages: (item.galleryImages || []).join('\n'),
+      galleryImages: (item.galleryImages || []).filter(Boolean),
     });
     setEditId(item._id);
     setModal('edit');
   };
+
+  // Gallery image helpers
+  const addGalleryImage = () => setForm(p => ({ ...p, galleryImages: [...(p.galleryImages || []), ''] }));
+  const removeGalleryImage = (index) => setForm(p => ({ ...p, galleryImages: p.galleryImages.filter((_, i) => i !== index) }));
+  const updateGalleryImage = (index, val) => setForm(p => ({ ...p, galleryImages: p.galleryImages.map((img, i) => i === index ? val : img) }));
 
   const handleSave = async (e) => {
     e.preventDefault(); setSaving(true);
     const payload = {
       ...form,
       seasons: form.seasons ? form.seasons.split(',').map(s => s.trim()).filter(Boolean) : [],
-      galleryImages: form.galleryImages ? form.galleryImages.split('\n').map(s => s.trim()).filter(Boolean) : [],
+      galleryImages: (form.galleryImages || []).map(s => s.trim()).filter(Boolean),
     };
     try {
       const url = editId
@@ -182,27 +189,52 @@ export default function AdminDestinations() {
                 {/* Category */}
                 <div>
                   <label style={labelStyle}>Category *</label>
-                  <select value={form.category} onChange={e => f('category', e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-                    {['Domestic', 'International'].map(c => <option key={c} value={c}>{c}</option>)}
+                  <select value={form.category} onChange={e => f('category', e.target.value)} style={selectStyle}>
+                    {['Domestic', 'International'].map(c => <option key={c} value={c} style={optionStyle}>{c}</option>)}
                   </select>
                 </div>
 
                 <div>
                   <label style={labelStyle}>Tier</label>
-                  <select value={form.tier} onChange={e => f('tier', e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-                    {['Luxury', 'Premium', 'Value'].map(t => <option key={t} value={t}>{t}</option>)}
+                  <select value={form.tier} onChange={e => f('tier', e.target.value)} style={selectStyle}>
+                    {['Luxury', 'Premium', 'Value'].map(t => <option key={t} value={t} style={optionStyle}>{t}</option>)}
                   </select>
                 </div>
                 <div>
                   <label style={labelStyle}>Type</label>
-                  <select value={form.type} onChange={e => f('type', e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-                    {['Beach', 'Mountain', 'Adventure', 'Nature', 'Urban', 'Cultural', 'Desert', 'Coastal', 'Island', 'Heritage'].map(t => <option key={t} value={t}>{t}</option>)}
+                  <select value={form.type} onChange={e => f('type', e.target.value)} style={selectStyle}>
+                    {['Beach', 'Mountain', 'Adventure', 'Nature', 'Urban', 'Cultural', 'Desert', 'Coastal', 'Island', 'Heritage'].map(t => <option key={t} value={t} style={optionStyle}>{t}</option>)}
                   </select>
                 </div>
 
+                {/* Gallery Images — Dynamic URL Fields */}
                 <div style={{ gridColumn: 'span 2' }}>
-                  <label style={labelStyle}>Gallery Images (one URL per line)</label>
-                  <textarea value={form.galleryImages || ''} onChange={e => f('galleryImages', e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} placeholder="Paste one image URL per line..." />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label style={{ ...labelStyle, marginBottom: 0 }}>Gallery Images ({(form.galleryImages || []).length})</label>
+                    <button type="button" onClick={addGalleryImage} style={{ background: 'rgba(27,94,150,0.15)', border: '1px solid rgba(27,94,150,0.3)', borderRadius: '8px', padding: '4px 12px', color: '#38bdf8', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}>
+                      + Add Image
+                    </button>
+                  </div>
+                  {(!form.galleryImages || form.galleryImages.length === 0) && (
+                    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '10px', padding: '16px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
+                      No gallery images added. Click "+ Add Image" to add URLs.
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {(form.galleryImages || []).map((url, i) => (
+                      <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <span style={{ color: '#64748b', fontSize: '12px', minWidth: '18px' }}>{i + 1}.</span>
+                        <input
+                          value={url}
+                          onChange={e => updateGalleryImage(i, e.target.value)}
+                          placeholder="Paste image URL..."
+                          style={{ ...inputStyle, flex: 1 }}
+                        />
+                        {url && <img src={url} alt="" style={{ width: '36px', height: '36px', borderRadius: '6px', objectFit: 'cover', flexShrink: 0 }} onError={e => e.target.style.display = 'none'} />}
+                        <button type="button" onClick={() => removeGalleryImage(i)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', borderRadius: '6px', padding: '6px 8px', color: '#f87171', fontSize: '14px', cursor: 'pointer', flexShrink: 0 }}>✕</button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div style={{ gridColumn: 'span 2' }}>

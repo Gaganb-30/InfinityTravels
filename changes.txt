@@ -14,7 +14,7 @@ cancellation points  /
 4 star hotels  /
 tour type ke liye input field add krna hai jo comma ke basis pe set ho jaye 
 
-FAQ har package pe
+FAQ har package pe  /
 
 itenary accordian me karna hai  /
 page ka logo plus naam

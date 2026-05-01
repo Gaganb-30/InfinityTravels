@@ -1,4 +1,5 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE = `${BACKEND_URL.replace(/\/+$/, '')}/api`;
 
 export const api = {
   // Destinations

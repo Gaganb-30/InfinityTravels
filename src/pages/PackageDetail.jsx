@@ -342,8 +342,8 @@ const PackageDetail = () => {
   const [pkg, setPkg] = useState(null);
   const [loading, setLoading] = useState(true);
   const [guests, setGuests] = useState(2);
-  const [hotelStandard, setHotelStandard] = useState("5-Star Elite");
-  const [whatsappNumber, setWhatsappNumber] = useState("919876543210");
+  const [hotelStandard, setHotelStandard] = useState("");
+  const [whatsappNumber, setWhatsappNumber] = useState("919310798965");
   const [openDays, setOpenDays] = useState(new Set([1])); // Day 1 open by default
 
   useEffect(() => {
@@ -351,8 +351,10 @@ const PackageDetail = () => {
       try {
         const data = await api.getPackage(slug);
         setPkg(data);
+        // Default to first tier that has prices (3-star or 4-star), not 5-star
         if (data.hotelStandards?.length > 0) {
-          setHotelStandard(data.hotelStandards[data.hotelStandards.length - 1].tier);
+          const firstPricedTier = data.hotelStandards.find(h => !h.tier.includes('5-Star') && h.priceMin && h.priceMax);
+          setHotelStandard(firstPricedTier ? firstPricedTier.tier : data.hotelStandards[0].tier);
         }
         if (data.itinerary?.length > 0) {
           setOpenDays(new Set([data.itinerary[0].day]));
@@ -400,25 +402,38 @@ const PackageDetail = () => {
   const incrementGuests = () => setGuests((prev) => Math.min(prev + 1, 10));
   const decrementGuests = () => setGuests((prev) => Math.max(prev - 1, 1));
 
-  const getAdjustedPrice = () => {
+  // Detect if 5-star is selected
+  const is5StarSelected = hotelStandard.includes('5-Star');
+
+  // Get display price based on selected tier
+  const getDisplayPrice = () => {
     const standard = pkg.hotelStandards?.find((h) => h.tier === hotelStandard);
-    const adjustment = standard ? standard.priceAdjustmentPercent / 100 : 0;
+    if (standard && standard.priceMin && standard.priceMax) {
+      return {
+        min: standard.priceMin,
+        max: standard.priceMax,
+        currency: pkg.priceRange?.currency || "₹",
+      };
+    }
+    // Fallback to base priceRange
     return {
-      min: Math.round(pkg.priceRange.min * (1 + adjustment)),
-      max: Math.round(pkg.priceRange.max * (1 + adjustment)),
-      currency: pkg.priceRange.currency || "\u20B9",
+      min: pkg.priceRange.min,
+      max: pkg.priceRange.max,
+      currency: pkg.priceRange.currency || "₹",
     };
   };
 
-  const adjustedPrice = getAdjustedPrice();
+  const displayPrice = is5StarSelected ? null : getDisplayPrice();
 
+  // Generate WhatsApp link with all client selections
   const whatsappLink = generateWhatsAppLink({
     whatsappNumber,
     packageName: pkg.name,
     destination: pkg.location,
     travelers: guests,
     hotelStandard,
-    priceRange: adjustedPrice,
+    priceRange: is5StarSelected ? null : displayPrice,
+    additionalNotes: is5StarSelected ? 'Interested in 5-Star Premium pricing — please share a quote.' : '',
   });
 
   // Combine main image + gallery for carousel
@@ -607,15 +622,31 @@ const PackageDetail = () => {
         {/* Right: Sticky Booking Sidebar */}
         <aside className="sticky top-32">
           <div className="bg-surface-container-lowest editorial-shadow rounded-xl p-8 space-y-8 border border-outline-variant/10">
-            <div className="space-y-1">
-              <span className="text-on-surface-variant text-sm font-label">Estimated Price Range</span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-headline font-bold text-primary">
-                  {formatPriceRange(adjustedPrice)}
-                </span>
+            {/* Price Display — changes based on hotel tier */}
+            {is5StarSelected ? (
+              <div className="space-y-2">
+                <span className="text-on-surface-variant text-sm font-label">5-Star Premium Pricing</span>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-secondary text-2xl">info</span>
+                  <span className="text-lg font-headline font-semibold text-on-surface">
+                    Contact for Pricing
+                  </span>
+                </div>
+                <p className="text-on-surface-variant text-xs leading-relaxed">
+                  5-Star Premium prices are tailored to your travel dates and preferences. Reach out via WhatsApp for an instant quote.
+                </p>
               </div>
-              <span className="text-on-surface-variant text-sm">per person</span>
-            </div>
+            ) : (
+              <div className="space-y-1">
+                <span className="text-on-surface-variant text-sm font-label">Estimated Price Range</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-headline font-bold text-primary">
+                    {formatPriceRange(displayPrice)}
+                  </span>
+                </div>
+                <span className="text-on-surface-variant text-sm">per person · {hotelStandard}</span>
+              </div>
+            )}
 
             <div className="space-y-6">
               {/* Travelers Selector */}
@@ -632,63 +663,87 @@ const PackageDetail = () => {
                 </div>
               </div>
 
-              {/* Hotel Toggle — FIXED: proper selected color */}
-              {pkg.hotelStandards?.length > 1 && (
+              {/* Hotel Tier Selection */}
+              {pkg.hotelStandards?.length > 0 && (
                 <div className="space-y-3">
                   <label className="font-label text-sm font-semibold uppercase tracking-wider text-on-surface-variant">Hotel Standard</label>
                   <div className="flex flex-col gap-2">
-                    {pkg.hotelStandards.map((hs) => (
-                      <button
-                        key={hs.tier}
-                        onClick={() => setHotelStandard(hs.tier)}
-                        className={`py-3 px-4 rounded-xl text-sm font-medium transition-all border cursor-pointer ${hotelStandard === hs.tier
-                          ? "cta-gradient-warm  text-black border-primary shadow-md shadow-primary/20"
-                          : "bg-surface-container-low text-on-surface-variant border-outline-variant/20 hover:border-primary/30 hover:bg-surface-container"
-                          }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span>{hs.tier}</span>
-                          <span className={`text-xs ${hotelStandard === hs.tier ? 'text-black' : 'text-on-surface-variant/60'}`}>
-                            {hs.priceAdjustmentPercent === 0 ? 'Base price' : `${hs.priceAdjustmentPercent}%`}
-                          </span>
-                        </div>
-                      </button>
-                    ))}
+                    {pkg.hotelStandards.map((hs) => {
+                      const isSelected = hotelStandard === hs.tier;
+                      const isFiveStar = hs.tier.includes('5-Star');
+                      const hasPrice = hs.priceMin && hs.priceMax;
+                      return (
+                        <button
+                          key={hs.tier}
+                          onClick={() => setHotelStandard(hs.tier)}
+                          className={`py-3 px-4 rounded-xl text-sm font-medium transition-all border cursor-pointer ${isSelected
+                            ? "cta-gradient-warm text-white border-primary shadow-md shadow-primary/20"
+                            : "bg-surface-container-low text-on-surface-variant border-outline-variant/20 hover:border-primary/30 hover:bg-surface-container"
+                            }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="flex items-center gap-2">
+                              {hs.tier}
+                              {isFiveStar && <span className="text-xs">✨</span>}
+                            </span>
+                            <span className={`text-xs ${isSelected ? 'text-white/80' : 'text-on-surface-variant/60'}`}>
+                              {isFiveStar
+                                ? 'On request'
+                                : hasPrice
+                                  ? `₹${hs.priceMin?.toLocaleString('en-IN')} - ₹${hs.priceMax?.toLocaleString('en-IN')}`
+                                  : 'Base price'
+                              }
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="pt-6 border-t border-outline-variant/20 space-y-4">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-on-surface-variant">Estimate per person</span>
-                <span className="font-medium">{formatPriceRange(adjustedPrice)}</span>
+            {/* Pricing Summary */}
+            {!is5StarSelected && displayPrice && (
+              <div className="pt-6 border-t border-outline-variant/20 space-y-4">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-on-surface-variant">Estimate per person</span>
+                  <span className="font-medium">{formatPriceRange(displayPrice)}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-on-surface-variant">Travelers</span>
+                  <span className="font-medium">{guests}</span>
+                </div>
+                <div className="flex justify-between items-center pt-2">
+                  <span className="font-bold text-lg">Total Estimate</span>
+                  <span className="font-headline font-bold text-xl text-primary">
+                    {displayPrice.currency}{(displayPrice.min * guests).toLocaleString('en-IN')} - {displayPrice.currency}{(displayPrice.max * guests).toLocaleString('en-IN')}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-on-surface-variant">Travelers</span>
-                <span className="font-medium">{guests}</span>
-              </div>
-              <div className="flex justify-between items-center pt-2">
-                <span className="font-bold text-lg">Total Estimate</span>
-                <span className="font-headline font-bold text-xl text-primary">
-                  {adjustedPrice.currency}{(adjustedPrice.min * guests).toLocaleString('en-IN')} - {adjustedPrice.currency}{(adjustedPrice.max * guests).toLocaleString('en-IN')}
-                </span>
-              </div>
-            </div>
+            )}
 
             {/* WhatsApp Book Button */}
             <a
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-5 bg-green-600 text-white rounded-full font-bold text-lg shadow-lg hover:bg-green-700 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+              className={`w-full py-2 px-6 text-white rounded-full font-bold text-lg shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-3 ${is5StarSelected ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800' : 'bg-green-600 hover:bg-green-700'
+                }`}
             >
               <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-              Book via WhatsApp
+              {is5StarSelected ? 'Get 5-Star Quote on WhatsApp' : 'Book via WhatsApp'}
             </a>
-            <p className="text-center text-xs text-on-surface-variant font-medium">
-              Final pricing will be confirmed upon contact.
-            </p>
+
+            {is5StarSelected ? (
+              <p className="text-center text-xs text-on-surface-variant font-medium">
+                <span className="text-secondary font-bold">*</span> 5-Star Premium prices are variable and depend on travel dates, room availability, and seasonal demand. Contact us for a personalized quote.
+              </p>
+            ) : (
+              <p className="text-center text-xs text-on-surface-variant font-medium">
+                Final pricing will be confirmed upon contact.
+              </p>
+            )}
           </div>
         </aside>
       </div>

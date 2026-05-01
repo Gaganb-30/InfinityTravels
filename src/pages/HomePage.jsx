@@ -66,7 +66,7 @@ const HomePage = () => {
           <img
             alt="Breathtaking mountain landscape with mist"
             className="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAN0bl2w6UanVhpueRMK6iMr1IBW_Yeq2aQ2-EBatc9bvWf355qkKqRb8uHak6-U3-ClraHaNgBGWPSYx1qmtu_KoMCoPbyqDEVtjR3ITCm9XEp4fjbKGgxY53PwsEriTIijnb9ZSDYt7tqinwuHcptj-m9HgJJNpbzezDeE07XHoHoVZkx5UvnJkyloiAEuot1o2kVQnSfQRn6RjKZ-ZJ99jXwWhabJjDhM2neFD23046AOsHbIsweOXED8Qoxe2QlrHS0v3-eaFEy"
+            src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           />
           <div className="absolute inset-0 bg-black/20"></div>
         </div>
@@ -260,7 +260,7 @@ const HomePage = () => {
                       <span className="text-xs text-slate-400">Estimate</span>
                       <span className="text-lg font-bold text-primary">{formatPriceRange(pkg.priceRange)}</span>
                     </div>
-                    <Link to={`/packages/${pkg.slug}`} className="text-primary font-bold text-sm uppercase tracking-widest hover:underline">
+                    <Link to={`/packages/${pkg.slug}`} className="text-primary font-bold text-sm uppercase mt-4 tracking-widest hover:underline">
                       View Details
                     </Link>
                   </div>
@@ -317,7 +317,7 @@ const HomePage = () => {
       </section>
 
       {/* Newsletter Signup */}
-      <section className="py-24 px-8 max-w-7xl mx-auto">
+      {/* <section className="py-24 px-8 max-w-7xl mx-auto">
         <div className="relative rounded-2xl md:rounded-3xl overflow-hidden min-h-[500px] flex items-center justify-center text-center p-8 shadow-2xl">
           <img
             alt="Newsletter Background"
@@ -347,7 +347,7 @@ const HomePage = () => {
             </p>
           </div>
         </div>
-      </section>
+      </section> */}
     </main>
   );
 };
