@@ -6,6 +6,7 @@ const Navbar = () => {
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
   const isDestinationsActive = location.pathname.startsWith("/destinations");
+  const isHomePage = location.pathname === "/";
 
   const [destDropdownOpen, setDestDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -68,8 +69,10 @@ const Navbar = () => {
     { name: "About Us", path: "/about-us" },
   ];
 
-  const linkColor = scrolled ? "#475569" : "#ffffff";
-  const activeLinkDynamic = scrolled
+  // On non-home pages, always use dark text (scrolled style) since bg is light
+  const effectiveScrolled = !isHomePage || scrolled;
+  const linkColor = effectiveScrolled ? "#475569" : "#ffffff";
+  const activeLinkDynamic = effectiveScrolled
     ? { fontWeight: 600, color: "#1B5E96", borderBottom: "2px solid #1B5E96" }
     : { fontWeight: 600, color: "#ffffff", borderBottom: "2px solid #ffffff" };
 
@@ -101,10 +104,10 @@ const Navbar = () => {
     <>
       <nav style={{
         ...navStyle,
-        background: scrolled ? "rgba(255, 255, 255, 0.85)" : "transparent",
-        backdropFilter: scrolled ? "blur(24px)" : "none",
-        WebkitBackdropFilter: scrolled ? "blur(24px)" : "none",
-        boxShadow: scrolled ? "0 1px 3px rgba(0,0,0,0.06)" : "none",
+        background: effectiveScrolled ? "rgba(255, 255, 255, 0.85)" : "transparent",
+        backdropFilter: effectiveScrolled ? "blur(24px)" : "none",
+        WebkitBackdropFilter: effectiveScrolled ? "blur(24px)" : "none",
+        boxShadow: effectiveScrolled ? "0 1px 3px rgba(0,0,0,0.06)" : "none",
       }}>
         <div style={navInnerStyle}>
           {/* Logo */}
@@ -128,7 +131,7 @@ const Navbar = () => {
               onMouseLeave={handleMouseLeave}
             >
               <button
-                onClick={() => setDestDropdownOpen((prev) => !prev)}
+                onClick={() => { clearTimeout(timeoutRef.current); setDestDropdownOpen((prev) => !prev); }}
                 style={{
                   ...desktopLinkStyle,
                   ...buttonResetStyle,
@@ -248,7 +251,7 @@ const Navbar = () => {
               style={hamburgerStyle}
               aria-label="Toggle menu"
             >
-              <span className="material-symbols-outlined" style={{ fontSize: "28px", color: scrolled ? "#475569" : "#ffffff" }}>
+              <span className="material-symbols-outlined" style={{ fontSize: "28px", color: effectiveScrolled ? "#475569" : "#ffffff" }}>
                 {mobileMenuOpen ? "close" : "menu"}
               </span>
             </button>

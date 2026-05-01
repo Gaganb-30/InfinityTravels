@@ -1,6 +1,6 @@
 // src/pages/Packages.jsx
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
 import { formatPriceRange } from "../utils/whatsapp";
 
@@ -258,9 +258,10 @@ const Packages = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {packages.map((pkg) => (
-                <div
+                <Link
+                  to={`/packages/${pkg.slug}`}
                   key={pkg._id}
-                  style={packageCardStyle}
+                  style={{ ...packageCardStyle, display: 'block', textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
                   onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-8px)"; e.currentTarget.style.boxShadow = "0 20px 60px -12px rgba(0,0,0,0.15)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 24px -4px rgba(0,0,0,0.06)"; }}
                 >
@@ -301,17 +302,14 @@ const Packages = () => {
                         </div>
                       )}
                     </div>
-                    <Link
-                      to={`/packages/${pkg.slug}`}
+                    <span
                       style={viewDetailsBtnStyle}
-                      onMouseEnter={(e) => { e.target.style.background = "#1B5E96"; e.target.style.color = "#fff"; }}
-                      onMouseLeave={(e) => { e.target.style.background = "#f1f5f9"; e.target.style.color = "#0f172a"; }}
                     >
                       View Details
                       <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>arrow_forward</span>
-                    </Link>
+                    </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}

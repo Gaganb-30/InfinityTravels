@@ -166,7 +166,7 @@ const HomePage = () => {
               Unique experiences designed by locals and travel experts for authentic discovery.
             </p>
           </div>
-          <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-xl group">
+          <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-xl group" onClick={() => navigate('/contact')}>
             <div className="w-16 h-16 rounded-2xl bg-tertiary-container/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <span className="material-symbols-outlined text-tertiary text-3xl">support_agent</span>
             </div>
@@ -237,7 +237,7 @@ const HomePage = () => {
             ))
           ) : (
             packages.slice(0, 3).map((pkg) => (
-              <div key={pkg._id} className="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-2xl">
+              <Link to={`/packages/${pkg.slug}`} key={pkg._id} className="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-2xl block" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div className="h-64 overflow-hidden relative">
                   <img alt={pkg.name} className="w-full h-full object-cover" src={pkg.image} />
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">
@@ -260,12 +260,12 @@ const HomePage = () => {
                       <span className="text-xs text-slate-400">Estimate</span>
                       <span className="text-lg font-bold text-primary">{formatPriceRange(pkg.priceRange)}</span>
                     </div>
-                    <Link to={`/packages/${pkg.slug}`} className="text-primary font-bold text-sm uppercase mt-4 tracking-widest hover:underline">
+                    <span className="text-primary font-bold text-sm uppercase mt-4 tracking-widest hover:underline">
                       View Details
-                    </Link>
+                    </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           )}
         </div>

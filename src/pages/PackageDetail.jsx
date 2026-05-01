@@ -407,6 +407,22 @@ const PackageDetail = () => {
 
   // Get display price based on selected tier
   const getDisplayPrice = () => {
+    // Check dedicated tier fields first
+    if (hotelStandard === '3-Star' && pkg.priceRange3Star?.min && pkg.priceRange3Star?.max) {
+      return {
+        min: pkg.priceRange3Star.min,
+        max: pkg.priceRange3Star.max,
+        currency: pkg.priceRange?.currency || "₹",
+      };
+    }
+    if (hotelStandard === '4-Star' && pkg.priceRange4Star?.min && pkg.priceRange4Star?.max) {
+      return {
+        min: pkg.priceRange4Star.min,
+        max: pkg.priceRange4Star.max,
+        currency: pkg.priceRange?.currency || "₹",
+      };
+    }
+    // Fallback to hotelStandards array
     const standard = pkg.hotelStandards?.find((h) => h.tier === hotelStandard);
     if (standard && standard.priceMin && standard.priceMax) {
       return {

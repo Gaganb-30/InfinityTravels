@@ -5,12 +5,14 @@ const Footer = () => {
   return (
     <footer className="bg-slate-50 w-full border-t-0 py-16 px-12 grid grid-cols-1 md:grid-cols-4 gap-12">
       <div className="col-span-1 md:col-span-1">
-        <div className="flex flex-col items-start gap-0 mb-6 -mt-8">
-          <img
-            src="/logo2.png"
-            alt="Infinity Miles Logo"
-            className="h-34 w-auto object-contain"
-          />
+        <div className="flex flex-col items-start gap-0 mb-6 -mt-8" >
+          <Link to="/">
+            <img
+              src="/logo2.png"
+              alt="Infinity Miles Logo"
+              className="h-34 w-auto object-contain cursor-pointer"
+            />
+          </Link>
           {/* <div className="flex gap-1 leading-tight">
             <span className="text-sm font-bold font-headline tracking-tight" style={{ color: '#1B5E96' }}>
               Infinity

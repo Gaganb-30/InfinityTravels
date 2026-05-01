@@ -11,6 +11,8 @@ const EMPTY = {
   name: '', slug: '', location: '', description: '',
   duration: '', days: '', nights: '',
   'priceRange.min': '', 'priceRange.max': '',
+  'priceRange3Star.min': '', 'priceRange3Star.max': '',
+  'priceRange4Star.min': '', 'priceRange4Star.max': '',
   image: '', galleryImages: [], badge: '', tags: '',
   type: 'Coastal', destination: '',
   inclusions: '', exclusions: '',
@@ -64,12 +66,19 @@ export default function AdminPackages() {
 
   const openCreate = () => { setForm({ ...EMPTY, itinerary: [], galleryImages: [] }); setEditId(null); setModal('create'); };
   const openEdit = (item) => {
+    // Get 3-star and 4-star prices from dedicated fields or fallback to hotelStandards
+    const hs3 = (item.hotelStandards || []).find(h => h.tier === '3-Star');
+    const hs4 = (item.hotelStandards || []).find(h => h.tier === '4-Star');
     setForm({
       name: item.name || '', slug: item.slug || '',
       location: item.location || '', description: item.description || '',
       duration: item.duration || '', days: item.days || '', nights: item.nights || '',
       'priceRange.min': item.priceRange?.min || '',
       'priceRange.max': item.priceRange?.max || '',
+      'priceRange3Star.min': item.priceRange3Star?.min || hs3?.priceMin || '',
+      'priceRange3Star.max': item.priceRange3Star?.max || hs3?.priceMax || '',
+      'priceRange4Star.min': item.priceRange4Star?.min || hs4?.priceMin || '',
+      'priceRange4Star.max': item.priceRange4Star?.max || hs4?.priceMax || '',
       image: item.image || '',
       galleryImages: (item.galleryImages || []).filter(Boolean),
       badge: item.badge || '',
@@ -91,13 +100,13 @@ export default function AdminPackages() {
       hotelStandards: [
         {
           tier: '3-Star',
-          priceMin: (item.hotelStandards || []).find(h => h.tier === '3-Star')?.priceMin || '',
-          priceMax: (item.hotelStandards || []).find(h => h.tier === '3-Star')?.priceMax || '',
+          priceMin: item.priceRange3Star?.min || hs3?.priceMin || '',
+          priceMax: item.priceRange3Star?.max || hs3?.priceMax || '',
         },
         {
           tier: '4-Star',
-          priceMin: (item.hotelStandards || []).find(h => h.tier === '4-Star')?.priceMin || '',
-          priceMax: (item.hotelStandards || []).find(h => h.tier === '4-Star')?.priceMax || '',
+          priceMin: item.priceRange4Star?.min || hs4?.priceMin || '',
+          priceMax: item.priceRange4Star?.max || hs4?.priceMax || '',
         },
         {
           tier: '5-Star Premium',
@@ -120,6 +129,14 @@ export default function AdminPackages() {
         max: Number(form['priceRange.max']),
         currency: '₹',
       },
+      priceRange3Star: {
+        min: Number(form['priceRange3Star.min']) || undefined,
+        max: Number(form['priceRange3Star.max']) || undefined,
+      },
+      priceRange4Star: {
+        min: Number(form['priceRange4Star.min']) || undefined,
+        max: Number(form['priceRange4Star.max']) || undefined,
+      },
       image: form.image, badge: form.badge || undefined,
       galleryImages: (form.galleryImages || []).map(s => s.trim()).filter(Boolean),
       tags: form.tags ? form.tags.split(',').map(s => s.trim()).filter(Boolean) : [],
@@ -138,16 +155,21 @@ export default function AdminPackages() {
       rating: Number(form.rating) || 0,
       reviewCount: Number(form.reviewCount) || 0,
       isPopular: form.isPopular, isFeatured: form.isFeatured, isActive: form.isActive,
-      hotelStandards: (form.hotelStandards || []).filter(h => {
-        // Include 5-star always, include 3/4 star only if prices are set
-        if (h.tier === '5-Star Premium') return true;
-        return h.priceMin && h.priceMax;
-      }).map(h => ({
-        tier: h.tier,
-        priceMin: h.tier === '5-Star Premium' ? undefined : (Number(h.priceMin) || undefined),
-        priceMax: h.tier === '5-Star Premium' ? undefined : (Number(h.priceMax) || undefined),
-        priceAdjustmentPercent: 0,
-      })),
+      hotelStandards: [
+        ...(form['priceRange3Star.min'] && form['priceRange3Star.max'] ? [{
+          tier: '3-Star',
+          priceMin: Number(form['priceRange3Star.min']),
+          priceMax: Number(form['priceRange3Star.max']),
+          priceAdjustmentPercent: 0,
+        }] : []),
+        ...(form['priceRange4Star.min'] && form['priceRange4Star.max'] ? [{
+          tier: '4-Star',
+          priceMin: Number(form['priceRange4Star.min']),
+          priceMax: Number(form['priceRange4Star.max']),
+          priceAdjustmentPercent: 0,
+        }] : []),
+        { tier: '5-Star Premium', priceAdjustmentPercent: 0 },
+      ],
     };
     try {
       const url = editId ? `${API}/api/admin/packages/${editId}` : `${API}/api/admin/packages`;
@@ -387,53 +409,77 @@ export default function AdminPackages() {
                     🏨 Hotel Tier Pricing
                   </label>
                   <div style={{ display: 'grid', gap: '12px' }}>
-                    {(form.hotelStandards || []).map((hs, i) => {
-                      const is5Star = hs.tier.includes('5-Star');
-                      return (
-                        <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '14px 16px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: is5Star ? 0 : '10px' }}>
-                            <span style={{ color: is5Star ? '#fbbf24' : '#38bdf8', fontSize: '13px', fontWeight: 700 }}>
-                              {'⭐'.repeat(is5Star ? 5 : (i + 3))} {hs.tier}
-                            </span>
-                            {is5Star && (
-                              <span style={{ color: '#f59e0b', fontSize: '11px', fontStyle: 'italic' }}>Contact for pricing</span>
-                            )}
-                          </div>
-                          {!is5Star && (
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                              <div>
-                                <label style={{ ...labelStyle, fontSize: '11px' }}>Price Min (₹)</label>
-                                <input
-                                  type="number"
-                                  placeholder="e.g. 15000"
-                                  value={hs.priceMin}
-                                  onChange={e => {
-                                    const updated = [...form.hotelStandards];
-                                    updated[i] = { ...updated[i], priceMin: e.target.value };
-                                    f('hotelStandards', updated);
-                                  }}
-                                  style={smallInputStyle}
-                                />
-                              </div>
-                              <div>
-                                <label style={{ ...labelStyle, fontSize: '11px' }}>Price Max (₹)</label>
-                                <input
-                                  type="number"
-                                  placeholder="e.g. 30000"
-                                  value={hs.priceMax}
-                                  onChange={e => {
-                                    const updated = [...form.hotelStandards];
-                                    updated[i] = { ...updated[i], priceMax: e.target.value };
-                                    f('hotelStandards', updated);
-                                  }}
-                                  style={smallInputStyle}
-                                />
-                              </div>
-                            </div>
-                          )}
+                    {/* 3-Star Pricing */}
+                    <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '14px 16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                        <span style={{ color: '#38bdf8', fontSize: '13px', fontWeight: 700 }}>
+                          ⭐⭐⭐ 3-Star
+                        </span>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                        <div>
+                          <label style={{ ...labelStyle, fontSize: '11px' }}>Price Min (₹)</label>
+                          <input
+                            type="number"
+                            placeholder="e.g. 15000"
+                            value={form['priceRange3Star.min']}
+                            onChange={e => f('priceRange3Star.min', e.target.value)}
+                            style={smallInputStyle}
+                          />
                         </div>
-                      );
-                    })}
+                        <div>
+                          <label style={{ ...labelStyle, fontSize: '11px' }}>Price Max (₹)</label>
+                          <input
+                            type="number"
+                            placeholder="e.g. 25000"
+                            value={form['priceRange3Star.max']}
+                            onChange={e => f('priceRange3Star.max', e.target.value)}
+                            style={smallInputStyle}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 4-Star Pricing */}
+                    <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '14px 16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                        <span style={{ color: '#38bdf8', fontSize: '13px', fontWeight: 700 }}>
+                          ⭐⭐⭐⭐ 4-Star
+                        </span>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                        <div>
+                          <label style={{ ...labelStyle, fontSize: '11px' }}>Price Min (₹)</label>
+                          <input
+                            type="number"
+                            placeholder="e.g. 25000"
+                            value={form['priceRange4Star.min']}
+                            onChange={e => f('priceRange4Star.min', e.target.value)}
+                            style={smallInputStyle}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ ...labelStyle, fontSize: '11px' }}>Price Max (₹)</label>
+                          <input
+                            type="number"
+                            placeholder="e.g. 40000"
+                            value={form['priceRange4Star.max']}
+                            onChange={e => f('priceRange4Star.max', e.target.value)}
+                            style={smallInputStyle}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 5-Star Premium */}
+                    <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '14px 16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: '#fbbf24', fontSize: '13px', fontWeight: 700 }}>
+                          ⭐⭐⭐⭐⭐ 5-Star Premium
+                        </span>
+                        <span style={{ color: '#f59e0b', fontSize: '11px', fontStyle: 'italic' }}>Contact for pricing</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
