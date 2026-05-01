@@ -10,8 +10,19 @@ const Navbar = () => {
   const [destDropdownOpen, setDestDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileDestOpen, setMobileDestOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef(null);
   const timeoutRef = useRef(null);
+
+  // Track scroll position for transparent navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    handleScroll(); // check initial position
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -57,13 +68,19 @@ const Navbar = () => {
     { name: "About Us", path: "/about-us" },
   ];
 
+  const linkColor = scrolled ? "#475569" : "#ffffff";
+  const activeLinkDynamic = scrolled
+    ? { fontWeight: 600, color: "#1B5E96", borderBottom: "2px solid #1B5E96" }
+    : { fontWeight: 600, color: "#ffffff", borderBottom: "2px solid #ffffff" };
+
   const renderDesktopLink = (link) => (
     <Link
       key={link.path}
       to={link.path}
       style={{
         ...desktopLinkStyle,
-        ...(isActive(link.path) ? activeLinkStyle : {}),
+        color: linkColor,
+        ...(isActive(link.path) ? activeLinkDynamic : {}),
       }}
       onMouseEnter={(e) => {
         if (!isActive(link.path)) {
@@ -72,7 +89,7 @@ const Navbar = () => {
       }}
       onMouseLeave={(e) => {
         if (!isActive(link.path)) {
-          e.target.style.color = "#475569";
+          e.target.style.color = linkColor;
         }
       }}
     >
@@ -82,7 +99,13 @@ const Navbar = () => {
 
   return (
     <>
-      <nav style={navStyle}>
+      <nav style={{
+        ...navStyle,
+        background: scrolled ? "rgba(255, 255, 255, 0.85)" : "transparent",
+        backdropFilter: scrolled ? "blur(24px)" : "none",
+        WebkitBackdropFilter: scrolled ? "blur(24px)" : "none",
+        boxShadow: scrolled ? "0 1px 3px rgba(0,0,0,0.06)" : "none",
+      }}>
         <div style={navInnerStyle}>
           {/* Logo */}
           <Link to="/" style={{ display: "flex", alignItems: "center" }}>
@@ -114,7 +137,8 @@ const Navbar = () => {
                   fontWeight: "500",
                   gap: "4px",
                   cursor: "pointer",
-                  ...(isDestinationsActive ? activeLinkStyle : {}),
+                  color: linkColor,
+                  ...(isDestinationsActive ? activeLinkDynamic : {}),
                 }}
                 onMouseEnter={(e) => {
                   if (!isDestinationsActive) {
@@ -123,7 +147,7 @@ const Navbar = () => {
                 }}
                 onMouseLeave={(e) => {
                   if (!isDestinationsActive) {
-                    e.currentTarget.style.color = "#475569";
+                    e.currentTarget.style.color = linkColor;
                   }
                 }}
               >
@@ -224,7 +248,7 @@ const Navbar = () => {
               style={hamburgerStyle}
               aria-label="Toggle menu"
             >
-              <span className="material-symbols-outlined" style={{ fontSize: "28px" }}>
+              <span className="material-symbols-outlined" style={{ fontSize: "28px", color: scrolled ? "#475569" : "#ffffff" }}>
                 {mobileMenuOpen ? "close" : "menu"}
               </span>
             </button>
@@ -403,10 +427,7 @@ const navStyle = {
   top: 0,
   width: "100%",
   zIndex: 50,
-  background: "rgba(255, 255, 255, 0.85)",
-  backdropFilter: "blur(24px)",
-  WebkitBackdropFilter: "blur(24px)",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+  transition: "background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease",
 };
 
 const navInnerStyle = {
