@@ -69,12 +69,9 @@ const Navbar = () => {
     { name: "About Us", path: "/about-us" },
   ];
 
-  // On non-home pages, always use dark text (scrolled style) since bg is light
-  const effectiveScrolled = !isHomePage || scrolled;
-  const linkColor = effectiveScrolled ? "#475569" : "#ffffff";
-  const activeLinkDynamic = effectiveScrolled
-    ? { fontWeight: 600, color: "#1B5E96", borderBottom: "2px solid #1B5E96" }
-    : { fontWeight: 600, color: "#ffffff", borderBottom: "2px solid #ffffff" };
+  // Navbar is always white, so always use dark text
+  const linkColor = "#475569";
+  const activeLinkDynamic = { fontWeight: 600, color: "#1B5E96", borderBottom: "2px solid #1B5E96" };
 
   const renderDesktopLink = (link) => (
     <Link
@@ -104,10 +101,10 @@ const Navbar = () => {
     <>
       <nav style={{
         ...navStyle,
-        background: effectiveScrolled ? "rgba(255, 255, 255, 0.85)" : "transparent",
-        backdropFilter: effectiveScrolled ? "blur(24px)" : "none",
-        WebkitBackdropFilter: effectiveScrolled ? "blur(24px)" : "none",
-        boxShadow: effectiveScrolled ? "0 1px 3px rgba(0,0,0,0.06)" : "none",
+        background: "rgba(255, 255, 255, 0.95)",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
+        boxShadow: scrolled ? "0 1px 3px rgba(0,0,0,0.06)" : "0 1px 2px rgba(0,0,0,0.03)",
       }}>
         <div style={navInnerStyle}>
           {/* Logo */}
@@ -251,7 +248,7 @@ const Navbar = () => {
               style={hamburgerStyle}
               aria-label="Toggle menu"
             >
-              <span className="material-symbols-outlined" style={{ fontSize: "28px", color: effectiveScrolled ? "#475569" : "#ffffff" }}>
+              <span className="material-symbols-outlined" style={{ fontSize: "28px", color: "#475569" }}>
                 {mobileMenuOpen ? "close" : "menu"}
               </span>
             </button>

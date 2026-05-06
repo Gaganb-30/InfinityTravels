@@ -9,6 +9,7 @@ import AboutUs from "./pages/AboutUs";
 import DestinationDetail from "./pages/DestinationDetail";
 import PackageDetail from "./pages/PackageDetail";
 import Contact from "./pages/Contact";
+import FloatingButtons from "./components/FloatingButtons";
 
 // Admin pages
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -29,6 +30,7 @@ function App() {
           element={
             <div className="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
               <Navbar />
+              <FloatingButtons />
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/destinations" element={<Destinations />} />

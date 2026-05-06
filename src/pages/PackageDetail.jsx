@@ -456,7 +456,7 @@ const PackageDetail = () => {
   const allImages = [pkg.image, ...(pkg.galleryImages || [])].filter(Boolean);
 
   return (
-    <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12 bg-amber-50">
+    <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12 bg-white">
       {/* Header */}
       <header className="mb-12">
         <nav className="flex items-center gap-2 mb-4 text-on-surface-variant text-sm font-label uppercase tracking-widest">

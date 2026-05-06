@@ -59,7 +59,7 @@ const HomePage = () => {
   };
 
   return (
-    <main className="pt-0 bg-amber-50">
+    <main className="pt-0">
       {/* Hero Section */}
       <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -179,8 +179,8 @@ const HomePage = () => {
       </section>
 
       {/* Featured Destinations */}
-      <section className="py-24 bg-surface-bright">
-        <div className="px-8 max-w-7xl mx-auto mb-12 flex justify-between items-end">
+      <section className="py-20 bg-white">
+        <div className="px-8 max-w-7xl mx-auto mb-10 flex justify-between items-end">
           <div>
             <span className="label-md font-bold text-primary tracking-widest uppercase text-xs mb-2 block">
               The Collection
@@ -193,26 +193,23 @@ const HomePage = () => {
             View All <span className="material-symbols-outlined">arrow_forward</span>
           </Link>
         </div>
-        <div className="px-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="px-8 max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-5">
           {loading ? (
-            [...Array(3)].map((_, i) => (
-              <div key={i} className="h-[500px] rounded-2xl bg-surface-container-low animate-pulse" />
+            [...Array(4)].map((_, i) => (
+              <div key={i} className="h-[280px] rounded-2xl bg-slate-100 animate-pulse" />
             ))
           ) : (
-            destinations.slice(0, 3).map((dest) => (
-              <Link to={`/destinations/${dest.slug}`} key={dest._id} className="relative h-[500px] rounded-2xl overflow-hidden group cursor-pointer shadow-lg block">
+            destinations.slice(0, 8).map((dest) => (
+              <Link to={`/destinations/${dest.slug}`} key={dest._id} className="relative h-[280px] rounded-2xl overflow-hidden group cursor-pointer shadow-md block">
                 <img
                   alt={dest.name}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   src={dest.heroImage}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                <div className="absolute bottom-0 p-8">
-                  <h3 className="text-white font-headline text-3xl font-bold mb-2">{dest.name}</h3>
-                  <p className="text-white/80 text-sm mb-4">{dest.country}</p>
-                  <span className="text-white font-semibold flex items-center gap-2 group/btn">
-                    Explore <span className="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
-                  </span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-0 p-5">
+                  <h3 className="text-white font-headline text-lg font-bold mb-1 leading-tight">{dest.name}</h3>
+                  <p className="text-white/70 text-xs">{dest.country}</p>
                 </div>
               </Link>
             ))
@@ -221,8 +218,8 @@ const HomePage = () => {
       </section>
 
       {/* Popular Packages */}
-      <section className="py-24 px-8 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+      <section className="py-20 px-8 max-w-7xl mx-auto">
+        <div className="text-center mb-12">
           <span className="label-md font-bold text-secondary tracking-widest uppercase text-xs mb-2 block">
             Curated Journeys
           </span>
@@ -230,38 +227,37 @@ const HomePage = () => {
             Popular Packages
           </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
           {loading ? (
-            [...Array(3)].map((_, i) => (
-              <div key={i} className="h-[500px] rounded-2xl bg-surface-container-low animate-pulse" />
+            [...Array(4)].map((_, i) => (
+              <div key={i} className="h-[360px] rounded-2xl bg-slate-100 animate-pulse" />
             ))
           ) : (
-            packages.slice(0, 3).map((pkg) => (
-              <Link to={`/packages/${pkg.slug}`} key={pkg._id} className="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-2xl block" style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div className="h-64 overflow-hidden relative">
-                  <img alt={pkg.name} className="w-full h-full object-cover" src={pkg.image} />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">
+            packages.slice(0, 8).map((pkg) => (
+              <Link to={`/packages/${pkg.slug}`} key={pkg._id} className="bg-white rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 block" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="h-44 overflow-hidden relative">
+                  <img alt={pkg.name} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src={pkg.image} />
+                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2.5 py-0.5 rounded-full text-[10px] font-bold text-primary">
                     {pkg.duration}
                   </div>
                 </div>
-                <div className="p-8">
-                  <h3 className="font-headline text-2xl font-bold mb-2">{pkg.name}</h3>
-                  <div className="flex items-center gap-1 text-secondary-container mb-4">
+                <div className="p-4">
+                  <h3 className="font-headline text-base font-bold mb-1 leading-tight line-clamp-2">{pkg.name}</h3>
+                  <div className="flex items-center gap-0.5 text-secondary-container mb-2">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                      <span key={i} className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                     ))}
-                    <span className="text-xs text-on-surface-variant font-medium ml-1">
-                      {pkg.rating} ({pkg.reviewCount} Reviews)
+                    <span className="text-[10px] text-on-surface-variant font-medium ml-1">
+                      {pkg.rating}
                     </span>
                   </div>
-                  <p className="text-on-surface-variant text-sm mb-6 leading-relaxed">{pkg.description}</p>
-                  <div className="flex justify-between items-center pt-6 border-t border-slate-100">
+                  <div className="flex justify-between items-center pt-3 border-t border-slate-100">
                     <div className="flex flex-col">
-                      <span className="text-xs text-slate-400">Estimate</span>
-                      <span className="text-lg font-bold text-primary">{formatPriceRange(pkg.priceRange)}</span>
+                      <span className="text-[10px] text-slate-400">Estimate</span>
+                      <span className="text-sm font-bold text-primary">{formatPriceRange(pkg.priceRange)}</span>
                     </div>
-                    <span className="text-primary font-bold text-sm uppercase mt-4 tracking-widest hover:underline">
-                      View Details
+                    <span className="text-primary text-xs font-bold uppercase tracking-wider">
+                      View →
                     </span>
                   </div>
                 </div>
