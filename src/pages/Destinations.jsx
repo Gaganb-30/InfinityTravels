@@ -181,9 +181,10 @@ const Destinations = () => {
 
       {/* Destination Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-          <div className="md:col-span-8 h-[500px] rounded-[2.5rem] bg-surface-container-low animate-pulse" />
-          <div className="md:col-span-4 h-[500px] rounded-[2.5rem] bg-surface-container-low animate-pulse" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className={`rounded-2xl bg-slate-100 animate-pulse ${i === 0 ? 'md:col-span-2 md:row-span-2 h-[340px]' : 'h-[160px]'}`} />
+          ))}
         </div>
       ) : destinations.length === 0 ? (
         <div className="text-center py-20">
@@ -192,125 +193,50 @@ const Destinations = () => {
           <p className="text-slate-400">Try adjusting your filters</p>
         </div>
       ) : (
-        <section className="grid grid-cols-1 md:grid-cols-12 gap-10">
-          {/* Large Feature Card */}
-          {destinations[0] && (
-            <Link to={`/destinations/${destinations[0].slug}`} className="md:col-span-8 group relative overflow-hidden rounded-[2.5rem] bg-surface-container-lowest editorial-shadow block">
-              <div className="aspect-[16/9] w-full overflow-hidden">
-                <img
-                  alt={destinations[0].name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[10%] group-hover:grayscale-0"
-                  src={destinations[0].heroImage}
-                />
-              </div>
-              <div className="p-10">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-headline text-4xl text-on-surface">
-                    {destinations[0].name}, {destinations[0].country}
-                  </h3>
-                  <div className="flex items-center gap-3">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${destinations[0].category === 'Domestic' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}>
-                      {destinations[0].category}
-                    </span>
-                    <span className="font-label text-sm text-secondary font-bold tracking-widest uppercase">
-                      {destinations[0].tier} Tier
-                    </span>
-                  </div>
-                </div>
-                <p className="text-on-surface-variant text-lg leading-relaxed max-w-xl mb-8">
-                  {destinations[0].description}
-                </p>
-                <span className="flex items-center gap-3 text-primary font-bold tracking-tight hover:gap-5 transition-all">
-                  EXPLORE DESTINATION
-                  <span className="material-symbols-outlined">arrow_forward</span>
-                </span>
-              </div>
-            </Link>
-          )}
-
-          {/* Side Card */}
-          {destinations[1] && (
-            <Link to={`/destinations/${destinations[1].slug}`} className="md:col-span-4 group bg-surface-container-lowest rounded-[2.5rem] editorial-shadow flex flex-col block">
-              <div className="aspect-square w-full overflow-hidden rounded-t-[2.5rem]">
-                <img
-                  alt={destinations[1].name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  src={destinations[1].heroImage}
-                />
-              </div>
-              <div className="p-8 flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${destinations[1].category === 'Domestic' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}>
-                      {destinations[1].category}
-                    </span>
-                  </div>
-                  <h3 className="font-headline text-2xl text-on-surface mb-3">
-                    {destinations[1].name}, {destinations[1].country}
-                  </h3>
-                  <p className="text-on-surface-variant text-sm leading-relaxed mb-6">
-                    {destinations[1].tagline}
-                  </p>
-                </div>
-                <span className="w-full py-4 rounded-2xl bg-surface-container-high text-on-surface font-semibold hover:bg-primary hover:text-on-primary transition-all active:scale-95 text-center block">
-                  Explore
-                </span>
-              </div>
-            </Link>
-          )}
-
-          {/* Row 2 */}
-          {destinations.slice(2, 4).map((dest) => (
-            <Link to={`/destinations/${dest.slug}`} key={dest._id} className="md:col-span-6 group bg-surface-container-lowest rounded-[2.5rem] editorial-shadow block">
-              <div className="aspect-[4/3] w-full overflow-hidden rounded-t-[2.5rem]">
+        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridAutoRows: '180px', gap: '12px' }}>
+          {destinations.map((dest, idx) => {
+            // Bento pattern: idx 0 = large (2x2), idx 1 = tall (1x2), a couple are wide (2x1), rest 1x1
+            const spanStyle = idx === 0
+              ? { gridColumn: 'span 2', gridRow: 'span 2' }
+              : idx === 1
+                ? { gridRow: 'span 2' }
+                : (idx === 4 || idx === 8)
+                  ? { gridColumn: 'span 2' }
+                  : {};
+            const isLarge = idx === 0;
+            const isTall = idx === 1;
+            return (
+              <Link
+                to={`/destinations/${dest.slug}`}
+                key={dest._id}
+                className="relative rounded-2xl overflow-hidden group cursor-pointer shadow-md block"
+                style={{ ...spanStyle, minHeight: 0 }}
+              >
                 <img
                   alt={dest.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   src={dest.heroImage}
                 />
-              </div>
-              <div className="p-10">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${dest.category === 'Domestic' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}>
-                    {dest.category}
-                  </span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                {/* Category badge */}
+                <div className={`absolute top-3 left-3 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${dest.category === 'Domestic' ? 'bg-emerald-500/90 text-white' : 'bg-blue-500/90 text-white'}`}>
+                  {dest.category}
                 </div>
-                <h3 className="font-headline text-3xl text-on-surface mb-4">
-                  {dest.name}, {dest.country}
-                </h3>
-                <p className="text-on-surface-variant leading-relaxed mb-8">{dest.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="bg-secondary-container/10 text-on-secondary-container px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">
-                    {dest.type}
-                  </span>
-                  <span className="p-4 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center transition-transform hover:rotate-45">
-                    <span className="material-symbols-outlined">north_east</span>
-                  </span>
+                {/* Content */}
+                <div className={`absolute bottom-0 left-0 right-0 ${isLarge ? 'p-6' : 'p-3'}`}>
+                  <h3 className={`text-white font-headline font-bold leading-tight ${isLarge ? 'text-2xl mb-2' : isTall ? 'text-lg mb-1' : 'text-sm mb-0.5'}`}>
+                    {dest.name}
+                  </h3>
+                  <p className={`text-white/70 ${isLarge ? 'text-sm' : 'text-[10px]'}`}>{dest.country}</p>
+                  {isLarge && (
+                    <span className="flex items-center gap-2 text-white/80 text-sm font-medium mt-3 group-hover:gap-3 transition-all">
+                      Explore <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    </span>
+                  )}
                 </div>
-              </div>
-            </Link>
-          ))}
-
-          {/* Extra destinations */}
-          {destinations.slice(4).map((dest) => (
-            <Link to={`/destinations/${dest.slug}`} key={dest._id} className="md:col-span-4 group bg-surface-container-lowest rounded-[2.5rem] editorial-shadow block">
-              <div className="aspect-[4/3] w-full overflow-hidden rounded-t-[2.5rem]">
-                <img alt={dest.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={dest.heroImage} />
-              </div>
-              <div className="p-8">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${dest.category === 'Domestic' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}>
-                    {dest.category}
-                  </span>
-                </div>
-                <h3 className="font-headline text-2xl text-on-surface mb-3">{dest.name}, {dest.country}</h3>
-                <p className="text-on-surface-variant text-sm leading-relaxed mb-4">{dest.tagline}</p>
-                <span className="bg-secondary-container/10 text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
-                  {dest.type}
-                </span>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </section>
       )}
 

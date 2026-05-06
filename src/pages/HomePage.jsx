@@ -178,7 +178,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Featured Destinations */}
+      {/* Featured Destinations — Bento Puzzle Grid */}
       <section className="py-20 bg-white">
         <div className="px-8 max-w-7xl mx-auto mb-10 flex justify-between items-end">
           <div>
@@ -193,31 +193,48 @@ const HomePage = () => {
             View All <span className="material-symbols-outlined">arrow_forward</span>
           </Link>
         </div>
-        <div className="px-8 max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div className="px-8 max-w-7xl mx-auto">
           {loading ? (
-            [...Array(4)].map((_, i) => (
-              <div key={i} className="h-[280px] rounded-2xl bg-slate-100 animate-pulse" />
-            ))
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className={`rounded-2xl bg-slate-100 animate-pulse ${i === 0 ? 'md:col-span-2 md:row-span-2 h-[400px]' : 'h-[192px]'}`} />
+              ))}
+            </div>
           ) : (
-            destinations.slice(0, 8).map((dest) => (
-              <Link to={`/destinations/${dest.slug}`} key={dest._id} className="relative h-[280px] rounded-2xl overflow-hidden group cursor-pointer shadow-md block">
-                <img
-                  alt={dest.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  src={dest.heroImage}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                <div className="absolute bottom-0 p-5">
-                  <h3 className="text-white font-headline text-lg font-bold mb-1 leading-tight">{dest.name}</h3>
-                  <p className="text-white/70 text-xs">{dest.country}</p>
-                </div>
-              </Link>
-            ))
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridAutoRows: '192px', gap: '12px' }}>
+              {destinations.slice(0, 9).map((dest, idx) => {
+                // Bento pattern: first card is large (2x2), rest are 1x1, with a couple being wider (2x1)
+                const spanClass = idx === 0
+                  ? { gridColumn: 'span 2', gridRow: 'span 2' }
+                  : idx === 5 || idx === 7
+                    ? { gridColumn: 'span 2', gridRow: 'span 1' }
+                    : {};
+                return (
+                  <Link
+                    to={`/destinations/${dest.slug}`}
+                    key={dest._id}
+                    className="relative rounded-2xl overflow-hidden group cursor-pointer shadow-md block"
+                    style={{ ...spanClass, minHeight: 0 }}
+                  >
+                    <img
+                      alt={dest.name}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      src={dest.heroImage}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                    <div className="absolute bottom-0 p-4">
+                      <h3 className={`text-white font-headline font-bold leading-tight ${idx === 0 ? 'text-2xl mb-2' : 'text-sm mb-0.5'}`}>{dest.name}</h3>
+                      <p className={`text-white/70 ${idx === 0 ? 'text-sm' : 'text-[10px]'}`}>{dest.country}</p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           )}
         </div>
       </section>
 
-      {/* Popular Packages */}
+      {/* Popular Packages — Bento Puzzle Grid */}
       <section className="py-20 px-8 max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <span className="label-md font-bold text-secondary tracking-widest uppercase text-xs mb-2 block">
@@ -227,42 +244,56 @@ const HomePage = () => {
             Popular Packages
           </h2>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridAutoRows: '180px', gap: '12px' }}>
           {loading ? (
-            [...Array(4)].map((_, i) => (
-              <div key={i} className="h-[360px] rounded-2xl bg-slate-100 animate-pulse" />
+            [...Array(6)].map((_, i) => (
+              <div key={i} className={`rounded-2xl bg-slate-100 animate-pulse ${i === 0 ? '' : ''}`} style={i === 0 ? { gridColumn: 'span 2', gridRow: 'span 2' } : {}} />
             ))
           ) : (
-            packages.slice(0, 8).map((pkg) => (
-              <Link to={`/packages/${pkg.slug}`} key={pkg._id} className="bg-white rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 block" style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div className="h-44 overflow-hidden relative">
-                  <img alt={pkg.name} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src={pkg.image} />
-                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2.5 py-0.5 rounded-full text-[10px] font-bold text-primary">
+            packages.slice(0, 9).map((pkg, idx) => {
+              // Bento pattern: idx 0 = big (2x2), idx 3 = wide (2x1), rest normal
+              const spanStyle = idx === 0
+                ? { gridColumn: 'span 2', gridRow: 'span 2' }
+                : idx === 3 || idx === 6
+                  ? { gridColumn: 'span 2', gridRow: 'span 1' }
+                  : {};
+              const isBig = idx === 0;
+              return (
+                <Link
+                  to={`/packages/${pkg.slug}`}
+                  key={pkg._id}
+                  className="relative rounded-2xl overflow-hidden group cursor-pointer shadow-md block"
+                  style={{ ...spanStyle, textDecoration: 'none', color: 'inherit', minHeight: 0 }}
+                >
+                  <img
+                    alt={pkg.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    src={pkg.image}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                  {/* Duration badge */}
+                  <div className={`absolute top-3 right-3 bg-white/90 backdrop-blur rounded-full font-bold text-primary ${isBig ? 'px-3 py-1 text-xs' : 'px-2 py-0.5 text-[9px]'}`}>
                     {pkg.duration}
                   </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-headline text-base font-bold mb-1 leading-tight line-clamp-2">{pkg.name}</h3>
-                  <div className="flex items-center gap-0.5 text-secondary-container mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                    ))}
-                    <span className="text-[10px] text-on-surface-variant font-medium ml-1">
-                      {pkg.rating}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center pt-3 border-t border-slate-100">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-400">Estimate</span>
-                      <span className="text-sm font-bold text-primary">{formatPriceRange(pkg.priceRange)}</span>
+                  {/* Content overlay */}
+                  <div className={`absolute bottom-0 left-0 right-0 ${isBig ? 'p-6' : 'p-3'}`}>
+                    <h3 className={`text-white font-headline font-bold leading-tight ${isBig ? 'text-2xl mb-2' : 'text-sm mb-1'}`}>
+                      {pkg.name}
+                    </h3>
+                    <div className="flex items-center justify-between">
+                      <span className={`text-white/90 font-bold ${isBig ? 'text-lg' : 'text-xs'}`}>
+                        {formatPriceRange(pkg.priceRange)}
+                      </span>
+                      {isBig && (
+                        <span className="text-white/70 text-sm font-medium flex items-center gap-1">
+                          View Details <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                        </span>
+                      )}
                     </div>
-                    <span className="text-primary text-xs font-bold uppercase tracking-wider">
-                      View →
-                    </span>
                   </div>
-                </div>
-              </Link>
-            ))
+                </Link>
+              );
+            })
           )}
         </div>
       </section>

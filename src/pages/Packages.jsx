@@ -241,9 +241,9 @@ const Packages = () => {
         {/* Packages Grid — LEFT */}
         <div style={{ flex: 1, minWidth: 0 }}>
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} style={{ height: "520px", borderRadius: "16px", background: "#f1f5f9" }} className="animate-pulse" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} style={{ height: "380px", borderRadius: "16px", background: "#f1f5f9" }} className="animate-pulse" />
               ))}
             </div>
           ) : packages.length === 0 ? (
@@ -256,21 +256,21 @@ const Packages = () => {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {packages.map((pkg) => (
                 <Link
                   to={`/packages/${pkg.slug}`}
                   key={pkg._id}
                   style={{ ...packageCardStyle, display: 'block', textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-8px)"; e.currentTarget.style.boxShadow = "0 20px 60px -12px rgba(0,0,0,0.15)"; }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = "0 16px 48px -8px rgba(0,0,0,0.12)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 24px -4px rgba(0,0,0,0.06)"; }}
                 >
-                  <div style={{ position: "relative", aspectRatio: "4/5", overflow: "hidden" }}>
+                  <div style={{ position: "relative", aspectRatio: "3/4", overflow: "hidden" }}>
                     <img
                       alt={pkg.name}
                       style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.7s" }}
                       src={pkg.image}
-                      onMouseEnter={(e) => (e.target.style.transform = "scale(1.1)")}
+                      onMouseEnter={(e) => (e.target.style.transform = "scale(1.08)")}
                       onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
                     />
                     {pkg.badge && (
@@ -278,36 +278,23 @@ const Packages = () => {
                         {pkg.badge}
                       </div>
                     )}
+                    <div style={{ position: "absolute", top: "12px", left: "12px", background: "rgba(255,255,255,0.92)", backdropFilter: "blur(8px)", padding: "4px 12px", borderRadius: "999px", fontSize: "11px", fontWeight: 600, color: "#64748b" }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: "14px", verticalAlign: "middle", marginRight: "4px" }}>schedule</span>
+                      {pkg.duration}
+                    </div>
                   </div>
-                  <div style={{ padding: "24px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                  <div style={{ padding: "16px" }}>
+                    <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#0f172a", marginBottom: "4px", lineHeight: 1.3 }}>{pkg.name}</h3>
+                    <span style={{ fontSize: "12px", color: "#64748b", letterSpacing: "0.05em" }}>{pkg.location}</span>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #f1f5f9" }}>
                       <div>
-                        <h3 style={{ fontSize: "20px", fontWeight: 700, color: "#0f172a", marginBottom: "4px" }}>{pkg.name}</h3>
-                        <span style={{ fontSize: "13px", color: "#64748b", letterSpacing: "0.05em" }}>{pkg.location}</span>
+                        <span style={{ display: "block", color: "#1B5E96", fontWeight: 700, fontSize: "15px" }}>{formatPriceRange(pkg.priceRange)}</span>
+                        <span style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 500 }}>Per Person</span>
                       </div>
-                      <div style={{ textAlign: "right" }}>
-                        <span style={{ display: "block", color: "#1B5E96", fontWeight: 700, fontSize: "18px" }}>{formatPriceRange(pkg.priceRange)}</span>
-                        <span style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 500 }}>Per Person</span>
-                      </div>
+                      <span style={{ ...viewDetailsBtnCompactStyle }}>
+                        View →
+                      </span>
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px", color: "#64748b", fontSize: "14px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>schedule</span>
-                        {pkg.duration}
-                      </div>
-                      {pkg.highlights?.[0] && (
-                        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>{pkg.highlights[0].icon}</span>
-                          {pkg.highlights[0].title}
-                        </div>
-                      )}
-                    </div>
-                    <span
-                      style={viewDetailsBtnStyle}
-                    >
-                      View Details
-                      <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>arrow_forward</span>
-                    </span>
                   </div>
                 </Link>
               ))}
@@ -520,6 +507,14 @@ const viewDetailsBtnStyle = {
   transition: "all 0.3s",
   border: "none",
   cursor: "pointer",
+};
+
+const viewDetailsBtnCompactStyle = {
+  color: "#1B5E96",
+  fontWeight: 700,
+  fontSize: "12px",
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
 };
 
 /* Desktop sidebar */
