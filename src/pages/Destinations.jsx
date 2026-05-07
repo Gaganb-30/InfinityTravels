@@ -193,7 +193,7 @@ const Destinations = () => {
           <p className="text-slate-400">Try adjusting your filters</p>
         </div>
       ) : (
-        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridAutoRows: '180px', gap: '12px' }}>
+        <section className="home-bento-grid" style={{ display: 'grid', gridAutoRows: '180px', gap: '12px' }}>
           {destinations.map((dest, idx) => {
             // Bento pattern: idx 0 = large (2x2), idx 1 = tall (1x2), a couple are wide (2x1), rest 1x1
             const spanStyle = idx === 0

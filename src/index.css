@@ -94,3 +94,19 @@ body {
     order: 0 !important;
   }
 }
+
+/* ── Packages page: smaller cards on mobile ─────────── */
+@media (max-width: 639px) {
+  .packages-grid .pkg-card-img {
+    aspect-ratio: 1 / 1 !important;
+  }
+  .packages-grid a > div:last-child {
+    padding: 8px 10px !important;
+  }
+  .packages-grid a > div:last-child h3 {
+    font-size: 13px !important;
+  }
+  .packages-grid a > div:last-child span {
+    font-size: 10px !important;
+  }
+}

@@ -66,7 +66,6 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Packages", path: "/packages" },
-    { name: "About Us", path: "/about-us" },
   ];
 
   // Navbar is always white, so always use dark text
@@ -227,7 +226,10 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Contact Us — after Destinations */}
+            {/* About Us — after Destinations */}
+            {renderDesktopLink({ name: "About Us", path: "/about-us" })}
+
+            {/* Contact Us — after About Us */}
             {renderDesktopLink({ name: "Contact Us", path: "/contact" })}
           </div>
 
@@ -298,6 +300,18 @@ const Navbar = () => {
               Home
             </Link>
 
+            <Link
+              to="/packages"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                ...mobileLinkStyle,
+                ...(isActive("/packages") ? mobileActiveLinkStyle : {}),
+              }}
+            >
+              <span className="material-symbols-outlined" style={mobileIconStyle}>luggage</span>
+              Packages
+            </Link>
+
             {/* Mobile Destinations Accordion */}
             <div>
               <button
@@ -361,18 +375,6 @@ const Navbar = () => {
                 </div>
               </div>
             </div>
-
-            <Link
-              to="/packages"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{
-                ...mobileLinkStyle,
-                ...(isActive("/packages") ? mobileActiveLinkStyle : {}),
-              }}
-            >
-              <span className="material-symbols-outlined" style={mobileIconStyle}>luggage</span>
-              Packages
-            </Link>
 
             <Link
               to="/about-us"

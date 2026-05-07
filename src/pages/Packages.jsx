@@ -12,6 +12,11 @@ const Packages = () => {
   const [selectedTypes, setSelectedTypes] = useState({});
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
+  // Pending filter state for mobile (only applied on "Apply" click)
+  const [pendingBudget, setPendingBudget] = useState(500000);
+  const [pendingDuration, setPendingDuration] = useState(null);
+  const [pendingTypes, setPendingTypes] = useState({});
+
   const allTypes = [
     "Coastal", "Mountain", "Urban", "Desert", "Forest",
     "Cultural", "Adventure", "Island", "Heritage", "Nature",
@@ -41,6 +46,29 @@ const Packages = () => {
       Object.keys(prev).forEach((k) => (cleared[k] = false));
       return cleared;
     });
+    setPendingBudget(500000);
+    setPendingDuration(null);
+    setPendingTypes((prev) => {
+      const cleared = {};
+      Object.keys(prev).forEach((k) => (cleared[k] = false));
+      return cleared;
+    });
+  };
+
+  // Sync pending state when mobile filter opens
+  useEffect(() => {
+    if (mobileFilterOpen) {
+      setPendingBudget(budget);
+      setPendingDuration(selectedDuration);
+      setPendingTypes({ ...selectedTypes });
+    }
+  }, [mobileFilterOpen]);
+
+  const applyMobileFilters = () => {
+    setBudget(pendingBudget);
+    setSelectedDuration(pendingDuration);
+    setSelectedTypes({ ...pendingTypes });
+    setMobileFilterOpen(false);
   };
 
   const activeFilterCount =
@@ -92,7 +120,7 @@ const Packages = () => {
     return () => { document.body.style.overflow = ""; };
   }, [mobileFilterOpen]);
 
-  /* ── Filter Sidebar Content (shared between desktop & mobile) ── */
+  /* ── Filter Sidebar Content (desktop — applies immediately) ── */
   const filterContent = (
     <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
       {/* Header with clear */}
@@ -118,11 +146,8 @@ const Packages = () => {
         </h3>
         <div style={{ padding: "0 4px" }}>
           <div style={{ position: "relative", height: "36px", display: "flex", alignItems: "center" }}>
-            {/* Track background */}
             <div style={sliderTrackStyle} />
-            {/* Track fill */}
             <div style={{ ...sliderFillStyle, width: `${sliderPercent}%` }} />
-            {/* Native range input */}
             <input
               type="range"
               min="10000"
@@ -195,6 +220,106 @@ const Packages = () => {
               <button
                 key={type}
                 onClick={() => handleTypeChange(type)}
+                style={{
+                  ...tagBtnStyle,
+                  ...(isSelected ? tagBtnActiveStyle : {}),
+                }}
+              >
+                {type}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ── Mobile Filter Content (pending state — only applies on "Apply") ── */
+  const pendingSliderPercent = ((pendingBudget - 10000) / (500000 - 10000)) * 100;
+  const mobileFilterContent = (
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+      {/* Budget Range */}
+      <div>
+        <h3 style={filterHeadingStyle}>
+          <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "#1B5E96" }}>payments</span>
+          Budget Range
+        </h3>
+        <div style={{ padding: "0 4px" }}>
+          <div style={{ position: "relative", height: "36px", display: "flex", alignItems: "center" }}>
+            <div style={sliderTrackStyle} />
+            <div style={{ ...sliderFillStyle, width: `${pendingSliderPercent}%` }} />
+            <input
+              type="range"
+              min="10000"
+              max="500000"
+              step="5000"
+              value={pendingBudget}
+              onChange={(e) => setPendingBudget(parseInt(e.target.value))}
+              style={sliderInputStyle}
+            />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
+            <span style={sliderLabelStyle}>₹10,000</span>
+            <span style={{
+              ...sliderLabelStyle,
+              fontWeight: 700,
+              color: "#1B5E96",
+              fontSize: "15px",
+              background: "rgba(27, 94, 150, 0.08)",
+              padding: "2px 10px",
+              borderRadius: "8px",
+            }}>
+              ₹{pendingBudget.toLocaleString("en-IN")}
+            </span>
+            <span style={sliderLabelStyle}>₹5L+</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Duration */}
+      <div>
+        <h3 style={filterHeadingStyle}>
+          <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "#1B5E96" }}>schedule</span>
+          Duration
+        </h3>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {durationOptions.map((opt) => {
+            const isSelected = pendingDuration === opt.key;
+            return (
+              <button
+                key={opt.key}
+                onClick={() => setPendingDuration((prev) => (prev === opt.key ? null : opt.key))}
+                style={{
+                  ...durationBtnStyle,
+                  ...(isSelected ? durationBtnActiveStyle : {}),
+                }}
+              >
+                <span className="material-symbols-outlined" style={{
+                  fontSize: "20px",
+                  color: isSelected ? "#fff" : "#1B5E96",
+                }}>
+                  {opt.icon}
+                </span>
+                <span>{opt.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Destination Type Tags */}
+      <div>
+        <h3 style={filterHeadingStyle}>
+          <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "#1B5E96" }}>landscape</span>
+          Destination Type
+        </h3>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+          {allTypes.map((type) => {
+            const isSelected = pendingTypes[type];
+            return (
+              <button
+                key={type}
+                onClick={() => setPendingTypes((prev) => ({ ...prev, [type]: !prev[type] }))}
                 style={{
                   ...tagBtnStyle,
                   ...(isSelected ? tagBtnActiveStyle : {}),
@@ -336,8 +461,29 @@ const Packages = () => {
             <span className="material-symbols-outlined" style={{ fontSize: "24px", color: "#475569" }}>close</span>
           </button>
         </div>
-        <div style={{ padding: "20px", overflowY: "auto", maxHeight: "calc(85vh - 60px)" }}>
-          {filterContent}
+        <div style={{ padding: "20px", overflowY: "auto", maxHeight: "calc(85vh - 130px)" }}>
+          {mobileFilterContent}
+        </div>
+        {/* Apply Button — fixed at bottom of mobile filter */}
+        <div style={{ padding: "12px 20px", borderTop: "1px solid #e2e8f0", background: "#fff" }}>
+          <button
+            onClick={applyMobileFilters}
+            style={{
+              width: "100%",
+              padding: "14px",
+              borderRadius: "14px",
+              background: "linear-gradient(135deg, #1B5E96, #154A78)",
+              color: "#fff",
+              border: "none",
+              fontSize: "16px",
+              fontWeight: 700,
+              cursor: "pointer",
+              boxShadow: "0 4px 16px rgba(27, 94, 150, 0.3)",
+              transition: "transform 0.2s",
+            }}
+          >
+            Apply Filters
+          </button>
         </div>
       </div>
 
