@@ -1,8 +1,10 @@
+const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '919310798965';
+
 /**
  * Generate a WhatsApp deep link with pre-filled booking message
  */
 export function generateWhatsAppLink({
-  whatsappNumber = '919310798965',
+  whatsappNumber = WHATSAPP_NUMBER,
   packageName,
   destination,
   travelers = 2,
@@ -12,7 +14,7 @@ export function generateWhatsAppLink({
   additionalNotes = '',
 }) {
   const lines = [
-    `🌟 *Booking Inquiry - Infinity Miles Travel*`,
+    `🌟 *Booking Inquiry - Infinity Miles Holiday*`,
     ``,
     `📦 *Package:* ${packageName || 'N/A'}`,
     `📍 *Destination:* ${destination || 'N/A'}`,

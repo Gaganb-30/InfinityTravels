@@ -48,3 +48,49 @@ body {
 .text-brand-orange { color: #D4782F; }
 .bg-brand-blue { background-color: #1B5E96; }
 .bg-brand-orange { background-color: #D4782F; }
+
+/* ── Responsive Bento Grid ────────────────────────── */
+.home-bento-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 1023px) {
+  .home-bento-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-auto-rows: 180px !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .home-bento-grid {
+    grid-template-columns: 1fr 1fr !important;
+    grid-auto-rows: 160px !important;
+    gap: 8px !important;
+  }
+  /* On mobile, don't let any card span more than 2 columns */
+  .home-bento-grid > * {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+  /* Keep the first card large (2 cols) for visual hierarchy */
+  .home-bento-grid > *:first-child {
+    grid-column: span 2 !important;
+    grid-row: span 1 !important;
+    min-height: 200px;
+  }
+}
+
+/* ── PackageDetail: Mobile sidebar reorder ─────────── */
+@media (max-width: 1023px) {
+  .package-detail-grid {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .package-detail-sidebar {
+    order: -1 !important;
+    position: static !important;
+  }
+  .package-detail-content {
+    order: 0 !important;
+  }
+}

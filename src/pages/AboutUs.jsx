@@ -23,7 +23,7 @@ const AboutUs = () => {
           </h1>
           <p className="text-xl text-on-surface-variant leading-relaxed max-w-xl">
             We believe travel is more than a destination; it's the prose of a
-            life well-lived. Infinity Miles was born from the desire to craft
+            life well-lived. Infinity Miles Holiday was born from the desire to craft
             journeys that resonate as deeply as a masterpiece.
           </p>
         </div>

@@ -77,7 +77,7 @@ export default function AdminLayout() {
           {sidebarOpen && (
             <div style={{ overflow: 'hidden' }}>
               <div style={{ color: '#f1f5f9', fontWeight: 700, fontSize: '14px', whiteSpace: 'nowrap' }}>
-                Infinity Travel
+                Infinity Miles Holiday
               </div>
               <div style={{ color: '#475569', fontSize: '11px', whiteSpace: 'nowrap' }}>Admin Panel</div>
             </div>

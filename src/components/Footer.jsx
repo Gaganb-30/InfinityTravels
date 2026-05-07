@@ -134,7 +134,7 @@ const Footer = () => {
       </div>
       <div className="col-span-1 md:col-span-4 pt-12 border-t border-slate-200 mt-4 text-center">
         <p className="font-inter text-sm text-slate-500">
-          © {new Date().getFullYear()} Infinity Travels. Explore the World.
+          © {new Date().getFullYear()} Infinity Miles Holiday. Explore the World.
         </p>
       </div>
     </footer>

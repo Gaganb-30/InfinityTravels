@@ -74,7 +74,7 @@ export default function AdminLogin() {
             <span style={{ fontSize: '24px' }}>✈️</span>
           </div>
           <h1 style={{ color: '#f1f5f9', fontSize: '22px', fontWeight: 700, margin: 0 }}>
-            Infinity Travel Admin
+            Infinity Miles Holiday Admin
           </h1>
           <p style={{ color: '#64748b', fontSize: '14px', margin: '6px 0 0' }}>
             Sign in to manage your platform

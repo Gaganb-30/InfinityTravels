@@ -91,7 +91,7 @@ const DestinationDetail = () => {
   const [destination, setDestination] = useState(null);
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [whatsappNumber, setWhatsappNumber] = useState("919310798965");
+  const [whatsappNumber, setWhatsappNumber] = useState(import.meta.env.VITE_WHATSAPP_NUMBER || "919310798965");
 
   useEffect(() => {
     const fetchData = async () => {

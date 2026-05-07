@@ -72,7 +72,7 @@ const HomePage = () => {
         </div>
         <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
           <h1 className="text-white font-headline text-5xl md:text-7xl font-extrabold tracking-tight mb-8 drop-shadow-xl">
-            Explore the World with Infinity Miles
+            Explore the World with Infinity Miles Holiday
           </h1>
           {/* Floating Search Bar */}
           <div ref={searchRef} className="relative">
@@ -145,39 +145,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-24 px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-xl group">
-            <div className="w-16 h-16 rounded-2xl bg-primary-container/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <span className="material-symbols-outlined text-primary text-3xl">hotel</span>
-            </div>
-            <h3 className="font-headline text-xl font-bold mb-3">Luxury Stays</h3>
-            <p className="text-on-surface-variant leading-relaxed">
-              Handpicked boutique hotels and 5-star resorts tailored to your comfort.
-            </p>
-          </div>
-          <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-xl group">
-            <div className="w-16 h-16 rounded-2xl bg-secondary-container/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <span className="material-symbols-outlined text-secondary text-3xl">map</span>
-            </div>
-            <h3 className="font-headline text-xl font-bold mb-3">Curated Itineraries</h3>
-            <p className="text-on-surface-variant leading-relaxed">
-              Unique experiences designed by locals and travel experts for authentic discovery.
-            </p>
-          </div>
-          <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-xl group" onClick={() => navigate('/contact')}>
-            <div className="w-16 h-16 rounded-2xl bg-tertiary-container/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <span className="material-symbols-outlined text-tertiary text-3xl">support_agent</span>
-            </div>
-            <h3 className="font-headline text-xl font-bold mb-3">24/7 Support</h3>
-            <p className="text-on-surface-variant leading-relaxed">
-              Peace of mind with a dedicated concierge available at any time, anywhere.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Featured Destinations — Bento Puzzle Grid */}
       <section className="py-20 bg-white">
         <div className="px-8 max-w-7xl mx-auto mb-10 flex justify-between items-end">
@@ -201,7 +168,7 @@ const HomePage = () => {
               ))}
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridAutoRows: '192px', gap: '12px' }}>
+            <div className="home-bento-grid" style={{ display: 'grid', gridAutoRows: '192px', gap: '12px' }}>
               {destinations.slice(0, 9).map((dest, idx) => {
                 // Bento pattern: first card is large (2x2), rest are 1x1, with a couple being wider (2x1)
                 const spanClass = idx === 0
@@ -244,7 +211,7 @@ const HomePage = () => {
             Popular Packages
           </h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridAutoRows: '180px', gap: '12px' }}>
+        <div className="home-bento-grid" style={{ display: 'grid', gridAutoRows: '180px', gap: '12px' }}>
           {loading ? (
             [...Array(6)].map((_, i) => (
               <div key={i} className={`rounded-2xl bg-slate-100 animate-pulse ${i === 0 ? '' : ''}`} style={i === 0 ? { gridColumn: 'span 2', gridRow: 'span 2' } : {}} />
@@ -295,6 +262,39 @@ const HomePage = () => {
               );
             })
           )}
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="py-10 px-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex flex-col items-center text-center p-5 rounded-xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-lg group">
+            <div className="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-primary text-2xl">hotel</span>
+            </div>
+            <h3 className="font-headline text-lg font-bold mb-1">Luxury Stays</h3>
+            <p className="text-on-surface-variant text-sm leading-relaxed">
+              Handpicked boutique hotels and 5-star resorts tailored to your comfort.
+            </p>
+          </div>
+          <div className="flex flex-col items-center text-center p-5 rounded-xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-lg group">
+            <div className="w-12 h-12 rounded-xl bg-secondary-container/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-secondary text-2xl">map</span>
+            </div>
+            <h3 className="font-headline text-lg font-bold mb-1">Curated Itineraries</h3>
+            <p className="text-on-surface-variant text-sm leading-relaxed">
+              Unique experiences designed by locals and travel experts for authentic discovery.
+            </p>
+          </div>
+          <div className="flex flex-col items-center text-center p-5 rounded-xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-lg group" onClick={() => navigate('/contact')}>
+            <div className="w-12 h-12 rounded-xl bg-tertiary-container/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-tertiary text-2xl">support_agent</span>
+            </div>
+            <h3 className="font-headline text-lg font-bold mb-1">24/7 Support</h3>
+            <p className="text-on-surface-variant text-sm leading-relaxed">
+              Peace of mind with a dedicated concierge available at any time, anywhere.
+            </p>
+          </div>
         </div>
       </section>
 

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 const FloatingButtons = () => {
   const [hovered, setHovered] = useState(null);
+  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919310798965';
 
   return (
     <div style={containerStyle}>
@@ -43,7 +44,7 @@ const FloatingButtons = () => {
           <span style={tooltipStyle}>WhatsApp</span>
         )}
         <a
-          href="https://wa.me/919310798965?text=Hi%20Infinity%20Miles!%20I%27m%20interested%20in%20your%20travel%20packages."
+          href={`https://wa.me/${whatsappNumber}?text=Hi%20Infinity%20Miles!%20I%27m%20interested%20in%20your%20travel%20packages.`}
           target="_blank"
           rel="noopener noreferrer"
           style={{

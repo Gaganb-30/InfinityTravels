@@ -19,7 +19,7 @@ const ImageCarousel = ({ images, altText }) => {
 
   useEffect(() => {
     if (!isAutoPlaying || images.length <= 1) return;
-    const timer = setInterval(nextSlide, 5000);
+    const timer = setInterval(nextSlide, 4000);
     return () => clearInterval(timer);
   }, [isAutoPlaying, images.length, nextSlide]);
 
@@ -343,7 +343,7 @@ const PackageDetail = () => {
   const [loading, setLoading] = useState(true);
   const [guests, setGuests] = useState(2);
   const [hotelStandard, setHotelStandard] = useState("");
-  const [whatsappNumber, setWhatsappNumber] = useState("919310798965");
+  const [whatsappNumber, setWhatsappNumber] = useState(import.meta.env.VITE_WHATSAPP_NUMBER || "919310798965");
   const [openDays, setOpenDays] = useState(new Set([1])); // Day 1 open by default
 
   useEffect(() => {
@@ -510,15 +510,16 @@ const PackageDetail = () => {
         <ImageCarousel images={allImages} altText={pkg.name} />
       </section>
 
+      {/* Overview — always first, outside the grid so mobile reorder works */}
+      <section className="space-y-6 mb-16" id="overview">
+        <h2 className="font-headline text-3xl font-bold">Overview</h2>
+        <p className="text-lg text-on-surface-variant leading-relaxed">{pkg.description}</p>
+      </section>
+
       {/* Content + Sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-start package-detail-grid">
         {/* Left: Details */}
-        <div className="lg:col-span-2 space-y-16">
-          {/* Overview */}
-          <section className="space-y-6" id="overview">
-            <h2 className="font-headline text-3xl font-bold">Overview</h2>
-            <p className="text-lg text-on-surface-variant leading-relaxed">{pkg.description}</p>
-          </section>
+        <div className="lg:col-span-2 space-y-16 package-detail-content">
 
           {/* Highlights */}
           {/* {pkg.highlights?.length > 0 && (
@@ -636,7 +637,7 @@ const PackageDetail = () => {
         </div>
 
         {/* Right: Sticky Booking Sidebar */}
-        <aside className="sticky top-32">
+        <aside className="sticky top-32 package-detail-sidebar">
           <div className="bg-surface-container-lowest editorial-shadow rounded-xl p-8 space-y-8 border border-outline-variant/10">
             {/* Price Display — changes based on hotel tier */}
             {is5StarSelected ? (
