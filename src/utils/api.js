@@ -1,4 +1,4 @@
-const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'https://infinity-travels-be.onrender.com';
 const API_BASE = `${BACKEND_URL.replace(/\/+$/, '')}/api`;
 
 export const api = {

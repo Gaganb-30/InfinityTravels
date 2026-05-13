@@ -343,7 +343,7 @@ const PackageDetail = () => {
   const [loading, setLoading] = useState(true);
   const [guests, setGuests] = useState(2);
   const [hotelStandard, setHotelStandard] = useState("");
-  const [whatsappNumber, setWhatsappNumber] = useState(import.meta.env.VITE_WHATSAPP_NUMBER || "919310798965");
+  const [whatsappNumber, setWhatsappNumber] = useState(import.meta.env.VITE_WHATSAPP_NUMBER || "917291099670");
   const [openDays, setOpenDays] = useState(new Set([1])); // Day 1 open by default
 
   useEffect(() => {

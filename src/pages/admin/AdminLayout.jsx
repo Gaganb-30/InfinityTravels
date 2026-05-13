@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API = import.meta.env.VITE_API_URL || 'http://https://infinity-travels-be.onrender.com:5000';
 
 const NAV_ITEMS = [
   { to: '/admin/dashboard', icon: '📊', label: 'Dashboard' },

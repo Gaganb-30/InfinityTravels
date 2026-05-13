@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const FloatingButtons = () => {
   const [hovered, setHovered] = useState(null);
-  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919310798965';
+  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '917291099670';
 
   return (
     <div style={containerStyle}>

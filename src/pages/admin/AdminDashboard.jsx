@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API = import.meta.env.VITE_API_URL || 'http://https://infinity-travels-be.onrender.com:5000';
 
 const authHeader = () => ({
   'Content-Type': 'application/json',
