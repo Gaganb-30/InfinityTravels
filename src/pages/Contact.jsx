@@ -131,7 +131,7 @@ const Contact = () => {
               <div>
                 <h4 className="font-headline text-xl mb-1">WhatsApp</h4>
                 <a href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || '919310798965'}`} target="_blank" rel="noopener noreferrer" className="text-green-600 text-lg font-light hover:underline">
-                  +91 93107 98965
+                  +91 72910 99670
                 </a>
                 <p className="text-on-surface-variant text-sm mt-1">Quick response on WhatsApp</p>
               </div>

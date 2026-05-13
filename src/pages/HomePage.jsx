@@ -61,7 +61,7 @@ const HomePage = () => {
   return (
     <main className="pt-0">
       {/* Hero Section */}
-      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[60vh] md:h-screen w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
             alt="Breathtaking mountain landscape with mist"
