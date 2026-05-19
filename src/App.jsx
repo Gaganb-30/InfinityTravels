@@ -1,14 +1,18 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
 import Destinations from "./pages/Destinations";
 import Packages from "./pages/Packages";
-import AboutUs from "./pages/AboutUs";
+// import AboutUs from "./pages/AboutUs";
 import DestinationDetail from "./pages/DestinationDetail";
 import PackageDetail from "./pages/PackageDetail";
 import Contact from "./pages/Contact";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import CookiePolicy from "./pages/CookiePolicy";
 import FloatingButtons from "./components/FloatingButtons";
 
 // Admin pages
@@ -23,6 +27,7 @@ import AdminInquiries from "./pages/admin/AdminInquiries";
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* ── Public site ── */}
         <Route
@@ -35,8 +40,11 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/destinations" element={<Destinations />} />
                 <Route path="/packages" element={<Packages />} />
-                <Route path="/about-us" element={<AboutUs />} />
+                {/* <Route path="/about-us" element={<AboutUs />} /> */}
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/cookie-policy" element={<CookiePolicy />} />
                 <Route path="/destinations/:slug" element={<DestinationDetail />} />
                 <Route path="/packages/:slug" element={<PackageDetail />} />
               </Routes>

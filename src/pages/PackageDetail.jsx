@@ -381,7 +381,7 @@ const PackageDetail = () => {
 
   if (loading) {
     return (
-      <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12">
+      <main className="pt-32 pb-20 max-w-7xl mx-auto px-6 md:px-12">
         <div className="h-8 w-40 bg-surface-container-low animate-pulse rounded mb-4" />
         <div className="h-14 w-80 bg-surface-container-low animate-pulse rounded mb-8" />
         <div className="h-[500px] bg-surface-container-low animate-pulse rounded-xl" />
@@ -391,7 +391,7 @@ const PackageDetail = () => {
 
   if (!pkg) {
     return (
-      <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12 text-center py-32">
+      <main className="pt-32 pb-20 max-w-7xl mx-auto px-6 md:px-12 text-center py-32">
         <span className="material-symbols-outlined text-6xl text-slate-300 mb-4 block">inventory_2</span>
         <h2 className="font-headline text-3xl text-slate-400">Package not found</h2>
         <Link to="/packages" className="text-primary font-semibold mt-4 inline-block hover:underline">&larr; Back to Packages</Link>
@@ -456,7 +456,7 @@ const PackageDetail = () => {
   const allImages = [pkg.image, ...(pkg.galleryImages || [])].filter(Boolean);
 
   return (
-    <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12 bg-white">
+    <main className="pt-32 pb-20 max-w-7xl mx-auto px-6 md:px-12 bg-white">
       {/* Header */}
       <header className="mb-12">
         <nav className="flex items-center gap-2 mb-4 text-on-surface-variant text-sm font-label uppercase tracking-widest">

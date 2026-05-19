@@ -108,7 +108,7 @@ const Destinations = () => {
 
       {/* Filters Section */}
       <section className="mb-16">
-        <div className="bg-surface-container-low p-6 rounded-3xl flex flex-wrap items-center gap-8 shadow-sm">
+        <div className="bg-surface-container-low p-4 md:p-6 rounded-3xl flex flex-wrap items-center gap-3 md:gap-8 shadow-sm">
           <div className="flex flex-col gap-2">
             <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-bold ml-1">
               Country

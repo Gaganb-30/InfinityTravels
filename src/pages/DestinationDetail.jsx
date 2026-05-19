@@ -91,7 +91,7 @@ const DestinationDetail = () => {
   const [destination, setDestination] = useState(null);
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [whatsappNumber, setWhatsappNumber] = useState(import.meta.env.VITE_WHATSAPP_NUMBER || "919310798965");
+  const [whatsappNumber, setWhatsappNumber] = useState(import.meta.env.VITE_WHATSAPP_NUMBER || "917291099670");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,7 +112,7 @@ const DestinationDetail = () => {
 
   if (loading) {
     return (
-      <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12">
+      <main className="pt-32 pb-20 max-w-7xl mx-auto px-6 md:px-12">
         <div className="h-12 w-60 bg-surface-container-low animate-pulse rounded mb-4" />
         <div className="h-16 w-96 bg-surface-container-low animate-pulse rounded mb-8" />
         <div className="h-[500px] bg-surface-container-low animate-pulse rounded-xl" />
@@ -122,7 +122,7 @@ const DestinationDetail = () => {
 
   if (!destination) {
     return (
-      <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12 text-center py-32">
+      <main className="pt-32 pb-20 max-w-7xl mx-auto px-6 md:px-12 text-center py-32">
         <span className="material-symbols-outlined text-6xl text-slate-300 mb-4 block">travel_explore</span>
         <h2 className="font-headline text-3xl text-slate-400">Destination not found</h2>
         <Link to="/destinations" className="text-primary font-semibold mt-4 inline-block hover:underline">
@@ -137,7 +137,7 @@ const DestinationDetail = () => {
   const hasMultipleImages = allImages.length > 1;
 
   return (
-    <main className="pt-24 pb-20 max-w-7xl mx-auto px-6 md:px-12">
+    <main className="pt-32 pb-20 max-w-7xl mx-auto px-6 md:px-12">
       {/* Header Section */}
       <header className="mb-12">
         <nav className="flex items-center gap-2 mb-4 text-on-surface-variant text-sm font-label uppercase tracking-widest">

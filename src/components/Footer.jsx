@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="flex flex-col items-start gap-0 mb-6 -mt-8" >
           <Link to="/">
             <img
-              src="/logo2.png"
+              src="https://i.postimg.cc/m2Px73S8/logo2.png"
               alt="Infinity Miles Logo"
               className="h-34 w-auto object-contain cursor-pointer"
             />
@@ -66,12 +66,12 @@ const Footer = () => {
         </h4>
         <ul className="space-y-4 font-inter text-sm text-slate-500">
           <li>
-            <Link
+            {/* <Link
               to="/about-us"
               className="hover:text-[#D4782F] transition-colors"
             >
               About Us
-            </Link>
+            </Link> */}
           </li>
           <li>
             <a href="#" className="hover:text-[#D4782F] transition-colors">
@@ -96,39 +96,54 @@ const Footer = () => {
         </h4>
         <ul className="space-y-4 font-inter text-sm text-slate-500">
           <li>
-            <a href="#" className="hover:text-[#D4782F] transition-colors">
+            <Link
+              to="/privacy-policy"
+              className="hover:text-[#D4782F] transition-colors"
+            >
               Privacy Policy
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="hover:text-[#D4782F] transition-colors">
+            <Link
+              to="/terms-of-service"
+              className="hover:text-[#D4782F] transition-colors"
+            >
               Terms of Service
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="hover:text-[#D4782F] transition-colors">
+            <Link
+              to="/cookie-policy"
+              className="hover:text-[#D4782F] transition-colors"
+            >
               Cookie Policy
-            </a>
+            </Link>
           </li>
           <li className="pt-4 flex gap-4">
-            <span className="material-symbols-outlined cursor-pointer transition-colors" style={{ color: '#1B5E96' }}
-              onMouseEnter={(e) => e.target.style.color = '#D4782F'}
-              onMouseLeave={(e) => e.target.style.color = '#1B5E96'}
-            >
-              public
-            </span>
-            <span className="material-symbols-outlined cursor-pointer transition-colors" style={{ color: '#1B5E96' }}
-              onMouseEnter={(e) => e.target.style.color = '#D4782F'}
-              onMouseLeave={(e) => e.target.style.color = '#1B5E96'}
-            >
-              mail
-            </span>
-            <span className="material-symbols-outlined cursor-pointer transition-colors" style={{ color: '#1B5E96' }}
-              onMouseEnter={(e) => e.target.style.color = '#D4782F'}
-              onMouseLeave={(e) => e.target.style.color = '#1B5E96'}
-            >
-              call
-            </span>
+            <Link to="/" onClick={() => window.scrollTo(0, 0)}>
+              <span className="material-symbols-outlined cursor-pointer transition-colors" style={{ color: '#1B5E96' }}
+                onMouseEnter={(e) => e.target.style.color = '#D4782F'}
+                onMouseLeave={(e) => e.target.style.color = '#1B5E96'}
+              >
+                public
+              </span>
+            </Link>
+            <Link to="/contact">
+              <span className="material-symbols-outlined cursor-pointer transition-colors" style={{ color: '#1B5E96' }}
+                onMouseEnter={(e) => e.target.style.color = '#D4782F'}
+                onMouseLeave={(e) => e.target.style.color = '#1B5E96'}
+              >
+                mail
+              </span>
+            </Link>
+            <a href="tel:+917291099670">
+              <span className="material-symbols-outlined cursor-pointer transition-colors" style={{ color: '#1B5E96' }}
+                onMouseEnter={(e) => e.target.style.color = '#D4782F'}
+                onMouseLeave={(e) => e.target.style.color = '#1B5E96'}
+              >
+                call
+              </span>
+            </a>
           </li>
         </ul>
       </div>
