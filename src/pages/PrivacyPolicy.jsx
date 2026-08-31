@@ -1,19 +1,21 @@
 // src/pages/PrivacyPolicy.jsx
 import React from "react";
+import SEO from "../components/ui/SEO";
 
 const PrivacyPolicy = () => {
   return (
-    <main className="pt-32 pb-20">
-      <header className="max-w-4xl mx-auto px-8 py-16 text-center">
-        <p className="font-label uppercase tracking-[0.2em] text-sm mb-4" style={{ color: '#D4782F' }}>Legal</p>
-        <h1 className="font-headline text-4xl md:text-6xl font-bold tracking-tight leading-tight" style={{ color: '#1e293b' }}>
+    <main className="pb-20">
+      <SEO title="Privacy Policy" description="How Infinity Miles Holiday collects, uses and protects your personal information." path="/privacy-policy" />
+      <header className="max-w-4xl mx-auto px-8 pt-14 pb-10 text-center">
+        <p className="font-label uppercase tracking-[0.2em] text-sm mb-4" style={{ color: 'var(--orange-dark)' }}>Legal</p>
+        <h1 className="section-title is-centered" style={{ fontSize: "clamp(1.8rem, 1.3rem + 2vw, 2.6rem)" }}>
           Privacy Policy
         </h1>
         <p className="text-slate-500 mt-4 text-lg">Last updated: May 2026</p>
       </header>
 
       <section className="max-w-4xl mx-auto px-8">
-        <div className="bg-white rounded-xl shadow-sm p-8 md:p-12 space-y-8" style={{ lineHeight: '1.8', color: '#334155' }}>
+        <div className="bg-white rounded-2xl p-8 md:p-12 space-y-8" data-legal="1" style={{ lineHeight: '1.8', color: 'var(--ink-muted)' }}>
 
           <div>
             <p className="text-lg text-slate-600 italic mb-8">
@@ -22,7 +24,7 @@ const PrivacyPolicy = () => {
           </div>
 
           <div>
-            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: '#1B5E96' }}>1. Information We Collect</h2>
+            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: 'var(--navy)' }}>1. Information We Collect</h2>
             <p className="mb-3">At Infinity Miles Holiday (<strong>infinitymilesholiday.com</strong>), we collect the following types of information:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li><strong>Personal Information:</strong> Name, email address, phone number, and any other information you provide when filling out our contact form or booking inquiries.</li>
@@ -32,7 +34,7 @@ const PrivacyPolicy = () => {
           </div>
 
           <div>
-            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: '#1B5E96' }}>2. How We Use Your Information</h2>
+            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: 'var(--navy)' }}>2. How We Use Your Information</h2>
             <ul className="list-disc pl-6 space-y-2">
               <li>To process and respond to your travel inquiries and bookings</li>
               <li>To send you confirmation emails and booking-related communications</li>
@@ -43,7 +45,7 @@ const PrivacyPolicy = () => {
           </div>
 
           <div>
-            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: '#1B5E96' }}>3. Cancellation & Refund Policy</h2>
+            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: 'var(--navy)' }}>3. Cancellation & Refund Policy</h2>
 
             <h3 className="font-semibold text-lg mb-3">(a) Cancellation of the entire tour by the Company</h3>
             <p className="mb-4">Every tour requires a minimum number of passengers to operate. If minimum numbers are not achieved, the tour may be cancelled by the Company on short notice. In such cases, we will offer you alternative tour dates / tours or you would have the option of travelling as individual travellers, not as part of the original tours. If the alternative date / tour is not acceptable or you do not wish to travel as individual travellers, we would refund the money paid by you without interest after deducting any costs incurred by us on your behalf, within a period of thirty days from the date of cancellation.</p>
@@ -58,7 +60,7 @@ const PrivacyPolicy = () => {
             <p className="mb-3">The following cancellation charges shall apply irrespective of the reason for cancellation:</p>
 
             <div className="bg-slate-50 rounded-lg p-6 mb-4">
-              <h4 className="font-semibold mb-3" style={{ color: '#1B5E96' }}>For trips excluding cruises:</h4>
+              <h4 className="font-semibold mb-3" style={{ color: 'var(--navy)' }}>For trips excluding cruises:</h4>
               <ul className="space-y-2 text-sm">
                 <li className="flex justify-between border-b border-slate-200 pb-2">
                   <span>Up to 75 days prior to departure</span>
@@ -80,7 +82,7 @@ const PrivacyPolicy = () => {
             </div>
 
             <div className="bg-slate-50 rounded-lg p-6 mb-4">
-              <h4 className="font-semibold mb-3" style={{ color: '#1B5E96' }}>For trips including cruises:</h4>
+              <h4 className="font-semibold mb-3" style={{ color: 'var(--navy)' }}>For trips including cruises:</h4>
               <ul className="space-y-2 text-sm">
                 <li className="flex justify-between border-b border-slate-200 pb-2">
                   <span>Up to 150 days prior to departure</span>
@@ -116,17 +118,17 @@ const PrivacyPolicy = () => {
           </div>
 
           <div>
-            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: '#1B5E96' }}>4. Data Security</h2>
+            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: 'var(--navy)' }}>4. Data Security</h2>
             <p>We implement appropriate technical and organisational measures to protect your personal information against unauthorised access, alteration, disclosure, or destruction. However, no method of transmission over the Internet is 100% secure.</p>
           </div>
 
           <div>
-            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: '#1B5E96' }}>5. Third-Party Sharing</h2>
+            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: 'var(--navy)' }}>5. Third-Party Sharing</h2>
             <p>We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except as required to provide our services (e.g., hotel bookings, airline reservations) or comply with law.</p>
           </div>
 
           <div>
-            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: '#1B5E96' }}>6. Your Rights</h2>
+            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: 'var(--navy)' }}>6. Your Rights</h2>
             <ul className="list-disc pl-6 space-y-2">
               <li>Access and receive a copy of your personal data</li>
               <li>Request correction of inaccurate data</li>
@@ -136,13 +138,13 @@ const PrivacyPolicy = () => {
           </div>
 
           <div>
-            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: '#1B5E96' }}>7. Contact Us</h2>
+            <h2 className="font-headline text-2xl font-bold mb-4" style={{ color: 'var(--navy)' }}>7. Contact Us</h2>
             <p>If you have any questions about this Privacy Policy, please contact us at:</p>
             <div className="bg-slate-50 rounded-lg p-6 mt-3">
-              <p className="font-semibold" style={{ color: '#1B5E96' }}>Infinity Miles Holiday</p>
-              <p>Email: <a href="mailto:info.infinitymiles@gmail.com" style={{ color: '#D4782F' }}>info.infinitymiles@gmail.com</a></p>
-              <p>Phone: <a href="tel:+917291099670" style={{ color: '#D4782F' }}>+91 72910 99670</a></p>
-              <p>Website: <a href="https://infinitymilesholiday.com" style={{ color: '#D4782F' }}>infinitymilesholiday.com</a></p>
+              <p className="font-semibold" style={{ color: 'var(--navy)' }}>Infinity Miles Holiday</p>
+              <p>Email: <a href="mailto:info.infinitymiles@gmail.com" style={{ color: 'var(--orange-dark)' }}>info.infinitymiles@gmail.com</a></p>
+              <p>Phone: <a href="tel:+917291099670" style={{ color: 'var(--orange-dark)' }}>+91 72910 99670</a></p>
+              <p>Website: <a href="https://infinitymilesholiday.com" style={{ color: 'var(--orange-dark)' }}>infinitymilesholiday.com</a></p>
             </div>
           </div>
 

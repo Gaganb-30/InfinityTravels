@@ -1,771 +1,705 @@
-// src/pages/PackageDetail.js
-import React, { useState, useEffect, useCallback } from "react";
+// src/pages/PackageDetail.jsx — Luxytrix-style full layout
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { api } from "../utils/api";
-import { generateWhatsAppLink, formatPriceRange } from "../utils/whatsapp";
+import { generateWhatsAppLink } from "../utils/whatsapp";
+import Icon, { WhatsAppIcon } from "../components/ui/Icon";
+import SEO from "../components/ui/SEO";
+import { BRAND } from "../utils/siteConfig";
 
-/* ──────────── Image Carousel Component ──────────── */
-const ImageCarousel = ({ images, altText }) => {
-  const [current, setCurrent] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
-  const nextSlide = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % images.length);
-  }, [images.length]);
-
-  const prevSlide = () => {
-    setCurrent((prev) => (prev - 1 + images.length) % images.length);
-  };
-
-  useEffect(() => {
-    if (!isAutoPlaying || images.length <= 1) return;
-    const timer = setInterval(nextSlide, 4000);
-    return () => clearInterval(timer);
-  }, [isAutoPlaying, images.length, nextSlide]);
-
-  if (!images || images.length === 0) return null;
-  if (images.length === 1) {
-    return (
-      <div className="h-[500px] overflow-hidden rounded-xl bg-surface-container">
-        <img className="w-full h-full object-cover" alt={altText} src={images[0]} />
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="relative h-[500px] overflow-hidden rounded-xl bg-surface-container group"
-      onMouseEnter={() => setIsAutoPlaying(false)}
-      onMouseLeave={() => setIsAutoPlaying(true)}
-    >
-      <div
-        className="flex h-full transition-transform duration-700 ease-in-out"
-        style={{ transform: `translateX(-${current * 100}%)` }}
-      >
-        {images.map((img, i) => (
-          <img
-            key={i}
-            className="w-full h-full object-cover flex-shrink-0"
-            alt={`${altText} ${i + 1}`}
-            src={img}
-          />
-        ))}
-      </div>
-
-      {/* Nav Arrows */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-white cursor-pointer"
-      >
-        <span className="material-symbols-outlined text-slate-800">chevron_left</span>
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-white cursor-pointer"
-      >
-        <span className="material-symbols-outlined text-slate-800">chevron_right</span>
-      </button>
-
-      {/* Dots */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-        {images.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrent(i)}
-            className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${i === current ? "bg-white w-8" : "bg-white/50 hover:bg-white/80"
-              }`}
-          />
-        ))}
-      </div>
-
-      {/* Counter */}
-      <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
-        {current + 1} / {images.length}
-      </div>
-    </div>
-  );
-};
-
-/* ──────────── Accordion Item Component ──────────── */
-const AccordionItem = ({ day, isOpen, onToggle, isLast }) => {
-  return (
-    <div className={`border border-outline-variant/20 rounded-xl overflow-hidden transition-all mb-3 ${isOpen ? 'shadow-md shadow-primary/5' : ''}`}>
-      <button
-        onClick={onToggle}
-        className={`w-full flex items-center justify-between p-5 text-left transition-colors cursor-pointer ${isOpen ? 'bg-primary/5' : 'bg-surface-container-lowest hover:bg-surface-container-low'
-          }`}
-      >
-        <div className="flex items-center gap-4">
-          <span className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${isOpen ? 'bg-primary text-white' : 'bg-surface-container-highest text-on-surface-variant'
-            }`}>
-            {String(day.day).padStart(2, '0')}
-          </span>
-          <div>
-            <span className="font-label text-xs text-secondary font-bold tracking-widest uppercase">
-              Day {day.day}
-            </span>
-            <h3 className="font-headline text-lg font-bold text-on-surface">{day.title}</h3>
-          </div>
-        </div>
-        <span className={`material-symbols-outlined text-on-surface-variant transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
-          expand_more
-        </span>
-      </button>
-
-      <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-          }`}
-      >
-        <div className="px-5 pb-5 pt-2 ml-14">
-          <p className="text-on-surface-variant leading-relaxed">{day.description}</p>
-          {day.tags?.length > 0 && (
-            <div className="flex gap-2 mt-4 flex-wrap">
-              {day.tags.map((tag, j) => (
-                <span key={j} className="px-3 py-1 rounded-full bg-surface-bright border border-outline-variant/30 text-xs font-medium text-on-surface-variant">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/* ──────────── Policy Section Accordion ──────────── */
-const PolicySection = ({ icon, title, items, colorScheme, id }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const schemes = {
-    blue: {
-      bg: 'bg-blue-50',
-      headerBg: 'hover:bg-blue-100/60',
-      activeBg: 'bg-blue-100/40',
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
-      titleColor: 'text-blue-900',
-      bulletColor: 'text-blue-500',
-      textColor: 'text-blue-800',
-      borderColor: 'border-blue-200/60',
-    },
-    amber: {
-      bg: 'bg-amber-50',
-      headerBg: 'hover:bg-amber-100/60',
-      activeBg: 'bg-amber-100/40',
-      iconBg: 'bg-amber-100',
-      iconColor: 'text-amber-600',
-      titleColor: 'text-amber-900',
-      bulletColor: 'text-amber-500',
-      textColor: 'text-amber-800',
-      borderColor: 'border-amber-200/60',
-    },
-    rose: {
-      bg: 'bg-rose-50',
-      headerBg: 'hover:bg-rose-100/60',
-      activeBg: 'bg-rose-100/40',
-      iconBg: 'bg-rose-100',
-      iconColor: 'text-rose-600',
-      titleColor: 'text-rose-900',
-      bulletColor: 'text-rose-500',
-      textColor: 'text-rose-800',
-      borderColor: 'border-rose-200/60',
-    },
-  };
-
-  const s = schemes[colorScheme] || schemes.blue;
-
-  return (
-    <div className={`${s.bg} rounded-xl border ${s.borderColor} overflow-hidden transition-all ${isOpen ? 'shadow-md' : ''}`} id={id}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between p-6 text-left transition-colors cursor-pointer ${isOpen ? s.activeBg : s.headerBg}`}
-      >
-        <div className="flex items-center gap-4">
-          <span className={`w-11 h-11 rounded-xl ${s.iconBg} flex items-center justify-center`}>
-            <span className={`material-symbols-outlined ${s.iconColor}`}>{icon}</span>
-          </span>
-          <h3 className={`font-headline text-xl font-bold ${s.titleColor}`}>{title}</h3>
-        </div>
-        <span className={`material-symbols-outlined ${s.iconColor} transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
-          expand_more
-        </span>
-      </button>
-      <div className={`transition-all duration-400 ease-in-out overflow-hidden ${isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
-        <div className="px-6 pb-6 pt-2">
-          <ul className="space-y-3">
-            {items.map((item, i) => (
-              <li key={i} className={`flex items-start gap-3 ${s.textColor}`}>
-                <span className={`material-symbols-outlined text-sm mt-0.5 flex-shrink-0 ${s.bulletColor}`}>
-                  arrow_circle_right
-                </span>
-                <span className="leading-relaxed text-[15px]">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/* ──────────── FAQ Accordion ──────────── */
-const FAQItem = ({ question, answer, isOpen, onToggle }) => (
-  <div className={`border border-outline-variant/15 rounded-xl overflow-hidden transition-all ${isOpen ? 'shadow-md shadow-primary/5 border-primary/20' : ''}`}>
-    <button
-      onClick={onToggle}
-      className={`w-full flex items-center justify-between p-5 text-left transition-colors cursor-pointer ${isOpen ? 'bg-primary/5' : 'bg-surface-container-lowest hover:bg-surface-container-low'
-        }`}
-    >
-      <div className="flex items-center gap-3 flex-1 pr-4">
-        <span className={`material-symbols-outlined text-lg flex-shrink-0 transition-colors ${isOpen ? 'text-primary' : 'text-on-surface-variant'}`}>
-          help
-        </span>
-        <span className={`font-semibold text-[15px] ${isOpen ? 'text-primary' : 'text-on-surface'}`}>
-          {question}
-        </span>
-      </div>
-      <span className={`material-symbols-outlined text-on-surface-variant transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}>
-        expand_more
-      </span>
-    </button>
-    <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-      <div className="px-5 pb-5 pt-1 ml-9">
-        <p className="text-on-surface-variant leading-relaxed text-[15px]">{answer}</p>
-      </div>
-    </div>
-  </div>
-);
-
-const FAQSection = () => {
-  const [openFAQ, setOpenFAQ] = useState(null);
-
-  const faqs = [
-    {
-      question: "How do I book a package?",
-      answer: "You can book any package by clicking the 'Book via WhatsApp' button on the package page. Our travel expert will connect with you to finalize the itinerary, travel dates, and payment details. A 30% advance is required to confirm your booking."
-    },
-    {
-      question: "Can I customize the itinerary?",
-      answer: "Absolutely! All our packages are fully customizable. You can modify the number of days, destinations, hotel categories, activities, and more. Just let our travel expert know your preferences during the booking process."
-    },
-    {
-      question: "What is included in the package price?",
-      answer: "The package price typically includes accommodation, sightseeing as per itinerary, transfers, and meals as mentioned. Please refer to the 'What's Included' and 'Not Included' sections on each package page for specific details."
-    },
-    {
-      question: "Is airfare/train fare included in the price?",
-      answer: "Airfare and train fares are generally not included in the package price unless explicitly mentioned. The air fare is calculated at the time of proposal creation and is subject to change at the time of booking. 100% flight fare is required to issue the tickets."
-    },
-    {
-      question: "What is the payment schedule?",
-      answer: "A 30% advance is required at the time of booking. For domestic packages, 100% payment must be completed 10 days before departure. For international packages, full payment is required 15 days before the departure date."
-    },
-    {
-      question: "Can I reschedule my trip?",
-      answer: "Yes, you can prepone or postpone your trip once without additional charges, provided you inform us at least 15 days prior to your travel date in writing (email/SMS). A second reschedule may attract additional charges. Changes within 15 days of travel are generally not accepted."
-    },
-    {
-      question: "What is the cancellation policy?",
-      answer: "Cancellation charges depend on when you cancel: 30+ days before departure \u2014 10% of total cost; 15\u201329 days \u2014 25%; 7\u201314 days \u2014 50%; less than 7 days \u2014 no refund. Non-refundable components like flight tickets and visa fees are excluded from refunds."
-    },
-    {
-      question: "Can I transfer my booking to someone else?",
-      answer: "Yes! Your advance payment and invoice number are transferable. You can pass your booking to a friend or relative, provided the original terms and conditions are met first."
-    },
-    {
-      question: "How are hotel categories selected?",
-      answer: "We offer multiple hotel tier options for most packages. You can choose between standard, premium, or luxury categories. The price adjusts accordingly based on the hotel tier you select. You can see and compare options using the hotel selector on the booking sidebar."
-    },
-    {
-      question: "What happens in case of natural disasters or strikes?",
-      answer: "In rare cases like adverse climatic conditions or strikes, we will inform you in advance, and the package can be postponed without any extra charges. Your safety is our top priority, and we work closely with local authorities to ensure the best alternatives."
-    }
-  ];
-
-  return (
-    <section className="space-y-6" id="faq">
-      <div className="flex items-center gap-3">
-        <span className="w-11 h-11 rounded-xl bg-violet-100 flex items-center justify-center">
-          <span className="material-symbols-outlined text-violet-600">quiz</span>
-        </span>
-        <h2 className="font-headline text-3xl font-bold">Frequently Asked Questions</h2>
-      </div>
-      <div className="space-y-3">
-        {faqs.map((faq, i) => (
-          <FAQItem
-            key={i}
-            question={faq.question}
-            answer={faq.answer}
-            isOpen={openFAQ === i}
-            onToggle={() => setOpenFAQ(openFAQ === i ? null : i)}
-          />
-        ))}
-      </div>
-    </section>
-  );
-};
-
-/* ──────────── Static Policy Data ──────────── */
-const BOOKING_TERMS = [
-  "30% advance to be paid at the time of booking.",
-  "100% flight fare required to issue the tickets.",
-  "Air fare is calculated at the time of proposal creation and is subject to change at the time of booking.",
-  "100% payment is to be made for domestic packages before 10 days of departure date.",
-  "100% payment is to be made for international packages before 15 days of departure date.",
-  "In case of cancellation, standard cancellation policies will be applicable or may be changed as per the policies.",
+/* ── default FAQs shown when package has none ── */
+const DEFAULT_FAQS = [
+  {
+    question: "Can I customise this package?",
+    answer: "Absolutely! Every package is fully customisable. You can upgrade hotel category, add or remove days, change dates, add special experiences, or combine with other destinations. Contact our team for a personalised quote.",
+  },
+  {
+    question: "What is the cancellation policy?",
+    answer: "Free cancellation up to 30 days before departure for a full refund. 15–30 days: 25% charge. 7–14 days: 50% charge. Less than 7 days: 75% charge. Date changes allowed subject to availability.",
+  },
+  {
+    question: "When is the best time to book?",
+    answer: "We recommend booking at least 4–6 weeks in advance to secure your preferred hotel and dates. For peak season travel (October–March), book 2–3 months ahead.",
+  },
+  {
+    question: "Is travel insurance included?",
+    answer: "Travel insurance is not included by default but is strongly recommended. We can help arrange comprehensive travel insurance covering medical emergencies, trip cancellation, and baggage loss.",
+  },
 ];
 
-const TERMS_CONDITIONS = [
-  "In case client wishes to prepone/postpone his or her travel dates, we request you to kindly reach us 15 days prior to journey date via e-mail/SMS.",
-  "The customers can prepone/postpone their tour once without any additional charges (if intimated before 15 days of travel date in written). However, postponing & preponing a second time will attract additional charges.",
-  "Few service providers (Hoteliers, Transporters, etc.) may apply postpone/prepone charges even after meeting the above requirement. In such cases, the charges will be deducted from the advance amount deposited.",
-  "In all prepone or postpone scenarios, the services and the costing will be subject to availability of Hotel/Volvo and season/off-season time.",
-  "We do not accept any changes in plan within 15 days of travel date. However, in rare cases like adverse climatic conditions or strikes, package can be postponed which will be intimated to you beforehand.",
-  "The validity to utilize your advance payment in prepone/postpone scenarios is 1 year from the date of advance payment.",
-  "The advance payment and the invoice number allotted to you are transferable \u2014 you can pass on your booking to any of your friends/relatives (subject to meeting the above terms and conditions first).",
+const WHY_BOOK = [
+  { icon: "shield",  text: "100% Verified Hotels" },
+  { icon: "tag",     text: "Best Price Guarantee" },
+  { icon: "headset", text: "24/7 Support" },
+  { icon: "refresh", text: "Flexible Cancellation" },
+  { icon: "magic",   text: "100% Customisable" },
 ];
 
-const CANCELLATION_POLICY = [
-  "Cancellation 30 days or more before the departure date \u2014 10% of the total package cost will be charged.",
-  "Cancellation between 15 to 29 days before departure \u2014 25% of the total package cost will be charged.",
-  "Cancellation between 7 to 14 days before departure \u2014 50% of the total package cost will be charged.",
-  "Cancellation less than 7 days before departure \u2014 No refund will be provided.",
-  "Non-refundable components such as airline tickets, visa fees, and travel insurance premiums are excluded from all refund calculations.",
-  "Refunds (if applicable) will be processed within 10\u201315 business days from the date of cancellation confirmation.",
-  "In case of no-show or early departure, no refund will be applicable for the unused portion of the package.",
-];
-
-/* ──────────── Main PackageDetail Component ──────────── */
-const PackageDetail = () => {
+export default function PackageDetail() {
   const { slug } = useParams();
-  const [pkg, setPkg] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [guests, setGuests] = useState(2);
-  const [hotelStandard, setHotelStandard] = useState("");
-  const [whatsappNumber, setWhatsappNumber] = useState(import.meta.env.VITE_WHATSAPP_NUMBER || "917291099670");
-  const [openDays, setOpenDays] = useState(new Set([1])); // Day 1 open by default
+  const [pkg,        setPkg]        = useState(null);
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState(false);
+  const [tier,       setTier]       = useState(null);
+  const [travellers, setTravellers] = useState(2);
+  const [lightbox,   setLightbox]   = useState(null);
+  const [openFaq,    setOpenFaq]    = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    let alive = true;
+    setLoading(true); setError(false);
+    (async () => {
       try {
-        const data = await api.getPackage(slug);
-        setPkg(data);
-        // Default to first tier that has prices (3-star or 4-star), not 5-star
-        if (data.hotelStandards?.length > 0) {
-          const firstPricedTier = data.hotelStandards.find(h => !h.tier.includes('5-Star') && h.priceMin && h.priceMax);
-          setHotelStandard(firstPricedTier ? firstPricedTier.tier : data.hotelStandards[0].tier);
-        }
-        if (data.itinerary?.length > 0) {
-          setOpenDays(new Set([data.itinerary[0].day]));
-        }
-        const config = await api.getWhatsAppNumber();
-        setWhatsappNumber(config.whatsappNumber);
-      } catch (err) {
-        console.error("Failed to fetch package:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+        const res = await api.getPackage(slug);
+        if (!alive) return;
+        if (!res || res.error) { setError(true); return; }
+        setPkg(res);
+        setTier(res.hotelStandards?.[0]?.tier || null);
+      } catch { if (alive) setError(true); }
+      finally { if (alive) setLoading(false); }
+    })();
+    return () => { alive = false; };
   }, [slug]);
 
-  const toggleDay = (dayNum) => {
-    setOpenDays((prev) => {
-      const next = new Set(prev);
-      if (next.has(dayNum)) next.delete(dayNum);
-      else next.add(dayNum);
-      return next;
-    });
-  };
+  if (loading) return (
+    <main className="section">
+      <div className="shell" style={{ display: "grid", gap: 24 }}>
+        <div className="skeleton" style={{ height: 400 }} />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 32 }}>
+          <div style={{ display: "grid", gap: 18 }}>
+            <div className="skeleton" style={{ height: 28, width: "60%" }} />
+            <div className="skeleton" style={{ height: 120 }} />
+            <div className="skeleton" style={{ height: 200 }} />
+          </div>
+          <div className="skeleton" style={{ height: 380 }} />
+        </div>
+      </div>
+    </main>
+  );
 
-  if (loading) {
-    return (
-      <main className="pt-32 pb-20 max-w-7xl mx-auto px-6 md:px-12">
-        <div className="h-8 w-40 bg-surface-container-low animate-pulse rounded mb-4" />
-        <div className="h-14 w-80 bg-surface-container-low animate-pulse rounded mb-8" />
-        <div className="h-[500px] bg-surface-container-low animate-pulse rounded-xl" />
-      </main>
-    );
-  }
+  if (error || !pkg) return (
+    <main className="section">
+      <div className="shell" style={{ textAlign: "center", paddingBlock: 80 }}>
+        <Icon name="compass" size={48} style={{ color: "var(--ink-faint)" }} />
+        <h1 style={{ fontSize: "1.5rem", margin: "16px 0 8px" }}>Package not found</h1>
+        <p style={{ color: "var(--ink-muted)", marginBottom: 24 }}>
+          It may have sold out or been replaced with a newer itinerary.
+        </p>
+        <Link to="/packages" className="btn btn-orange">See all packages</Link>
+      </div>
+    </main>
+  );
 
-  if (!pkg) {
-    return (
-      <main className="pt-32 pb-20 max-w-7xl mx-auto px-6 md:px-12 text-center py-32">
-        <span className="material-symbols-outlined text-6xl text-slate-300 mb-4 block">inventory_2</span>
-        <h2 className="font-headline text-3xl text-slate-400">Package not found</h2>
-        <Link to="/packages" className="text-primary font-semibold mt-4 inline-block hover:underline">&larr; Back to Packages</Link>
-      </main>
-    );
-  }
+  const cur     = pkg.priceRange?.currency || "₹";
+  const selected = (pkg.hotelStandards || []).find(h => h.tier === tier);
+  const unit    = selected?.priceMin ?? pkg.priceRange?.min ?? 0;
+  const was     = pkg.priceRange?.max;
+  const off     = was && was > unit ? Math.round(((was - unit) / was) * 100) : null;
+  const total   = unit * travellers;
+  const gallery = [pkg.image, ...(pkg.galleryImages || [])].filter(Boolean);
+  const stops   = (pkg.location || "").split(/[,→|]/).map(s => s.trim()).filter(Boolean).slice(0, 4);
+  const faqs    = pkg.faqs?.length ? pkg.faqs : DEFAULT_FAQS;
+  const reviews = pkg.reviews || [];
+  const rb      = pkg.ratingBreakdown || {};
+  const related = pkg.related || [];
 
-  const incrementGuests = () => setGuests((prev) => Math.min(prev + 1, 10));
-  const decrementGuests = () => setGuests((prev) => Math.max(prev - 1, 1));
-
-  // Detect if 5-star is selected
-  const is5StarSelected = hotelStandard.includes('5-Star');
-
-  // Get display price based on selected tier
-  const getDisplayPrice = () => {
-    // Check dedicated tier fields first
-    if (hotelStandard === '3-Star' && pkg.priceRange3Star?.min && pkg.priceRange3Star?.max) {
-      return {
-        min: pkg.priceRange3Star.min,
-        max: pkg.priceRange3Star.max,
-        currency: pkg.priceRange?.currency || "₹",
-      };
-    }
-    if (hotelStandard === '4-Star' && pkg.priceRange4Star?.min && pkg.priceRange4Star?.max) {
-      return {
-        min: pkg.priceRange4Star.min,
-        max: pkg.priceRange4Star.max,
-        currency: pkg.priceRange?.currency || "₹",
-      };
-    }
-    // Fallback to hotelStandards array
-    const standard = pkg.hotelStandards?.find((h) => h.tier === hotelStandard);
-    if (standard && standard.priceMin && standard.priceMax) {
-      return {
-        min: standard.priceMin,
-        max: standard.priceMax,
-        currency: pkg.priceRange?.currency || "₹",
-      };
-    }
-    // Fallback to base priceRange
-    return {
-      min: pkg.priceRange.min,
-      max: pkg.priceRange.max,
-      currency: pkg.priceRange.currency || "₹",
-    };
-  };
-
-  const displayPrice = is5StarSelected ? null : getDisplayPrice();
-
-  // Generate WhatsApp link with all client selections
-  const whatsappLink = generateWhatsAppLink({
-    whatsappNumber,
+  const waLink = generateWhatsAppLink({
+    whatsappNumber: BRAND.whatsapp,
     packageName: pkg.name,
-    destination: pkg.location,
-    travelers: guests,
-    hotelStandard,
-    priceRange: is5StarSelected ? null : displayPrice,
-    additionalNotes: is5StarSelected ? 'Interested in 5-Star Premium pricing — please share a quote.' : '',
+    destination: pkg.location || pkg.destination?.name,
+    travelers: travellers,
+    hotelStandard: tier || "Standard",
+    priceRange: pkg.priceRange,
   });
 
-  // Combine main image + gallery for carousel
-  const allImages = [pkg.image, ...(pkg.galleryImages || [])].filter(Boolean);
-
   return (
-    <main className="pt-32 pb-20 max-w-7xl mx-auto px-6 md:px-12 bg-white">
-      {/* Header */}
-      <header className="mb-12">
-        <nav className="flex items-center gap-2 mb-4 text-on-surface-variant text-sm font-label uppercase tracking-widest">
-          <Link to="/packages" className="hover:text-primary transition-colors">Packages</Link>
-          <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <span className="text-primary font-semibold">{pkg.name}</span>
-        </nav>
-        <h1 className="font-headline text-5xl md:text-6xl text-on-surface font-bold tracking-tight mb-4">
-          {pkg.name}
-        </h1>
-        <div className="flex items-center gap-6 text-on-surface-variant flex-wrap">
-          {pkg.rating > 0 && (
-            <div className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-              <span className="font-semibold text-on-surface">{pkg.rating}</span>
-              <span className="text-sm">({pkg.reviewCount} Reviews)</span>
-            </div>
-          )}
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined">calendar_today</span>
-            <span className="text-sm font-medium">{pkg.duration}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined">location_on</span>
-            <span className="text-sm font-medium">{pkg.location}</span>
-          </div>
-          {pkg.badge && (
-            <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
-              {pkg.badge}
-            </span>
-          )}
-        </div>
+    <main style={{ background: "var(--surface-muted)" }}>
+      <SEO
+        title={pkg.name}
+        description={(pkg.description || `${pkg.name} — ${pkg.duration || ""} itinerary covering ${pkg.location || ""}.`).slice(0, 158)}
+        image={pkg.image}
+        path={`/packages/${pkg.slug}`}
+      />
 
-        {/* Package Tags */}
-        {pkg.tags?.length > 0 && (
-          <div className="flex gap-2 mt-6 flex-wrap">
-            {pkg.tags.map((tag, i) => (
-              <span
-                key={i}
-                className="px-4 py-1.5 rounded-full bg-blue-50 text-[#1B5E96] text-xs font-semibold border border-blue-200/50"
-              >
-                {tag}
+      {/* ── HERO IMAGE with overlaid title + pills ──────────── */}
+      <section style={S.hero}>
+        {pkg.image && (
+          <img src={pkg.image} alt={pkg.name} style={S.heroImg} />
+        )}
+        <span style={S.heroVeil} />
+
+        <div className="shell" style={S.heroInner}>
+          {/* Breadcrumb */}
+          <nav style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 18 }}>
+            <Link to="/" style={S.crumb}>Home</Link>
+            <Icon name="chevronRight" size={12} style={{ color: "rgba(255,255,255,.45)" }} />
+            <Link to="/packages" style={S.crumb}>Packages</Link>
+            <Icon name="chevronRight" size={12} style={{ color: "rgba(255,255,255,.45)" }} />
+            <span style={{ ...S.crumb, color: "var(--orange-light)", fontWeight: 700 }}>{pkg.name}</span>
+          </nav>
+
+          {pkg.badge && (
+            <span className="badge badge-orange" style={{ marginBottom: 14 }}>{pkg.badge}</span>
+          )}
+
+          <h1 style={S.heroTitle}>{pkg.name}</h1>
+
+          {/* Pills row */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 16 }}>
+            {pkg.duration && (
+              <span className="badge badge-glass">
+                <Icon name="clock" size={13} /> {pkg.duration}
+              </span>
+            )}
+            {stops.map(s => (
+              <span key={s} className="badge badge-glass">
+                <Icon name="pin" size={13} /> {s}
               </span>
             ))}
+            {pkg.rating > 0 && (
+              <span className="badge badge-glass">
+                <Icon name="star" size={13} style={{ color: "var(--orange-light)" }} /> {pkg.rating}/5 ({pkg.reviewCount || 0} reviews)
+              </span>
+            )}
           </div>
-        )}
-      </header>
-
-      {/* Hero Image / Carousel */}
-      <section className="mb-16">
-        <ImageCarousel images={allImages} altText={pkg.name} />
+        </div>
       </section>
 
-      {/* Overview — always first, outside the grid so mobile reorder works */}
-      <section className="space-y-6 mb-16" id="overview">
-        <h2 className="font-headline text-3xl font-bold">Overview</h2>
-        <p className="text-lg text-on-surface-variant leading-relaxed">{pkg.description}</p>
-      </section>
+      {/* ── BODY: main col + sticky sidebar ─────────────────── */}
+      <div className="shell im-pd-layout" style={{ paddingBlock: 40 }}>
 
-      {/* Content + Sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-start package-detail-grid">
-        {/* Left: Details */}
-        <div className="lg:col-span-2 space-y-16 package-detail-content">
+        {/* ───── LEFT: main content ───── */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
 
-          {/* Highlights */}
-          {/* {pkg.highlights?.length > 0 && (
-            <section className="space-y-8" id="highlights">
-              <h2 className="font-headline text-3xl font-bold">Highlights</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {pkg.highlights.map((h, i) => (
-                  <div key={i} className={`bg-surface-container-low p-8 rounded-xl space-y-4 ${h.image ? 'md:col-span-2 flex flex-col md:flex-row gap-8 items-center' : ''}`}>
-                    {h.image && (
-                      <div className="md:w-1/3 overflow-hidden rounded-xl h-40">
-                        <img className="w-full h-full object-cover" alt={h.title} src={h.image} />
+          {/* Package Overview */}
+          <div style={S.card}>
+            <h2 style={S.cardTitle}>Package Overview</h2>
+            <p style={S.desc}>{pkg.description || "Full itinerary details available on request."}</p>
+
+            {/* Package Highlights */}
+            {(pkg.highlights?.length > 0 || pkg.inclusions?.length > 0) && (
+              <div style={{ marginTop: 22, background: "var(--surface-muted)", borderRadius: 14, padding: 20 }}>
+                <h3 style={S.subH}>Package Highlights</h3>
+                <ul style={S.checkList}>
+                  {(pkg.highlights?.length > 0
+                    ? pkg.highlights.map(h => h.title)
+                    : (pkg.inclusions || []).slice(0, 6)
+                  ).map((item, i) => (
+                    <li key={i} style={S.checkItem}>
+                      <span style={S.checkDot}><Icon name="check" size={13} strokeWidth={3} /></span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Day-by-Day Itinerary */}
+          {pkg.itinerary?.length > 0 && (
+            <div style={S.card}>
+              <h2 style={S.cardTitle}>Day-by-Day Itinerary</h2>
+              <div style={{ display: "flex", flexDirection: "column", gap: 0, marginTop: 20 }}>
+                {pkg.itinerary.map((d, i) => (
+                  <div key={i} style={S.dayRow}>
+                    {/* Number circle + connecting line */}
+                    <div style={S.dayNumCol}>
+                      <div style={S.dayCircle}>{d.day}</div>
+                      {i < pkg.itinerary.length - 1 && <div style={S.dayLine} />}
+                    </div>
+                    {/* Content */}
+                    <div style={S.dayContent}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                        <span style={S.dayBadge}>Day {d.day}</span>
+                        <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 800, color: "var(--navy)" }}>{d.title}</h3>
                       </div>
-                    )}
-                    <div className={h.image ? 'flex-1 space-y-2' : ''}>
-                      <span className="material-symbols-outlined text-secondary text-4xl">{h.icon}</span>
-                      <h3 className="font-headline text-xl font-bold">{h.title}</h3>
-                      <p className="text-on-surface-variant">{h.description}</p>
+                      {d.description && (
+                        <p style={{ margin: 0, color: "var(--ink-muted)", fontSize: ".9rem", lineHeight: 1.75 }}>
+                          {d.description}
+                        </p>
+                      )}
+                      {d.tags?.length > 0 && (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 10 }}>
+                          {d.tags.map(t => (
+                            <span key={t} className="badge" style={{ background: "var(--orange-pale)", color: "var(--orange-dark)", fontSize: 11 }}>{t}</span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
-            </section>
-          )} */}
-
-          {/* Itinerary Accordion */}
-          {pkg.itinerary?.length > 0 && (
-            <section className="space-y-6" id="itinerary">
-              <div className="flex items-center justify-between">
-                <h2 className="font-headline text-3xl font-bold">Your Itinerary</h2>
-                <button
-                  onClick={() => {
-                    if (openDays.size === pkg.itinerary.length) {
-                      setOpenDays(new Set());
-                    } else {
-                      setOpenDays(new Set(pkg.itinerary.map((d) => d.day)));
-                    }
-                  }}
-                  className="text-primary text-sm font-semibold hover:underline cursor-pointer"
-                >
-                  {openDays.size === pkg.itinerary.length ? 'Collapse All' : 'Expand All'}
-                </button>
-              </div>
-              <div>
-                {pkg.itinerary.map((day, i) => (
-                  <AccordionItem
-                    key={i}
-                    day={day}
-                    isOpen={openDays.has(day.day)}
-                    onToggle={() => toggleDay(day.day)}
-                    isLast={i === pkg.itinerary.length - 1}
-                  />
-                ))}
-              </div>
-            </section>
+            </div>
           )}
 
-          {/* Inclusions & Exclusions */}
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {pkg.inclusions?.length > 0 && (
-              <div className="bg-green-50 p-8 rounded-xl">
-                <h3 className="font-headline text-xl font-bold mb-4 text-green-800">What's Included</h3>
-                <ul className="space-y-3">
-                  {pkg.inclusions.map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-green-700">
-                      <span className="material-symbols-outlined text-green-600 text-sm mt-0.5">check_circle</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {pkg.exclusions?.length > 0 && (
-              <div className="bg-red-50 p-8 rounded-xl">
-                <h3 className="font-headline text-xl font-bold mb-4 text-red-800">Not Included</h3>
-                <ul className="space-y-3">
-                  {pkg.exclusions.map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-red-700">
-                      <span className="material-symbols-outlined text-red-500 text-sm mt-0.5">cancel</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </section>
+          {/* What's Included / Not Included — side by side */}
+          {(pkg.inclusions?.length > 0 || pkg.exclusions?.length > 0) && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }} className="im-inc-grid">
+              {pkg.inclusions?.length > 0 && (
+                <div style={{ ...S.incCard, borderLeft: "4px solid #16a34a" }}>
+                  <h3 style={{ ...S.subH, display: "flex", alignItems: "center", gap: 8, margin: "0 0 16px", color: "#16a34a" }}>
+                    <span style={{ width: 28, height: 28, borderRadius: "50%", background: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Icon name="check" size={15} strokeWidth={3} style={{ color: "#16a34a" }} />
+                    </span>
+                    What's Included
+                  </h3>
+                  <ul style={S.checkList}>
+                    {pkg.inclusions.map((x, i) => (
+                      <li key={i} style={S.checkItem}>
+                        <span style={{ ...S.checkDot, background: "#dcfce7", color: "#16a34a" }}>
+                          <Icon name="check" size={12} strokeWidth={3} />
+                        </span>
+                        {x}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {pkg.exclusions?.length > 0 && (
+                <div style={{ ...S.incCard, borderLeft: "4px solid var(--hot)" }}>
+                  <h3 style={{ ...S.subH, display: "flex", alignItems: "center", gap: 8, margin: "0 0 16px", color: "var(--hot)" }}>
+                    <span style={{ width: 28, height: 28, borderRadius: "50%", background: "#fee2e2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Icon name="close" size={15} strokeWidth={3} style={{ color: "var(--hot)" }} />
+                    </span>
+                    Not Included
+                  </h3>
+                  <ul style={S.checkList}>
+                    {pkg.exclusions.map((x, i) => (
+                      <li key={i} style={S.checkItem}>
+                        <span style={{ ...S.checkDot, background: "#fee2e2", color: "var(--hot)" }}>
+                          <Icon name="close" size={12} strokeWidth={3} />
+                        </span>
+                        {x}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
 
-          {/* ── Booking Terms, T&C, Cancellation Policy ── */}
-          <section className="space-y-4" id="policies">
-            <h2 className="font-headline text-3xl font-bold mb-2">Policies & Terms</h2>
-            <PolicySection
-              icon="receipt_long"
-              title="Booking Terms"
-              items={BOOKING_TERMS}
-              colorScheme="blue"
-              id="booking-terms"
-            />
-            <PolicySection
-              icon="gavel"
-              title="Terms & Conditions"
-              items={TERMS_CONDITIONS}
-              colorScheme="amber"
-              id="terms-conditions"
-            />
-            <PolicySection
-              icon="event_busy"
-              title="Cancellation Policy"
-              items={CANCELLATION_POLICY}
-              colorScheme="rose"
-              id="cancellation-policy"
-            />
-          </section>
+          {/* Photo Gallery */}
+          {gallery.length > 1 && (
+            <div style={S.card}>
+              <h2 style={S.cardTitle}>Photo Gallery</h2>
+              <div className="im-pd-gallery" style={{ marginTop: 16 }}>
+                {gallery.map((src, i) => (
+                  <button key={i} onClick={() => setLightbox(src)} style={S.galBtn}>
+                    <img src={src} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
-          {/* ── FAQ ── */}
-          <FAQSection />
+          {/* FAQs */}
+          <div style={S.card}>
+            <h2 style={S.cardTitle}>Frequently Asked Questions</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0, marginTop: 16 }}>
+              {faqs.map((f, i) => {
+                const on = openFaq === i;
+                return (
+                  <div key={i} style={{ borderBottom: "1px solid var(--line)" }}>
+                    <button
+                      onClick={() => setOpenFaq(on ? null : i)}
+                      style={S.faqBtn}
+                    >
+                      <span style={S.faqQ}>
+                        <span style={S.faqIcon}>?</span>
+                        {f.question}
+                      </span>
+                      <Icon name="chevronDown" size={18} style={{
+                        color: "var(--ink-faint)", flexShrink: 0,
+                        transform: on ? "rotate(180deg)" : "none", transition: "transform .2s ease",
+                      }} />
+                    </button>
+                    {on && (
+                      <div style={S.faqAns}>{f.answer}</div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Traveller Reviews */}
+          {(reviews.length > 0 || pkg.rating > 0) && (
+            <div style={S.card}>
+              <h2 style={S.cardTitle}>Traveller Reviews</h2>
+
+              {/* Rating summary */}
+              {pkg.rating > 0 && (
+                <div style={S.ratingRow}>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "3rem", fontWeight: 900, color: "var(--navy)", lineHeight: 1 }}>{pkg.rating}</div>
+                    <div style={{ display: "flex", gap: 3, justifyContent: "center", margin: "6px 0 4px" }}>
+                      {[1,2,3,4,5].map(i => (
+                        <Icon key={i} name="star" size={16} style={{ color: i <= Math.round(pkg.rating) ? "var(--orange)" : "#dbe3ec" }} />
+                      ))}
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--ink-faint)", fontWeight: 600 }}>{pkg.reviewCount || 0}+ reviews</div>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    {[
+                      { label: "Itinerary Quality",  pct: rb.itineraryQuality || 95 },
+                      { label: "Hotel Standards",    pct: rb.hotelStandards   || 92 },
+                      { label: "Guide Knowledge",    pct: rb.guideKnowledge   || 94 },
+                      { label: "Value for Money",    pct: rb.valueForMoney    || 90 },
+                    ].map(row => (
+                      <div key={row.label} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                        <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink-muted)", minWidth: 140 }}>{row.label}</div>
+                        <div style={{ flex: 1, height: 8, borderRadius: 999, background: "var(--surface-sunken)", overflow: "hidden" }}>
+                          <div style={{ width: `${row.pct}%`, height: "100%", background: "linear-gradient(90deg, var(--orange-light), var(--orange))", borderRadius: 999 }} />
+                        </div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "var(--navy)", minWidth: 32 }}>{row.pct}%</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Review cards */}
+              {reviews.length > 0 && (
+                <div className="im-review-grid" style={{ marginTop: 22 }}>
+                  {reviews.map((r, i) => (
+                    <div key={i} style={S.reviewCard}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                        <div style={S.avatar}>{r.avatar || r.name?.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()}</div>
+                        <div>
+                          <div style={{ fontWeight: 800, fontSize: ".9rem", color: "var(--navy)" }}>{r.name}</div>
+                          {r.city && <div style={{ fontSize: 12, color: "var(--ink-faint)" }}>{r.city}</div>}
+                        </div>
+                        <div style={{ marginLeft: "auto", display: "flex", gap: 2 }}>
+                          {[1,2,3,4,5].map(i => (
+                            <Icon key={i} name="star" size={13} style={{ color: i <= r.rating ? "var(--orange)" : "#dbe3ec" }} />
+                          ))}
+                        </div>
+                      </div>
+                      <p style={{ margin: 0, fontSize: ".86rem", lineHeight: 1.7, color: "var(--ink-muted)", fontStyle: "italic" }}>
+                        "{r.text}"
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Right: Sticky Booking Sidebar */}
-        <aside className="sticky top-32 package-detail-sidebar">
-          <div className="bg-surface-container-lowest editorial-shadow rounded-xl p-8 space-y-8 border border-outline-variant/10">
-            {/* Price Display — changes based on hotel tier */}
-            {is5StarSelected ? (
-              <div className="space-y-2">
-                <span className="text-on-surface-variant text-sm font-label">5-Star Premium Pricing</span>
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-secondary text-2xl">info</span>
-                  <span className="text-lg font-headline font-semibold text-on-surface">
-                    Contact for Pricing
-                  </span>
-                </div>
-                <p className="text-on-surface-variant text-xs leading-relaxed">
-                  5-Star Premium prices are tailored to your travel dates and preferences. Reach out via WhatsApp for an instant quote.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-1">
-                <span className="text-on-surface-variant text-sm font-label">Estimated Price Range</span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-headline font-bold text-primary">
-                    {formatPriceRange(displayPrice)}
-                  </span>
-                </div>
-                <span className="text-on-surface-variant text-sm">per person · {hotelStandard}</span>
-              </div>
-            )}
+        {/* ───── RIGHT: sticky sidebar ───── */}
+        <aside className="im-pd-side" style={{ alignSelf: "start" }}>
+          <div style={{ position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 20 }}>
 
-            <div className="space-y-6">
-              {/* Travelers Selector */}
-              <div className="space-y-3">
-                <label className="font-label text-sm font-semibold uppercase tracking-wider text-on-surface-variant">Travelers</label>
-                <div className="flex items-center justify-between bg-surface-container-low p-4 rounded-lg">
-                  <button onClick={decrementGuests} className="material-symbols-outlined cursor-pointer text-on-surface-variant hover:text-primary transition-colors">
-                    remove_circle
-                  </button>
-                  <span className="font-bold text-lg">{guests} Guest{guests !== 1 && "s"}</span>
-                  <button onClick={incrementGuests} className="material-symbols-outlined cursor-pointer text-primary hover:opacity-80 transition-colors">
-                    add_circle
-                  </button>
-                </div>
+            {/* Booking card */}
+            <div style={S.bookCard}>
+              {off && (
+                <span className="badge badge-hot" style={{ marginBottom: 12 }}>{off}% OFF</span>
+              )}
+              <div style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-faint)", letterSpacing: ".05em" }}>STARTING FROM</div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 10, margin: "4px 0 2px" }}>
+                <span style={{ fontSize: "2.1rem", fontWeight: 900, color: "var(--navy)", lineHeight: 1 }}>
+                  {cur}{Number(unit).toLocaleString("en-IN")}
+                </span>
+                {off && <span className="price-strike">{cur}{Number(was).toLocaleString("en-IN")}</span>}
+              </div>
+              <div style={{ fontSize: 12, color: "var(--ink-faint)", marginBottom: 16 }}>per person</div>
+
+              {/* Meta facts */}
+              <div style={{ display: "grid", gap: 10, marginBottom: 16 }}>
+                {pkg.duration && (
+                  <div style={S.factRow}>
+                    <Icon name="clock" size={15} style={{ color: "var(--orange)" }} />
+                    <span style={{ color: "var(--ink-muted)", fontSize: ".87rem" }}>Duration: <strong style={{ color: "var(--navy)" }}>{pkg.duration}</strong></span>
+                  </div>
+                )}
+                {pkg.location && (
+                  <div style={S.factRow}>
+                    <Icon name="pin" size={15} style={{ color: "var(--orange)" }} />
+                    <span style={{ color: "var(--ink-muted)", fontSize: ".87rem" }}><strong style={{ color: "var(--navy)" }}>{stops.slice(0, 2).join(", ")}</strong></span>
+                  </div>
+                )}
+                {pkg.rating > 0 && (
+                  <div style={S.factRow}>
+                    <Icon name="star" size={15} style={{ color: "var(--orange)" }} />
+                    <span style={{ color: "var(--ink-muted)", fontSize: ".87rem" }}>
+                      Rated <strong style={{ color: "var(--navy)" }}>{pkg.rating}/5</strong> ({pkg.reviewCount || 0} reviews)
+                    </span>
+                  </div>
+                )}
               </div>
 
-              {/* Hotel Tier Selection */}
+              {/* Hotel standard selector */}
               {pkg.hotelStandards?.length > 0 && (
-                <div className="space-y-3">
-                  <label className="font-label text-sm font-semibold uppercase tracking-wider text-on-surface-variant">Hotel Standard</label>
-                  <div className="flex flex-col gap-2">
-                    {pkg.hotelStandards.map((hs) => {
-                      const isSelected = hotelStandard === hs.tier;
-                      const isFiveStar = hs.tier.includes('5-Star');
-                      const hasPrice = hs.priceMin && hs.priceMax;
+                <div style={{ marginBottom: 14 }}>
+                  <div style={S.sideLabel}><Icon name="hotel" size={13} /> Hotel Standard</div>
+                  <div style={{ display: "grid", gap: 6 }}>
+                    {pkg.hotelStandards.map(h => {
+                      const on = tier === h.tier;
                       return (
-                        <button
-                          key={hs.tier}
-                          onClick={() => setHotelStandard(hs.tier)}
-                          className={`py-3 px-4 rounded-xl text-sm font-medium transition-all border cursor-pointer ${isSelected
-                            ? "cta-gradient-warm text-white border-primary shadow-md shadow-primary/20"
-                            : "bg-surface-container-low text-on-surface-variant border-outline-variant/20 hover:border-primary/30 hover:bg-surface-container"
-                            }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="flex items-center gap-2">
-                              {hs.tier}
-                              {isFiveStar && <span className="text-xs">✨</span>}
+                        <button key={h.tier} onClick={() => setTier(h.tier)}
+                          style={{ ...S.tierBtn, borderColor: on ? "var(--orange)" : "var(--line)", background: on ? "rgba(249,115,22,.06)" : "#fff" }}>
+                          <span style={{ fontWeight: 700, fontSize: ".85rem" }}>{h.tier}</span>
+                          {h.priceMin != null && (
+                            <span style={{ fontSize: ".82rem", fontWeight: 800, color: on ? "var(--orange-dark)" : "var(--navy)" }}>
+                              {cur}{Number(h.priceMin).toLocaleString("en-IN")}
                             </span>
-                            <span className={`text-xs ${isSelected ? 'text-white/80' : 'text-on-surface-variant/60'}`}>
-                              {isFiveStar
-                                ? 'On request'
-                                : hasPrice
-                                  ? `₹${hs.priceMin?.toLocaleString('en-IN')} - ₹${hs.priceMax?.toLocaleString('en-IN')}`
-                                  : 'Base price'
-                              }
-                            </span>
-                          </div>
+                          )}
                         </button>
                       );
                     })}
                   </div>
                 </div>
               )}
-            </div>
 
-            {/* Pricing Summary */}
-            {!is5StarSelected && displayPrice && (
-              <div className="pt-6 border-t border-outline-variant/20 space-y-4">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-on-surface-variant">Estimate per person</span>
-                  <span className="font-medium">{formatPriceRange(displayPrice)}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-on-surface-variant">Travelers</span>
-                  <span className="font-medium">{guests}</span>
-                </div>
-                <div className="flex justify-between items-center pt-2">
-                  <span className="font-bold text-lg">Total Estimate</span>
-                  <span className="font-headline font-bold text-xl text-primary">
-                    {displayPrice.currency}{(displayPrice.min * guests).toLocaleString('en-IN')} - {displayPrice.currency}{(displayPrice.max * guests).toLocaleString('en-IN')}
+              {/* Travellers stepper */}
+              <div style={{ marginBottom: 16 }}>
+                <div style={S.sideLabel}><Icon name="users" size={13} /> Travellers</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                  <button onClick={() => setTravellers(Math.max(1, travellers - 1))} style={S.step}>−</button>
+                  <span style={{ fontWeight: 800, fontSize: "1.1rem", minWidth: 28, textAlign: "center" }}>{travellers}</span>
+                  <button onClick={() => setTravellers(Math.min(20, travellers + 1))} style={S.step}>+</button>
+                  <span style={{ fontSize: ".82rem", color: "var(--ink-faint)", marginLeft: "auto" }}>
+                    Total: <strong style={{ color: "var(--navy)" }}>{cur}{Number(total).toLocaleString("en-IN")}</strong>
                   </span>
                 </div>
               </div>
-            )}
 
-            {/* WhatsApp Book Button */}
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`w-full py-2 px-6 text-white rounded-full font-bold text-lg shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-3 ${is5StarSelected ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800' : 'bg-green-600 hover:bg-green-700'
-                }`}
-            >
-              <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-              {is5StarSelected ? 'Get 5-Star Quote on WhatsApp' : 'Book via WhatsApp'}
-            </a>
+              {/* CTAs */}
+              <div style={{ display: "grid", gap: 10 }}>
+                <Link to="/contact" className="btn btn-orange" style={{ width: "100%", padding: "14px 20px" }}>
+                  <Icon name="send" size={16} /> Enquire Now
+                </Link>
+                <a href={waLink} target="_blank" rel="noopener noreferrer" className="btn btn-wa" style={{ width: "100%" }}>
+                  <WhatsAppIcon size={16} /> WhatsApp Us
+                </a>
+                <a href={`tel:${BRAND.phone}`} className="btn btn-outline" style={{ width: "100%" }}>
+                  <Icon name="phone" size={15} /> {BRAND.phoneDisplay}
+                </a>
+              </div>
+              <p style={{ textAlign: "center", fontSize: 11.5, color: "var(--ink-faint)", margin: "12px 0 0" }}>
+                Free consultation · No hidden charges
+              </p>
+            </div>
 
-            {is5StarSelected ? (
-              <p className="text-center text-xs text-on-surface-variant font-medium">
-                <span className="text-secondary font-bold">*</span> 5-Star Premium prices are variable and depend on travel dates, room availability, and seasonal demand. Contact us for a personalized quote.
-              </p>
-            ) : (
-              <p className="text-center text-xs text-on-surface-variant font-medium">
-                Final pricing will be confirmed upon contact.
-              </p>
+            {/* Why Book With Us */}
+            <div style={S.bookCard}>
+              <h3 style={{ fontSize: "1rem", fontWeight: 800, color: "var(--navy)", margin: "0 0 14px" }}>
+                Why Book with {BRAND.shortName}?
+              </h3>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 10 }}>
+                {WHY_BOOK.map(w => (
+                  <li key={w.text} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: ".86rem", color: "var(--ink-muted)" }}>
+                    <span style={S.whyIcon}><Icon name={w.icon} size={14} /></span>
+                    {w.text}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* You May Also Like */}
+            {related.length > 0 && (
+              <div style={S.bookCard}>
+                <h3 style={{ fontSize: "1rem", fontWeight: 800, color: "var(--navy)", margin: "0 0 14px" }}>
+                  You May Also Like
+                </h3>
+                <div style={{ display: "grid", gap: 12 }}>
+                  {related.map(r => (
+                    <Link key={r._id || r.slug} to={`/packages/${r.slug}`} style={S.relatedItem}>
+                      <img
+                        src={r.image || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=120&q=80"}
+                        alt={r.name} style={S.relatedImg}
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 700, fontSize: ".85rem", color: "var(--navy)", lineHeight: 1.3, marginBottom: 4 }}>
+                          {r.name}
+                        </div>
+                        {r.duration && (
+                          <div style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>{r.duration}</div>
+                        )}
+                        {r.priceRange?.min && (
+                          <div style={{ fontSize: 13, fontWeight: 800, color: "var(--orange-dark)", marginTop: 4 }}>
+                            {r.priceRange.currency || "₹"}{Number(r.priceRange.min).toLocaleString("en-IN")}
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </aside>
       </div>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div onClick={() => setLightbox(null)} style={S.lightbox}>
+          <button onClick={() => setLightbox(null)} aria-label="Close" style={S.lightboxX}>
+            <Icon name="close" size={28} />
+          </button>
+          <img src={lightbox} alt="" style={{ maxWidth: "92vw", maxHeight: "88vh", borderRadius: 14, objectFit: "contain" }} />
+        </div>
+      )}
+
+      <style>{`
+        .im-pd-layout { display: grid; grid-template-columns: 1fr 360px; gap: 32px; align-items: start; }
+        .im-pd-side { align-self: start; }
+        .im-inc-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .im-pd-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .im-review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        /* Hide scrollbar on sidebar */
+        .im-pd-side > div::-webkit-scrollbar { display: none; }
+        .im-pd-side > div { -ms-overflow-style: none; scrollbar-width: none; }
+        @media (max-width: 1100px) {
+          .im-pd-layout { grid-template-columns: 1fr; }
+          .im-pd-side { order: -1; align-self: auto; }
+          .im-pd-side > div { position: static !important; max-height: none !important; overflow-y: visible !important; }
+        }
+        @media (max-width: 640px) {
+          .im-inc-grid, .im-review-grid { grid-template-columns: 1fr; }
+          .im-pd-gallery { grid-template-columns: repeat(2, 1fr); }
+        }
+      `}</style>
     </main>
   );
-};
+}
 
-export default PackageDetail;
+/* ── styles ──────────────────────────────────────────── */
+const S = {
+  hero: {
+    position: "relative", minHeight: 420, display: "flex",
+    alignItems: "flex-end", overflow: "hidden",
+  },
+  heroImg: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" },
+  heroVeil: {
+    position: "absolute", inset: 0,
+    background: "linear-gradient(to top, rgba(10,31,66,.95) 0%, rgba(10,31,66,.55) 50%, rgba(10,31,66,.2) 100%)",
+  },
+  heroInner: { position: "relative", zIndex: 2, paddingBlock: "48px 40px" },
+  heroTitle: {
+    color: "#fff", fontSize: "clamp(1.9rem, 1.2rem + 2.6vw, 3rem)",
+    fontWeight: 900, lineHeight: 1.1, margin: 0, letterSpacing: "-0.03em",
+  },
+  crumb: { color: "rgba(255,255,255,.72)", fontSize: 12.5, textDecoration: "none", fontWeight: 600 },
+
+  card: {
+    background: "#fff", borderRadius: 16, padding: 28,
+    boxShadow: "0 4px 20px rgba(15,45,94,.07)", border: "1px solid var(--line)",
+  },
+  cardTitle: { fontSize: "1.3rem", fontWeight: 900, color: "var(--navy)", margin: "0 0 4px", letterSpacing: "-0.02em" },
+  subH: { fontSize: "1rem", fontWeight: 800, color: "var(--navy)", margin: "0 0 12px" },
+  desc: { color: "var(--ink-muted)", lineHeight: 1.8, fontSize: ".96rem", margin: "10px 0 0" },
+
+  checkList: { listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 10 },
+  checkItem: { display: "flex", alignItems: "flex-start", gap: 10, fontSize: ".9rem", color: "var(--ink-muted)", lineHeight: 1.55 },
+  checkDot: {
+    width: 22, height: 22, borderRadius: "50%", flexShrink: 0, marginTop: 1,
+    background: "#dcfce7", color: "#16a34a",
+    display: "flex", alignItems: "center", justifyContent: "center",
+  },
+
+  /* Itinerary timeline */
+  dayRow: { display: "flex", gap: 16, paddingBottom: 24 },
+  dayNumCol: { display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 },
+  dayCircle: {
+    width: 40, height: 40, borderRadius: "50%",
+    background: "var(--navy)", color: "#fff",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontWeight: 900, fontSize: ".9rem", flexShrink: 0,
+  },
+  dayLine: { width: 2, flex: 1, background: "var(--line)", marginTop: 6 },
+  dayContent: { flex: 1, paddingTop: 8 },
+  dayBadge: {
+    display: "inline-block", padding: "2px 10px", borderRadius: 999,
+    background: "var(--orange-pale)", color: "var(--orange-dark)",
+    fontSize: 11.5, fontWeight: 800,
+  },
+
+  /* Inclusions card */
+  incCard: {
+    background: "#fff", borderRadius: 14, padding: "20px 22px",
+    boxShadow: "0 4px 14px rgba(15,45,94,.06)", border: "1px solid var(--line)",
+  },
+
+  /* FAQ */
+  faqBtn: {
+    width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+    gap: 12, padding: "18px 0", background: "transparent", border: "none",
+    cursor: "pointer", fontFamily: "inherit", textAlign: "left",
+  },
+  faqQ: { display: "flex", alignItems: "flex-start", gap: 12, fontSize: ".95rem", fontWeight: 700, color: "var(--navy)" },
+  faqIcon: {
+    width: 26, height: 26, borderRadius: "50%", flexShrink: 0,
+    background: "var(--orange-pale)", color: "var(--orange-dark)",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: 14, fontWeight: 900,
+  },
+  faqAns: { padding: "0 0 18px 38px", fontSize: ".9rem", color: "var(--ink-muted)", lineHeight: 1.75 },
+
+  /* Reviews */
+  ratingRow: {
+    display: "flex", gap: 32, alignItems: "center",
+    background: "var(--surface-muted)", borderRadius: 14, padding: 20, marginTop: 18,
+    flexWrap: "wrap",
+  },
+  reviewCard: {
+    background: "var(--surface-muted)", borderRadius: 14, padding: "18px 20px",
+    border: "1px solid var(--line)",
+  },
+  avatar: {
+    width: 42, height: 42, borderRadius: "50%", flexShrink: 0,
+    background: "var(--navy)", color: "#fff",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontWeight: 800, fontSize: ".9rem",
+  },
+
+  /* Booking sidebar */
+  bookCard: {
+    background: "#fff", border: "1px solid var(--line)", borderRadius: 18,
+    padding: 24, boxShadow: "0 8px 30px rgba(15,45,94,.10)",
+  },
+  factRow: { display: "flex", alignItems: "center", gap: 10 },
+  sideLabel: {
+    display: "flex", alignItems: "center", gap: 6,
+    fontSize: 11.5, fontWeight: 800, color: "var(--navy)",
+    letterSpacing: ".04em", textTransform: "uppercase",
+    marginBottom: 8,
+  },
+  tierBtn: {
+    display: "flex", alignItems: "center", justifyContent: "space-between",
+    gap: 10, padding: "10px 13px", borderRadius: 9,
+    border: "1.5px solid var(--line)", cursor: "pointer",
+    fontFamily: "inherit", transition: "all .16s ease", background: "#fff",
+  },
+  step: {
+    width: 38, height: 38, borderRadius: 9, border: "1.5px solid var(--line)",
+    background: "#fff", cursor: "pointer", fontSize: "1.1rem",
+    fontWeight: 700, color: "var(--navy)", fontFamily: "inherit",
+  },
+  whyIcon: {
+    width: 28, height: 28, borderRadius: 7, flexShrink: 0,
+    background: "var(--orange-pale)", color: "var(--orange-dark)",
+    display: "flex", alignItems: "center", justifyContent: "center",
+  },
+  relatedItem: {
+    display: "flex", gap: 12, alignItems: "flex-start",
+    textDecoration: "none", padding: "10px 0", borderBottom: "1px solid var(--line)",
+  },
+  relatedImg: { width: 70, height: 60, borderRadius: 8, objectFit: "cover", flexShrink: 0 },
+
+  lightbox: {
+    position: "fixed", inset: 0, zIndex: 90,
+    background: "rgba(10,31,66,.94)", display: "flex",
+    alignItems: "center", justifyContent: "center",
+    padding: 20, cursor: "zoom-out",
+  },
+  lightboxX: {
+    position: "absolute", top: 20, right: 24,
+    background: "transparent", border: "none", color: "#fff", cursor: "pointer",
+  },
+  galBtn: {
+    padding: 0, border: "none", cursor: "pointer",
+    borderRadius: 10, overflow: "hidden",
+    aspectRatio: "4/3", background: "var(--surface-sunken)",
+  },
+};

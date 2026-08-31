@@ -1,253 +1,218 @@
-// src/pages/AboutUs.js
-import React from "react";
+// src/pages/AboutUs.jsx
+import { Link } from "react-router-dom";
+import Icon, { WhatsAppIcon } from "../components/ui/Icon";
+import PageHero from "../components/ui/PageHero";
+import SEO from "../components/ui/SEO";
+import SectionHeading from "../components/ui/SectionHeading";
+import { BRAND, trustStats, whyUs } from "../utils/siteConfig";
 
-const AboutUs = () => {
+const VALUES = [
+  {
+    icon: "compass",
+    title: "Routes we've actually walked",
+    body: "We don't resell a catalogue we've never seen. If an itinerary is on this site, someone on the team has done the drive, stayed at the hotel and eaten at the dhaba we're sending you to.",
+  },
+  {
+    icon: "wallet",
+    title: "One price, explained",
+    body: "Every quote is itemised — stays, transfers, permits, taxes. If something isn't included we say so upfront, so the number you approve is the number you pay.",
+  },
+  {
+    icon: "clock",
+    title: "Pace over checklists",
+    body: "Most itineraries try to fit too much in. We'd rather cut a stop and give you an unhurried morning than have you spend the holiday in a car.",
+  },
+  {
+    icon: "headset",
+    title: "One person, start to finish",
+    body: "You get a named planner who knows your booking — not a ticket number and a different agent every time you call.",
+  },
+];
+
+const MILESTONES = [
+  { year: "Then", title: "A side project", body: "We started by planning trips for friends who kept asking how to do Kashmir or Kerala properly without overpaying." },
+  { year: "Growing", title: "Word travelled", body: "Those friends sent their friends. We built relationships with hotels and drivers we'd use ourselves." },
+  { year: "Today", title: "A small studio in Noida", body: "A compact team handling domestic and international holidays, group departures and corporate travel." },
+  { year: "Next", title: "More of the same", body: "Deeper coverage of the routes we know, rather than a longer list of places we don't." },
+];
+
+export default function AboutUs() {
+  const waLink = `https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent(`Hi ${BRAND.shortName}! I'd like to know more about your trips.`)}`;
+
   return (
-    <main className="pt-24">
-      {/* Hero Section: Brand Story */}
-      <section className="relative min-h-[819px] flex items-center overflow-hidden px-8 md:px-20">
-        <div className="absolute inset-0 z-0">
-          <img
-            alt="Luxury travel background"
-            className="w-full h-full object-cover opacity-90"
-            src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/40 to-transparent"></div>
-        </div>
-        <div className="relative z-10 max-w-3xl">
-          <span className="font-label text-secondary tracking-[0.2em] uppercase text-sm mb-6 block font-semibold">
-            Our Origin
-          </span>
-          <h1 className="font-headline text-5xl md:text-7xl text-on-surface mb-8 leading-[1.1] tracking-tight">
-            Defining luxury travel through narrative and curation.
-          </h1>
-          <p className="text-xl text-on-surface-variant leading-relaxed max-w-xl">
-            We believe travel is more than a destination; it's the prose of a
-            life well-lived. Infinity Miles Holiday was born from the desire to craft
-            journeys that resonate as deeply as a masterpiece.
-          </p>
+    <main>
+      <SEO
+        title="About Us"
+        description="A small Noida-based travel studio planning unhurried, honestly priced holidays across India and abroad."
+        path="/about-us"
+      />
+      <PageHero
+        eyebrow={`About ${BRAND.shortName}`}
+        title="A travel studio, not a booking engine"
+        sub="We're a small Noida-based team that plans holidays properly — fewer itineraries, better ones, priced without games."
+        image="https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1800&auto=format&fit=crop"
+        crumbs={[{ label: "About" }]}
+      />
+
+      {/* Stats */}
+      <section className="section-navy" style={{ paddingBlock: 28 }}>
+        <div className="shell im-about-stats">
+          {trustStats.map((s) => (
+            <div key={s.label} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "var(--orange-light)", lineHeight: 1.1 }}>{s.value}</div>
+              <div style={{ fontSize: ".78rem", color: "rgba(255,255,255,.78)", marginTop: 4 }}>{s.label}</div>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Mission & Vision: Editorial Layout */}
-      <section className="py-24 px-8 md:px-20 bg-surface">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
-          <div className="md:col-span-5">
-            <div className="bg-surface-container-low p-12 rounded-xl">
-              <span className="font-label text-primary tracking-widest text-xs uppercase mb-4 block">
-                Our Purpose
-              </span>
-              <h2 className="font-headline text-4xl text-on-surface mb-6">
-                Inspiring the modern explorer
-              </h2>
-              <p className="text-on-surface-variant leading-relaxed mb-8">
-                Our mission is to dissolve the boundaries between the traveler
-                and the world. We curate experiences that challenge the ordinary
-                and elevate the spirit of discovery.
-              </p>
-              <div className="flex items-center gap-4 group cursor-pointer">
-                <span className="w-12 h-[1px] bg-outline-variant group-hover:w-16 group-hover:bg-primary transition-all duration-500"></span>
-                <span className="font-label text-sm font-semibold group-hover:text-primary transition-colors">
-                  Our Vision for 2030
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="md:col-span-7 pt-12">
-            <div className="grid grid-cols-2 gap-8">
-              <div className="space-y-4 translate-y-12">
-                <img
-                  alt="Vision image 1"
-                  className="rounded-xl w-full h-[400px] object-cover shadow-lg"
-                  src="https://images.unsplash.com/photo-1541410965313-d53b3c16ef17?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3DD"
-                />
-                <h3 className="font-headline text-xl mt-4">Unrivaled Access</h3>
-                <p className="text-sm text-on-surface-variant">
-                  Opening doors to the world's most guarded cultural treasures.
-                </p>
-              </div>
-              <div className="space-y-4">
-                <img
-                  alt="Vision image 2"
-                  className="rounded-xl w-full h-[400px] object-cover shadow-lg"
-                  src="https://images.unsplash.com/photo-1516546453174-5e1098a4b4af?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDB8fHRyYXZlbGluZ3xlbnwwfHwwfHx8MA%3D%3D"
-                />
-                <h3 className="font-headline text-xl mt-4">Conscious Luxury</h3>
-                <p className="text-sm text-on-surface-variant">
-                  Crafting journeys that honor both the traveler and the
-                  terrain.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Travel Philosophy: Atmospheric Block */}
-      <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img
-            alt="Philosophy Background"
-            className="w-full h-full object-cover grayscale brightness-50"
-            src="https://images.unsplash.com/photo-1494783367193-149034c05e8f?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzB8fHRyYXZlbGluZ3xlbnwwfHwwfHx8MA%3D%3D"
-          />
-        </div>
-        <div className="relative z-10 max-w-4xl mx-auto text-center px-8">
-          <div className="inline-block p-4 bg-secondary-container/20 backdrop-blur-md rounded-full mb-8">
-            <span className="material-symbols-outlined text-secondary">
-              auto_awesome
-            </span>
-          </div>
-          <h2 className="font-headline text-4xl md:text-5xl text-white mb-10 leading-tight">
-            "Travel is the only thing you buy that makes you richer in stories,
-            not just memories."
-          </h2>
-          <div className="flex justify-center items-center gap-6">
-            <div className="h-[1px] w-12 bg-white/30"></div>
-            <p className="font-label text-white/80 tracking-widest text-sm uppercase">
-              The Infinity Philosophy
-            </p>
-            <div className="h-[1px] w-12 bg-white/30"></div>
-          </div>
-        </div>
-      </section>
-
-      {/* Team Section: Bento Grid */}
-      <section className="py-32 px-8 md:px-20 bg-surface-container-low">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-20">
-            <h2 className="font-headline text-5xl text-on-surface mb-4">
-              The Curators
-            </h2>
-            <p className="text-on-surface-variant max-w-xl">
-              Meet the visionaries weaving the threads of your next great
-              narrative.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Founder */}
-            <div className="md:col-span-2 group">
-              <div className="relative overflow-hidden rounded-xl h-[500px] bg-surface-container-highest">
-                <img
-                  alt="Julian Vance"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1M6_zmcEQZSoPpoPI6UozykxcWGgTg8J6ZEbpLjx9y3vPkTo73wQI2f8oOXh0UIISRjLdmRLPcg7lJUWGSgaquQTrVuK11qHF2blYd-0Lh-RqR54OAVicQItFYCOIP3ayGQLl1e_tniDAQBppUSK9DJxRiEFL9lp55s8iUmgb3kR1Az7R70hIeu2Bp4It9PR8uggrd3_lQ_odQxGOXiDqKhcYzbbDN8AiXqK07e-Gg2BfxvL3B_giTo-B8lZjt5c5bAe5Db4tl1YZ"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
-                <div className="absolute bottom-0 left-0 p-8">
-                  <p className="text-white/70 font-label text-xs uppercase tracking-widest mb-1">
-                    Founder &amp; CEO
-                  </p>
-                  <h3 className="font-headline text-3xl text-white">
-                    Julian Vance
-                  </h3>
-                </div>
-              </div>
-            </div>
-            {/* Team Member 1 */}
-            <div className="group">
-              <div className="relative overflow-hidden rounded-xl h-[500px] bg-surface-container-highest">
-                <img
-                  alt="Elena Rossi"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0mduCF4lQ24t2vGcdypfr9zuNNs96IFia0bC3J-eNbuG71A0K4ysiNp4Y4yfq0SlyTd6hw4rcPOEhbhe7dixtj9yh1gyetWusGpgr1gb720TuuipoYGwNS3fzJ7j1rFnNmtmjT-wAZSEhug1elVIZUivLAAolpOgvHAHLw_cykqnOV4DS2DiJ2dnRMCJY4CrmyS27SkzZlJYmIBrN9MbnmA4rutwSDShvdg9HmEwuRz_0vqKc1Uzs75NTvHuostJEXza1DfchGTrJ"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                <div className="absolute bottom-0 left-0 p-6">
-                  <p className="text-white/70 font-label text-xs uppercase tracking-widest mb-1">
-                    Chief Curator
-                  </p>
-                  <h3 className="font-headline text-xl text-white">
-                    Elena Rossi
-                  </h3>
-                </div>
-              </div>
-            </div>
-            {/* Team Member 2 */}
-            <div className="group">
-              <div className="relative overflow-hidden rounded-xl h-[500px] bg-surface-container-highest">
-                <img
-                  alt="Marcus Thorne"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAvQC_KlTJqUr-4c0Lb5TaXvqOVCH_Z0VhOyybV3En2xUDNWQpnacN5cT-ImXZMbietlpoCf62iawkbdkBcCnxBC3g3fiLnRJnBRzOlZb86DfFnpOH6LDQWjEaCnn7tyAc7QJJBYGbBTpFsIOexcre06RxrVtcfMsPR8qhHABvoo75uMq6cXgT1qpTPqbr_jsJd6Dnc9opLADFQBCzKf97vS9tpArJ9y8OSDPAhvKw3fpL8ZzkNUABm3mV00K3acq8-MwywkJ2rgpm"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                <div className="absolute bottom-0 left-0 p-6">
-                  <p className="text-white/70 font-label text-xs uppercase tracking-widest mb-1">
-                    Expedition Lead
-                  </p>
-                  <h3 className="font-headline text-xl text-white">
-                    Marcus Thorne
-                  </h3>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Values Section: Asymmetric */}
-      <section className="py-24 px-8 md:px-20 bg-surface">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-          <div className="relative">
-            <div className="absolute -top-10 -left-10 w-40 h-40 bg-secondary-fixed/30 rounded-full blur-3xl"></div>
-            <img
-              alt="Our Values"
-              className="rounded-xl editorial-shadow relative z-10"
-              src="https://images.unsplash.com/photo-1524842495237-6abc737eae1f?q=80&w=892&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            />
-          </div>
+      {/* Story */}
+      <section className="section">
+        <div className="shell im-story">
           <div>
-            <h2 className="font-headline text-4xl text-on-surface mb-12">
-              The Infinity Standard
-            </h2>
-            <ul className="space-y-10">
-              <li className="flex gap-6">
-                <span className="text-secondary font-headline text-2xl italic">
-                  01.
-                </span>
-                <div>
-                  <h4 className="font-headline text-xl mb-2">
-                    Narrative First
-                  </h4>
-                  <p className="text-on-surface-variant text-sm leading-relaxed">
-                    We don't sell hotels; we sell chapters of a story that
-                    you'll tell for generations.
-                  </p>
-                </div>
-              </li>
-              <li className="flex gap-6">
-                <span className="text-secondary font-headline text-2xl italic">
-                  02.
-                </span>
-                <div>
-                  <h4 className="font-headline text-xl mb-2">
-                    Radical Quality
-                  </h4>
-                  <p className="text-on-surface-variant text-sm leading-relaxed">
-                    Vetted by experts, tested by enthusiasts. If it isn't
-                    exceptional, it isn't on our map.
-                  </p>
-                </div>
-              </li>
-              <li className="flex gap-6">
-                <span className="text-secondary font-headline text-2xl italic">
-                  03.
-                </span>
-                <div>
-                  <h4 className="font-headline text-xl mb-2">Quiet Presence</h4>
-                  <p className="text-on-surface-variant text-sm leading-relaxed">
-                    We manage the chaos so you can enjoy the silence of a hidden
-                    desert canyon.
-                  </p>
-                </div>
-              </li>
-            </ul>
+            <SectionHeading eyebrow="Our story" eyebrowIcon="sparkles" title="Why we started" />
+            <div style={{ display: "grid", gap: 16, color: "var(--ink-muted)", lineHeight: 1.85, fontSize: ".97rem" }}>
+              <p style={{ margin: 0 }}>
+                Most people planning a holiday in India run into the same two problems: a wall of
+                near-identical packages with prices that shift depending on who's asking, and an
+                itinerary so packed that the trip becomes a logistics exercise.
+              </p>
+              <p style={{ margin: 0 }}>
+                We built {BRAND.name} to do the opposite. We keep the list of destinations we cover
+                deliberately narrow, so that for each one we know which hotel has the view worth
+                paying for, which road is worth the extra two hours, and which "must-see" you can
+                comfortably skip.
+              </p>
+              <p style={{ margin: 0 }}>
+                Everything else follows from that — transparent quotes, a planner who stays with
+                your booking, and an itinerary that leaves room in the day for the thing you'll
+                actually remember.
+              </p>
+            </div>
+
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 26 }}>
+              <Link to="/packages" className="btn btn-orange">
+                <Icon name="compass" size={16} /> See our packages
+              </Link>
+              <a href={waLink} target="_blank" rel="noopener noreferrer" className="btn btn-wa">
+                <WhatsAppIcon size={16} /> Talk to us
+              </a>
+            </div>
+          </div>
+
+          <div className="im-story-imgs">
+            <img src="https://images.unsplash.com/photo-1566837945700-30057527ade0?q=80&w=800&auto=format&fit=crop"
+                 alt="" loading="lazy" style={{ ...IMG, gridRow: "span 2", height: "100%" }} />
+            <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop"
+                 alt="" loading="lazy" style={IMG} />
+            <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=600&auto=format&fit=crop"
+                 alt="" loading="lazy" style={IMG} />
           </div>
         </div>
       </section>
+
+      {/* Values */}
+      <section className="section section-muted">
+        <div className="shell">
+          <SectionHeading
+            eyebrow="How we work" eyebrowIcon="shield"
+            title="Four things we don't compromise on"
+            centered
+          />
+          <div className="im-values">
+            {VALUES.map((v) => (
+              <div key={v.title} className="card" style={{ padding: 24 }}>
+                <span style={VAL_ICON}><Icon name={v.icon} size={20} /></span>
+                <h3 style={{ fontSize: "1.02rem", fontWeight: 800, margin: "14px 0 8px" }}>{v.title}</h3>
+                <p style={{ fontSize: ".88rem", lineHeight: 1.7, color: "var(--ink-muted)", margin: 0 }}>{v.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline */}
+      <section className="section">
+        <div className="shell">
+          <SectionHeading eyebrow="The short version" eyebrowIcon="clock" title="How we got here" centered />
+          <div className="im-timeline">
+            {MILESTONES.map((m, i) => (
+              <div key={m.title} style={{ position: "relative", paddingTop: 30 }}>
+                <span style={{ ...DOT, background: i === MILESTONES.length - 1 ? "var(--orange)" : "var(--navy)" }} />
+                <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--orange-dark)", marginBottom: 6 }}>
+                  {m.year}
+                </div>
+                <h3 style={{ fontSize: ".98rem", fontWeight: 800, margin: "0 0 7px" }}>{m.title}</h3>
+                <p style={{ fontSize: ".86rem", lineHeight: 1.7, color: "var(--ink-muted)", margin: 0 }}>{m.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why us */}
+      <section className="section section-muted">
+        <div className="shell">
+          <SectionHeading eyebrow="What you get" eyebrowIcon="check" title="Every trip, as standard" centered />
+          <div className="im-about-why">
+            {whyUs.map((w) => (
+              <div key={w.title} style={{ display: "flex", gap: 14 }}>
+                <span style={VAL_ICON}><Icon name={w.icon} size={18} /></span>
+                <div>
+                  <h3 style={{ fontSize: ".94rem", fontWeight: 800, margin: "0 0 5px" }}>{w.title}</h3>
+                  <p style={{ fontSize: ".85rem", lineHeight: 1.65, color: "var(--ink-muted)", margin: 0 }}>{w.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ background: "linear-gradient(120deg, var(--navy-900) 0%, var(--navy-700) 100%)", paddingBlock: 62 }}>
+        <div className="shell" style={{ textAlign: "center" }}>
+          <h2 style={{ color: "#fff", fontSize: "clamp(1.4rem, 1.1rem + 1.5vw, 2.05rem)", fontWeight: 800, margin: 0 }}>
+            Got a rough idea? That's enough to start.
+          </h2>
+          <p style={{ color: "rgba(255,255,255,.8)", maxWidth: 540, margin: "14px auto 26px", lineHeight: 1.7 }}>
+            Send us dates and a budget range. We'll tell you honestly what's realistic and what it costs.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <Link to="/contact" className="btn btn-orange btn-lg"><Icon name="send" size={17} /> Get a free quote</Link>
+            <a href={`tel:${BRAND.phone}`} className="btn btn-ghost btn-lg"><Icon name="phone" size={17} /> {BRAND.phoneDisplay}</a>
+          </div>
+        </div>
+      </section>
+
+      <style>{`
+        .im-about-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .im-story { display: grid; grid-template-columns: 1fr 420px; gap: 44px; align-items: center; }
+        .im-story-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .im-values { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .im-timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; border-top: 2px solid var(--line); }
+        .im-about-why { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px 34px; }
+        @media (max-width: 1000px) {
+          .im-story { grid-template-columns: 1fr; }
+          .im-values, .im-timeline { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 620px) {
+          .im-about-stats { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+          .im-values, .im-timeline, .im-about-why { grid-template-columns: 1fr; }
+          .im-timeline { border-top: none; }
+        }
+      `}</style>
     </main>
   );
-};
+}
 
-export default AboutUs;
+const IMG = { width: "100%", height: 190, objectFit: "cover", borderRadius: 14, boxShadow: "0 12px 30px rgba(15,45,94,.12)" };
+const VAL_ICON = {
+  width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+  display: "flex", alignItems: "center", justifyContent: "center",
+  background: "linear-gradient(135deg, rgba(251,146,60,.22), rgba(249,115,22,.14))",
+  color: "var(--orange-dark)",
+};
+const DOT = {
+  position: "absolute", top: -7, left: 0, width: 13, height: 13,
+  borderRadius: "50%", border: "3px solid #fff", boxShadow: "0 0 0 1px var(--line)",
+};

@@ -1,259 +1,231 @@
-// src/pages/Destinations.js
-import React, { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+// src/pages/Destinations.jsx
+import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { api } from "../utils/api";
+import Icon from "../components/ui/Icon";
+import PageHero from "../components/ui/PageHero";
+import SEO from "../components/ui/SEO";
+import DestinationTile from "../components/ui/DestinationTile";
+import CardSkeleton from "../components/ui/CardSkeleton";
 
-const Destinations = () => {
-  const [destinations, setDestinations] = useState([]);
+const TYPES = ["Beach", "Mountain", "Adventure", "Nature", "Urban", "Cultural", "Desert", "Coastal", "Island", "Heritage"];
+const TIERS = ["Luxury", "Premium", "Value"];
+
+export default function Destinations() {
+  const [params, setParams] = useSearchParams();
+  const [all, setAll] = useState([]);
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchParams] = useSearchParams();
+  const [panel, setPanel] = useState(false);
 
-  const categoryFromUrl = searchParams.get("category") || "";
+  const category = params.get("category") || "";
+  const type = params.get("type") || "";
+  const tier = params.get("tier") || "";
+  const country = params.get("country") || "";
+  const search = params.get("search") || "";
+  const [term, setTerm] = useState(search);
 
-  const [filters, setFilters] = useState({
-    country: "All Countries",
-    tier: "Any Budget",
-    season: "",
-    type: "",
-    search: searchParams.get("search") || "",
-    category: categoryFromUrl,
-  });
-
-  // Sync category from URL when it changes
-  useEffect(() => {
-    const c = searchParams.get("category") || "";
-    setFilters((prev) => ({ ...prev, category: c }));
-  }, [searchParams]);
+  useEffect(() => setTerm(search), [search]);
 
   useEffect(() => {
-    api.getCountries().then(setCountries).catch(console.error);
+    let alive = true;
+    setLoading(true);
+    (async () => {
+      try {
+        const [d, c] = await Promise.all([
+          api.getDestinations({}).catch(() => []),
+          api.getCountries().catch(() => []),
+        ]);
+        if (!alive) return;
+        setAll(Array.isArray(d) ? d : []);
+        setCountries(Array.isArray(c) ? c : []);
+      } finally { if (alive) setLoading(false); }
+    })();
+    return () => { alive = false; };
   }, []);
 
-  useEffect(() => {
-    const fetchDestinations = async () => {
-      setLoading(true);
-      try {
-        const queryFilters = {};
-        if (filters.category) queryFilters.category = filters.category;
-        if (filters.country !== "All Countries") queryFilters.country = filters.country;
-        if (filters.tier !== "Any Budget") queryFilters.tier = filters.tier;
-        if (filters.season) queryFilters.season = filters.season;
-        if (filters.type) queryFilters.type = filters.type;
-        if (filters.search) queryFilters.search = filters.search;
+  const patch = (key, value) => {
+    const next = new URLSearchParams(params);
+    if (value) next.set(key, value); else next.delete(key);
+    setParams(next, { replace: true });
+  };
 
-        const data = await api.getDestinations(queryFilters);
-        setDestinations(data);
-      } catch (err) {
-        console.error("Failed to fetch destinations:", err);
-      } finally {
-        setLoading(false);
+  const clearAll = () => setParams(new URLSearchParams(), { replace: true });
+
+  const results = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return all.filter((d) => {
+      if (category && d.category !== category) return false;
+      if (type && d.type !== type) return false;
+      if (tier && d.tier !== tier) return false;
+      if (country && d.country !== country) return false;
+      if (q) {
+        const hay = `${d.name} ${d.country} ${d.tagline || ""} ${d.description || ""}`.toLowerCase();
+        if (!hay.includes(q)) return false;
       }
-    };
-    fetchDestinations();
-  }, [filters]);
+      return true;
+    });
+  }, [all, category, type, tier, country, search]);
 
-  const types = ["Beach", "Mountain", "Adventure", "Nature", "Urban", "Cultural", "Island", "Heritage"];
-  const seasons = ["Summer", "Autumn", "Winter"];
-  const budgets = ["Any Budget", "Luxury", "Premium", "Value"];
+  const activeCount = [category, type, tier, country, search].filter(Boolean).length;
 
-  const pageTitle = filters.category === "Domestic"
-    ? "Domestic Destinations"
-    : filters.category === "International"
-      ? "International Destinations"
-      : "World Destinations";
+  const Filters = () => (
+    <>
+      <FilterGroup label="Region">
+        <Pills value={category} onPick={(v) => patch("category", v)}
+               options={[{ label: "All", value: "" }, { label: "Within India", value: "Domestic" }, { label: "International", value: "International" }]} />
+      </FilterGroup>
 
-  const pageDescription = filters.category === "Domestic"
-    ? "Explore the incredible diversity of India — from snow-capped Himalayas to tropical beaches, royal deserts to serene backwaters."
-    : filters.category === "International"
-      ? "Venture beyond borders. Discover stunning international destinations handpicked for unforgettable experiences."
-      : "Discover a world beyond boundaries. From the silent peaks of the Himalayas to the neon pulse of Tokyo, your next chapter begins here.";
+      <FilterGroup label="Type of place">
+        <Pills value={type} onPick={(v) => patch("type", v)}
+               options={[{ label: "All", value: "" }, ...TYPES.map((t) => ({ label: t, value: t }))]} />
+      </FilterGroup>
 
-  return (
-    <main className="pt-32 pb-24 px-8 max-w-7xl mx-auto">
-      {/* Hero Title Section */}
-      <section className="mb-20 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-8">
-        <div className="max-w-2xl">
-          <p className="font-label text-secondary tracking-[0.2em] uppercase text-xs mb-4 font-bold">
-            {filters.category ? `${filters.category} · Curated Collections` : 'Curated Collections'}
-          </p>
-          <h1 className="font-headline text-6xl md:text-7xl text-on-surface leading-tight tracking-tighter">
-            {pageTitle}
-          </h1>
-          <p className="mt-6 text-on-surface-variant text-lg max-w-lg leading-relaxed">
-            {pageDescription}
-          </p>
+      <FilterGroup label="Budget tier">
+        <Pills value={tier} onPick={(v) => patch("tier", v)}
+               options={[{ label: "Any", value: "" }, ...TIERS.map((t) => ({ label: t, value: t }))]} />
+      </FilterGroup>
 
-          {/* Category Toggle */}
-          <div className="flex gap-3 mt-8">
-            {['', 'Domestic', 'International'].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilters({ ...filters, category: cat })}
-                className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${filters.category === cat
-                  ? "cta-gradient-warm  text-white shadow-lg shadow-primary/25"
-                  : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container-highest"
-                  }`}
-              >
-                {cat === '' ? '🌐 All' : cat === 'Domestic' ? '🇮🇳 Domestic' : '🌍 International'}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="hidden md:flex items-center gap-4 text-primary font-semibold">
-          <span className="text-sm">Scroll to explore</span>
-          <span className="material-symbols-outlined animate-bounce">arrow_downward</span>
-        </div>
-      </section>
-
-      {/* Filters Section */}
-      <section className="mb-16">
-        <div className="bg-surface-container-low p-4 md:p-6 rounded-3xl flex flex-wrap items-center gap-3 md:gap-8 shadow-sm">
-          <div className="flex flex-col gap-2">
-            <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-bold ml-1">
-              Country
-            </label>
-            <select
-              value={filters.country}
-              onChange={(e) => setFilters({ ...filters, country: e.target.value })}
-              className="bg-surface-container-lowest border-none rounded-xl text-sm py-2.5 pl-4 pr-10 focus:ring-primary/20 min-w-[160px]"
-            >
-              <option>All Countries</option>
-              {countries.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-bold ml-1">
-              Budget
-            </label>
-            <select
-              value={filters.tier}
-              onChange={(e) => setFilters({ ...filters, tier: e.target.value })}
-              className="bg-surface-container-lowest border-none rounded-xl text-sm py-2.5 pl-4 pr-10 focus:ring-primary/20 min-w-[160px]"
-            >
-              {budgets.map((b) => (
-                <option key={b}>{b}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-bold ml-1">
-              Season
-            </label>
-            <div className="flex gap-2">
-              {seasons.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setFilters({ ...filters, season: filters.season === s ? "" : s })}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${filters.season === s
-                    ? "bg-primary text-on-primary"
-                    : "bg-surface-container-highest text-on-surface hover:bg-surface-variant"
-                    }`}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="flex flex-col gap-2 ml-auto">
-            <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-bold ml-1">
-              Type
-            </label>
-            <div className="flex gap-2 flex-wrap">
-              {types.slice(0, 4).map((t) => (
-                <span
-                  key={t}
-                  onClick={() => setFilters({ ...filters, type: filters.type === t ? "" : t })}
-                  className={`px-3 py-1.5 rounded-full border text-xs font-medium cursor-pointer transition-colors ${filters.type === t
-                    ? "border-primary bg-primary text-white"
-                    : "border-outline-variant/30 hover:bg-surface-container-highest"
-                    }`}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Destination Grid */}
-      {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className={`rounded-2xl bg-slate-100 animate-pulse ${i === 0 ? 'md:col-span-2 md:row-span-2 h-[340px]' : 'h-[160px]'}`} />
-          ))}
-        </div>
-      ) : destinations.length === 0 ? (
-        <div className="text-center py-20">
-          <span className="material-symbols-outlined text-6xl text-slate-300 mb-4 block">travel_explore</span>
-          <h3 className="font-headline text-2xl text-slate-400 mb-2">No destinations found</h3>
-          <p className="text-slate-400">Try adjusting your filters</p>
-        </div>
-      ) : (
-        <section className="home-bento-grid" style={{ display: 'grid', gridAutoRows: '180px', gap: '12px' }}>
-          {destinations.map((dest, idx) => {
-            // Bento pattern: idx 0 = large (2x2), idx 1 = tall (1x2), a couple are wide (2x1), rest 1x1
-            const spanStyle = idx === 0
-              ? { gridColumn: 'span 2', gridRow: 'span 2' }
-              : idx === 1
-                ? { gridRow: 'span 2' }
-                : (idx === 4 || idx === 8)
-                  ? { gridColumn: 'span 2' }
-                  : {};
-            const isLarge = idx === 0;
-            const isTall = idx === 1;
-            return (
-              <Link
-                to={`/destinations/${dest.slug}`}
-                key={dest._id}
-                className="relative rounded-2xl overflow-hidden group cursor-pointer shadow-md block"
-                style={{ ...spanStyle, minHeight: 0 }}
-              >
-                <img
-                  alt={dest.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  src={dest.heroImage}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-                {/* Category badge */}
-                <div className={`absolute top-3 left-3 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${dest.category === 'Domestic' ? 'bg-emerald-500/90 text-white' : 'bg-blue-500/90 text-white'}`}>
-                  {dest.category}
-                </div>
-                {/* Content */}
-                <div className={`absolute bottom-0 left-0 right-0 ${isLarge ? 'p-6' : 'p-3'}`}>
-                  <h3 className={`text-white font-headline font-bold leading-tight ${isLarge ? 'text-2xl mb-2' : isTall ? 'text-lg mb-1' : 'text-sm mb-0.5'}`}>
-                    {dest.name}
-                  </h3>
-                  <p className={`text-white/70 ${isLarge ? 'text-sm' : 'text-[10px]'}`}>{dest.country}</p>
-                  {isLarge && (
-                    <span className="flex items-center gap-2 text-white/80 text-sm font-medium mt-3 group-hover:gap-3 transition-all">
-                      Explore <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                    </span>
-                  )}
-                </div>
-              </Link>
-            );
-          })}
-        </section>
+      {countries.length > 0 && (
+        <FilterGroup label="Country">
+          <select className="field" value={country} onChange={(e) => patch("country", e.target.value)}>
+            <option value="">All countries</option>
+            {countries.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </FilterGroup>
       )}
 
-      {/* Newsletter CTA */}
-      <section className="mt-32 bg-slate-900 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 20% 30%, #1B5E96 0%, transparent 50%)" }}></div>
-        <div className="relative z-10 max-w-2xl mx-auto">
-          <h2 className="font-headline text-4xl md:text-5xl text-white mb-6">Receive Secret Itineraries</h2>
-          <p className="text-slate-400 text-lg mb-10">Join 50,000+ wanderers and receive our hand-crafted travel guides once a month.</p>
-          <div className="flex flex-col md:flex-row gap-4">
-            <input className="flex-1 px-8 py-5 rounded-full bg-slate-800 border-none text-white focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Your email address" type="email" />
-            <button className="bg-primary-container text-on-primary-container px-10 py-5 rounded-full font-bold shadow-xl shadow-primary/20 hover:brightness-110 transition-all">Subscribe Now</button>
+      {activeCount > 0 && (
+        <button onClick={clearAll} className="btn btn-outline btn-sm" style={{ width: "100%" }}>
+          <Icon name="close" size={14} /> Clear all filters
+        </button>
+      )}
+    </>
+  );
+
+  return (
+    <main>
+      <SEO
+        title="Destinations in India & Abroad"
+        description="Browse every destination we cover — Kashmir, Kerala, Goa, Rajasthan, Bali, Dubai, the Maldives and more. Filter by region, style and budget."
+        path="/destinations"
+      />
+      <PageHero
+        eyebrow="Where to next"
+        title="Destinations"
+        sub="Every place below is one we book regularly and know first-hand — filter by region, style or budget to narrow it down."
+        image="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1800&auto=format&fit=crop"
+        crumbs={[{ label: "Destinations" }]}
+      />
+
+      <section className="section">
+        <div className="shell" style={{ display: "grid", gap: 30 }}>
+          {/* Search + mobile filter toggle */}
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
+            <div style={{ position: "relative", flex: 1, minWidth: 240 }}>
+              <Icon name="search" size={17} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--ink-faint)" }} />
+              <input
+                className="field" style={{ paddingLeft: 42 }}
+                placeholder="Search destinations…" value={term}
+                onChange={(e) => setTerm(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && patch("search", term)}
+              />
+            </div>
+            <button onClick={() => patch("search", term)} className="btn btn-navy">Search</button>
+            <button onClick={() => setPanel(!panel)} className="btn btn-outline im-filter-toggle">
+              <Icon name="tag" size={15} /> Filters{activeCount > 0 ? ` (${activeCount})` : ""}
+            </button>
+          </div>
+
+          <div className="im-dest-layout">
+            {/* Sidebar */}
+            <aside className={`im-filters${panel ? " is-open" : ""}`}>
+              <div style={{ position: "sticky", top: 92, display: "grid", gap: 22 }}>
+                <Filters />
+              </div>
+            </aside>
+
+            {/* Results */}
+            <div>
+              <p style={{ color: "var(--ink-muted)", fontSize: ".88rem", margin: "0 0 18px" }}>
+                {loading ? "Loading destinations…" : (
+                  <><strong style={{ color: "var(--navy)" }}>{results.length}</strong> destination{results.length === 1 ? "" : "s"} found</>
+                )}
+              </p>
+
+              {loading ? (
+                <CardSkeleton count={6} inline={false} width={"100%"} height={320} />
+              ) : results.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "60px 20px", background: "var(--surface-muted)", borderRadius: 16 }}>
+                  <Icon name="compass" size={38} style={{ color: "var(--ink-faint)" }} />
+                  <h3 style={{ margin: "14px 0 6px", fontSize: "1.05rem" }}>Nothing matches those filters</h3>
+                  <p style={{ color: "var(--ink-muted)", fontSize: ".88rem", margin: "0 0 18px" }}>
+                    Try widening the search, or tell us what you have in mind and we'll build it.
+                  </p>
+                  <button onClick={clearAll} className="btn btn-orange btn-sm">Reset filters</button>
+                </div>
+              ) : (
+                <div className="im-dest-grid">
+                  {results.map((d) => (
+                    <DestinationTile key={d._id} dest={d} width="100%" height={330} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>
+
+      <style>{`
+        .im-dest-layout { display: grid; grid-template-columns: 250px 1fr; gap: 34px; }
+        .im-dest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .im-filter-toggle { display: none; }
+        @media (max-width: 1080px) { .im-dest-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 860px) {
+          .im-dest-layout { grid-template-columns: 1fr; }
+          .im-filter-toggle { display: inline-flex !important; }
+          .im-filters { display: none; }
+          .im-filters.is-open { display: block; padding: 18px; background: var(--surface-muted); border-radius: 14px; }
+          .im-filters.is-open > div { position: static !important; }
+        }
+        @media (max-width: 560px) { .im-dest-grid { grid-template-columns: 1fr; } }
+      `}</style>
     </main>
   );
-};
+}
 
-export default Destinations;
+function FilterGroup({ label, children }) {
+  return (
+    <div>
+      <h4 style={{ fontSize: 11, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--orange-dark)", margin: "0 0 11px" }}>
+        {label}
+      </h4>
+      {children}
+    </div>
+  );
+}
+
+function Pills({ options, value, onPick }) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+      {options.map((o) => {
+        const on = value === o.value;
+        return (
+          <button
+            key={o.label} onClick={() => onPick(o.value)}
+            style={{
+              padding: "6px 13px", borderRadius: 999, cursor: "pointer",
+              fontSize: 12.5, fontWeight: 700, fontFamily: "inherit",
+              border: `1.5px solid ${on ? "var(--navy)" : "var(--line)"}`,
+              background: on ? "var(--navy)" : "#fff",
+              color: on ? "#fff" : "var(--ink-muted)",
+              transition: "all .18s ease",
+            }}
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
