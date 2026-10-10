@@ -68,6 +68,13 @@ export default function Packages() {
     const hi = maxBudget ? Number(maxBudget) : null;
 
     let out = all.filter((p) => {
+      // Domestic packages only for now
+      const isInternational =
+        p.destination?.category === "International" ||
+        (p.destination?.country && p.destination.country.toLowerCase() !== "india") ||
+        (p.location && !p.location.toLowerCase().includes("india"));
+      if (isInternational) return false;
+
       const price = p?.priceRange?.min ?? 0;
       if (type && p.type !== type) return false;
       if (tag && !(p.tags || []).some((t) => t.toLowerCase().includes(tag.toLowerCase()))) return false;
@@ -109,7 +116,7 @@ export default function Packages() {
                   const [lo, hi] = (b.value || "").split("-");
                   patch({ minBudget: lo && lo !== "0" ? lo : "", maxBudget: hi || "" });
                 }}
-                style={{ ...RADIO, borderColor: on ? "var(--navy)" : "var(--line)", background: on ? "rgba(15,45,94,.05)" : "#fff" }}
+                style={{ ...RADIO, borderColor: on ? "var(--navy)" : "var(--line)", background: on ? "var(--orange-pale)" : "#fff" }}
               >
                 <span style={{ ...DOT, borderColor: on ? "var(--navy)" : "var(--line)" }}>
                   {on && <span style={DOT_IN} />}
@@ -127,7 +134,7 @@ export default function Packages() {
             const on = duration === d.value;
             return (
               <button key={d.label} onClick={() => patch({ duration: d.value })}
-                      style={{ ...RADIO, borderColor: on ? "var(--navy)" : "var(--line)", background: on ? "rgba(15,45,94,.05)" : "#fff" }}>
+                      style={{ ...RADIO, borderColor: on ? "var(--navy)" : "var(--line)", background: on ? "var(--orange-pale)" : "#fff" }}>
                 <span style={{ ...DOT, borderColor: on ? "var(--navy)" : "var(--line)" }}>
                   {on && <span style={DOT_IN} />}
                 </span>

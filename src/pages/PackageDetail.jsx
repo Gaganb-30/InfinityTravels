@@ -573,7 +573,7 @@ const S = {
   heroImg: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" },
   heroVeil: {
     position: "absolute", inset: 0,
-    background: "linear-gradient(to top, rgba(10,31,66,.95) 0%, rgba(10,31,66,.55) 50%, rgba(10,31,66,.2) 100%)",
+    background: "linear-gradient(to top, rgba(26,6,13,.95) 0%, rgba(26,6,13,.55) 50%, rgba(26,6,13,.2) 100%)",
   },
   heroInner: { position: "relative", zIndex: 2, paddingBlock: "48px 40px" },
   heroTitle: {
@@ -584,7 +584,7 @@ const S = {
 
   card: {
     background: "#fff", borderRadius: 16, padding: 28,
-    boxShadow: "0 4px 20px rgba(15,45,94,.07)", border: "1px solid var(--line)",
+    boxShadow: "0 4px 20px rgba(56,11,22,.07)", border: "1px solid var(--line)",
   },
   cardTitle: { fontSize: "1.3rem", fontWeight: 900, color: "var(--navy)", margin: "0 0 4px", letterSpacing: "-0.02em" },
   subH: { fontSize: "1rem", fontWeight: 800, color: "var(--navy)", margin: "0 0 12px" },
@@ -618,7 +618,7 @@ const S = {
   /* Inclusions card */
   incCard: {
     background: "#fff", borderRadius: 14, padding: "20px 22px",
-    boxShadow: "0 4px 14px rgba(15,45,94,.06)", border: "1px solid var(--line)",
+    boxShadow: "0 4px 14px rgba(56,11,22,.06)", border: "1px solid var(--line)",
   },
 
   /* FAQ */
@@ -656,7 +656,7 @@ const S = {
   /* Booking sidebar */
   bookCard: {
     background: "#fff", border: "1px solid var(--line)", borderRadius: 18,
-    padding: 24, boxShadow: "0 8px 30px rgba(15,45,94,.10)",
+    padding: 24, boxShadow: "0 8px 30px rgba(56,11,22,.10)",
   },
   factRow: { display: "flex", alignItems: "center", gap: 10 },
   sideLabel: {
@@ -689,7 +689,7 @@ const S = {
 
   lightbox: {
     position: "fixed", inset: 0, zIndex: 90,
-    background: "rgba(10,31,66,.94)", display: "flex",
+    background: "rgba(26,6,13,.95)", display: "flex",
     alignItems: "center", justifyContent: "center",
     padding: 20, cursor: "zoom-out",
   },

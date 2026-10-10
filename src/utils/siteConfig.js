@@ -81,6 +81,7 @@ export const NAV = [
       ]},
     ],
   },
+  /*
   {
     label: "International Tours",
     to: "/destinations?category=International",
@@ -111,6 +112,7 @@ export const NAV = [
       ]},
     ],
   },
+  */
   {
     label: "Packages",
     to: "/packages",

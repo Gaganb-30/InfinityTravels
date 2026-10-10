@@ -55,6 +55,8 @@ export default function Destinations() {
   const results = useMemo(() => {
     const q = search.trim().toLowerCase();
     return all.filter((d) => {
+      // Domestic only for now
+      if (d.category === "International" || (d.country && d.country.toLowerCase() !== "india")) return false;
       if (category && d.category !== category) return false;
       if (type && d.type !== type) return false;
       if (tier && d.tier !== tier) return false;
@@ -71,10 +73,10 @@ export default function Destinations() {
 
   const Filters = () => (
     <>
-      <FilterGroup label="Region">
+      {/* <FilterGroup label="Region">
         <Pills value={category} onPick={(v) => patch("category", v)}
                options={[{ label: "All", value: "" }, { label: "Within India", value: "Domestic" }, { label: "International", value: "International" }]} />
-      </FilterGroup>
+      </FilterGroup> */}
 
       <FilterGroup label="Type of place">
         <Pills value={type} onPick={(v) => patch("type", v)}
@@ -86,14 +88,14 @@ export default function Destinations() {
                options={[{ label: "Any", value: "" }, ...TIERS.map((t) => ({ label: t, value: t }))]} />
       </FilterGroup>
 
-      {countries.length > 0 && (
+      {/* {countries.length > 0 && (
         <FilterGroup label="Country">
           <select className="field" value={country} onChange={(e) => patch("country", e.target.value)}>
             <option value="">All countries</option>
             {countries.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </FilterGroup>
-      )}
+      )} */}
 
       {activeCount > 0 && (
         <button onClick={clearAll} className="btn btn-outline btn-sm" style={{ width: "100%" }}>

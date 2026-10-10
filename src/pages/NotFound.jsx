@@ -37,12 +37,12 @@ export default function NotFound() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginTop: 30 }}>
             {[
               { to: "/destinations?category=Domestic", icon: "mountain", label: "Holidays in India" },
-              { to: "/destinations?category=International", icon: "plane", label: "International trips" },
+              // { to: "/destinations?category=International", icon: "plane", label: "International trips" },
               { to: "/packages", icon: "tag", label: "All tour packages" },
               { to: "/contact", icon: "send", label: "Get a free quote" },
             ].map((c) => (
               <Link key={c.to} to={c.to} className="card" style={{ padding: 22, textAlign: "center", textDecoration: "none", color: "inherit" }}>
-                <span style={{ width: 44, height: 44, borderRadius: 12, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(249,115,22,.14)", color: "var(--orange-dark)" }}>
+                <span style={{ width: 44, height: 44, borderRadius: 12, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--orange-pale)", color: "var(--orange-dark)" }}>
                   <Icon name={c.icon} size={20} />
                 </span>
                 <div style={{ fontWeight: 800, fontSize: ".92rem", marginTop: 12 }}>{c.label}</div>

@@ -90,7 +90,7 @@ export default function Contact() {
       <section className="section">
         <div className="shell im-contact-layout">
           {/* Form */}
-          <div style={{ background: "#fff", border: "1px solid var(--line)", borderRadius: 18, padding: "clamp(22px, 3vw, 36px)", boxShadow: "0 14px 38px rgba(15,45,94,.07)" }}>
+          <div style={{ background: "#fff", border: "1px solid var(--line)", borderRadius: 18, padding: "clamp(22px, 3vw, 36px)", boxShadow: "0 14px 38px rgba(56,11,22,.07)" }}>
             {submitted ? (
               <div style={{ textAlign: "center", paddingBlock: 40 }}>
                 <span style={{ ...STRIP_ICON, width: 62, height: 62, margin: "0 auto 18px", background: "rgba(22,163,74,.12)", color: "#16a34a" }}>
@@ -221,11 +221,11 @@ export default function Contact() {
 const STRIP_ICON = {
   width: 40, height: 40, borderRadius: 11, flexShrink: 0,
   display: "flex", alignItems: "center", justifyContent: "center",
-  background: "rgba(249,115,22,.12)", color: "var(--orange-dark)",
+  background: "rgba(194,143,50,.14)", color: "var(--orange-dark)",
 };
 const SIDE = {
   background: "#fff", border: "1px solid var(--line)", borderRadius: 16,
-  padding: 22, boxShadow: "0 10px 28px rgba(15,45,94,.07)",
+  padding: 22, boxShadow: "0 10px 28px rgba(56,11,22,.07)",
 };
 const STEP_NUM = {
   width: 26, height: 26, borderRadius: "50%", flexShrink: 0,

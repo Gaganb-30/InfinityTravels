@@ -205,11 +205,11 @@ export default function AboutUs() {
   );
 }
 
-const IMG = { width: "100%", height: 190, objectFit: "cover", borderRadius: 14, boxShadow: "0 12px 30px rgba(15,45,94,.12)" };
+const IMG = { width: "100%", height: 190, objectFit: "cover", borderRadius: 14, boxShadow: "0 12px 30px rgba(56,11,22,.12)" };
 const VAL_ICON = {
   width: 44, height: 44, borderRadius: 12, flexShrink: 0,
   display: "flex", alignItems: "center", justifyContent: "center",
-  background: "linear-gradient(135deg, rgba(251,146,60,.22), rgba(249,115,22,.14))",
+  background: "linear-gradient(135deg, rgba(222,178,88,.24), rgba(194,143,50,.14))",
   color: "var(--orange-dark)",
 };
 const DOT = {

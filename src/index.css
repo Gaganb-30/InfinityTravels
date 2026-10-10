@@ -3,39 +3,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* ─────────────────────────────────────────────────────────
-   1. DESIGN TOKENS — Navy + Orange (logo palette)
+   1. DESIGN TOKENS — Royal Indian Historic Palette
+      Imperial Shahi Crimson + Kundan Antique Gold + Warm Palace Marble
    ───────────────────────────────────────────────────────── */
 :root {
-  /* Brand — deep navy + orange */
-  --navy-900: #0a1f42;
-  --navy:     #0f2d5e;
-  --navy-700: #1a4a8a;
-  --navy-500: #2563a8;
+  /* Brand — Royal Shahi Maroon & Imperial Crimson */
+  --navy-900: #1a060d;   /* Deepest Shahi Velvet / Royal Night */
+  --navy:     #380b16;   /* Imperial Shahi Crimson / Palace Maroon */
+  --navy-700: #521122;   /* Royal Rajput Heritage Wine */
+  --navy-500: #721932;   /* Rich Royal Ruby */
 
-  /* Orange accent (replaces gold everywhere) */
-  --orange:      #f97316;   /* tailwind orange-500 */
-  --orange-dark: #ea580c;   /* orange-600 */
-  --orange-light:#fb923c;   /* orange-400 */
-  --orange-pale: rgba(249,115,22,.12);
+  /* Kundan Antique Gold & Zari Accents */
+  --orange:      #c28f32;   /* Kundan Gold / Antique Zari */
+  --orange-dark: #9c6e1c;   /* Deep Burnished Brass */
+  --orange-light:#deb258;   /* Radiant Imperial Gold */
+  --orange-pale: rgba(194,143,50,.14);
 
-  /* Legacy gold aliases — now point to orange so old code still works */
-  --gold:       #f97316;
-  --gold-dark:  #ea580c;
-  --gold-light: #fb923c;
+  /* Legacy gold aliases */
+  --gold:       #c28f32;
+  --gold-dark:  #9c6e1c;
+  --gold-light: #deb258;
 
-  /* Neutrals */
-  --ink:           #0f172a;
-  --ink-muted:     #475569;
-  --ink-faint:     #94a3b8;
-  --line:          #e2e8f0;
-  --surface:       #ffffff;
-  --surface-muted: #f8fafc;
-  --surface-sunken:#f1f5f9;
+  /* Palace Marble & Warm Sandstone Neutrals */
+  --ink:           #1a1312;   /* Royal Kohl / Deep Charcoal Espresso */
+  --ink-muted:     #5a4a44;   /* Warm Antique Sepia Bronze */
+  --ink-faint:     #96867e;   /* Sandstone Dust */
+  --line:          #e6ddd0;   /* Gilded Parchment Border */
+  --surface:       #fcfbfa;   /* Warm Ivory Silk / Sangmarmar */
+  --surface-muted: #f8f3ea;   /* Haveli Courtyard Sandstone */
+  --surface-sunken:#f0e7d9;   /* Jaisalmer Palace Sand */
 
   /* Support */
   --wa-green:      #25d366;
   --wa-green-dark: #128c7e;
-  --hot:           #ef4444;
+  --hot:           #b91c1c;   /* Royal Sindoor Red */
 
   /* Rhythm */
   --radius-sm: 8px;
@@ -44,9 +45,9 @@
   --radius-xl: 24px;
   --shell:     1280px;
 
-  --shadow-card:       0 4px 16px rgba(15,45,94,.08);
-  --shadow-card-hover: 0 18px 40px rgba(15,45,94,.18);
-  --shadow-float:      0 10px 30px rgba(15,23,42,.12);
+  --shadow-card:       0 4px 18px rgba(56,11,22,.07);
+  --shadow-card-hover: 0 18px 42px rgba(56,11,22,.16);
+  --shadow-float:      0 10px 32px rgba(26,6,13,.14);
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -128,10 +129,10 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
 .btn-gold, .btn-primary, .btn-orange {
   background: linear-gradient(135deg, var(--orange-light), var(--orange));
   color: #fff;
-  box-shadow: 0 6px 18px rgba(249,115,22,.35);
+  box-shadow: 0 6px 18px rgba(194,143,50,.32);
 }
 .btn-gold:hover, .btn-primary:hover, .btn-orange:hover {
-  box-shadow: 0 12px 28px rgba(249,115,22,.45);
+  box-shadow: 0 12px 28px rgba(194,143,50,.44);
   transform: translateY(-2px);
 }
 
@@ -140,7 +141,7 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
 }
 .btn-navy:hover {
   background: var(--navy-700); transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(15,45,94,.28);
+  box-shadow: 0 12px 26px rgba(56,11,22,.28);
 }
 
 .btn-wa { background: var(--wa-green); color: #fff; }
@@ -186,7 +187,7 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
 .tile:hover img { transform: scale(1.09); }
 .tile-veil {
   position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(10,31,66,.92) 0%, rgba(10,31,66,.35) 45%, rgba(10,31,66,0) 72%);
+  background: linear-gradient(to top, rgba(26,6,13,.93) 0%, rgba(26,6,13,.38) 45%, rgba(26,6,13,0) 72%);
 }
 
 .badge {
@@ -223,11 +224,11 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
   border: 1px solid rgba(255,255,255,.25);
 }
 .glass-dark {
-  background: rgba(10,31,66,.55);
+  background: rgba(26,6,13,.62);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255,255,255,.18);
-  box-shadow: 0 24px 60px rgba(0,0,0,.32);
+  border: 1px solid rgba(222,178,88,.2);
+  box-shadow: 0 24px 60px rgba(0,0,0,.35);
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -239,7 +240,7 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
   font-size: .9rem; font-family: inherit; outline: none;
   transition: border-color .18s ease, box-shadow .18s ease;
 }
-.field:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(249,115,22,.16); }
+.field:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(194,143,50,.18); }
 .field::placeholder { color: var(--ink-faint); }
 
 .field-glass {
@@ -305,7 +306,7 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
   background: #fff;
   border-radius: 16px;
   border: 1px solid var(--line);
-  box-shadow: 0 24px 60px rgba(15,45,94,.18);
+  box-shadow: 0 24px 60px rgba(56,11,22,.16);
   z-index: 60;
   min-width: 520px;
   padding: 24px;
@@ -320,7 +321,7 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
 .im-mega-col-title {
   font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
   color: var(--orange-dark); margin-bottom: 10px; padding-bottom: 8px;
-  border-bottom: 2px solid rgba(249,115,22,.15);
+  border-bottom: 2px solid rgba(194,143,50,.2);
 }
 
 .im-mega-link {
@@ -353,7 +354,7 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
 .filter-tab:hover { border-color: var(--orange); color: var(--orange-dark); }
 .filter-tab.active {
   background: var(--orange); border-color: var(--orange);
-  color: #fff; box-shadow: 0 4px 14px rgba(249,115,22,.35);
+  color: #fff; box-shadow: 0 4px 14px rgba(194,143,50,.32);
 }
 
 /* Package category quick tabs */
@@ -369,7 +370,7 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
 .pkg-cat-tab.active {
   background: linear-gradient(135deg, var(--orange-light), var(--orange));
   border-color: transparent; color: #fff;
-  box-shadow: 0 4px 14px rgba(249,115,22,.35);
+  box-shadow: 0 4px 14px rgba(194,143,50,.32);
 }
 
 /* HOT badge pulse */
@@ -425,7 +426,7 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
   100% { background-position: 600px 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, #eef2f7 25%, #f8fafc 50%, #eef2f7 75%);
+  background: linear-gradient(90deg, #f0e7d9 25%, #f8f3ea 50%, #f0e7d9 75%);
   background-size: 600px 100%; animation: im-shimmer 1.4s infinite linear;
   border-radius: var(--radius);
 }
@@ -445,7 +446,7 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
 .editorial-shadow     { box-shadow: 0 32px 64px -12px rgba(25,28,29,.08); }
 .cta-gradient         { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-900) 100%); }
 .cta-gradient-warm    { background: linear-gradient(135deg, var(--orange-light) 0%, var(--orange) 100%); }
-.hero-gradient        { background: linear-gradient(135deg, rgba(15,45,94,.1) 0%, rgba(15,45,94,.2) 100%); }
+.hero-gradient        { background: linear-gradient(135deg, rgba(56,11,22,.1) 0%, rgba(56,11,22,.2) 100%); }
 .glass-nav            { background: rgba(255,255,255,.72); backdrop-filter: blur(24px); }
 .text-brand-blue      { color: var(--navy); }
 .text-brand-orange    { color: var(--orange-dark); }
@@ -491,7 +492,7 @@ h1, h2, h3, h4 { color: var(--navy); letter-spacing: -0.02em; }
   background: var(--orange);
   border-color: var(--orange);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(249,115,22,.35);
+  box-shadow: 0 4px 14px rgba(194,143,50,.32);
 }
 
 /* ─────────────────────────────────────────────────────────

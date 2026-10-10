@@ -16,7 +16,7 @@ export default function PageHero({ eyebrow, title, sub, image, crumbs = [], heig
       <span style={{
         position: "absolute", inset: 0,
         background: image
-          ? "linear-gradient(100deg, rgba(10,31,66,.92) 0%, rgba(10,31,66,.65) 55%, rgba(10,31,66,.40) 100%)"
+          ? "linear-gradient(100deg, rgba(26,6,13,.93) 0%, rgba(26,6,13,.68) 55%, rgba(26,6,13,.42) 100%)"
           : "linear-gradient(120deg, var(--navy-900) 0%, var(--navy-700) 100%)",
       }} />
 

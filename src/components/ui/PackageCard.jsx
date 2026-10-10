@@ -26,7 +26,7 @@ export default function PackageCard({ pkg, width }) {
       onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "var(--shadow-card)"; }}
     >
       {/* Media */}
-      <div style={{ position: "relative", aspectRatio: "16 / 10", overflow: "hidden", background: "#eef2f7" }}>
+      <div style={{ position: "relative", aspectRatio: "16 / 10", overflow: "hidden", background: "var(--surface-sunken)" }}>
         <img
           src={pkg.image || FALLBACK} alt={pkg.name} loading="lazy"
           style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform .7s ease" }}
@@ -34,7 +34,7 @@ export default function PackageCard({ pkg, width }) {
           onMouseLeave={(e) => e.currentTarget.style.transform = "none"}
         />
         {/* Bottom gradient */}
-        <span style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,31,66,.6), transparent 55%)" }} />
+        <span style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(26,6,13,.65), transparent 55%)" }} />
 
         {/* Badges */}
         {pkg.badge && (

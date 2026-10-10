@@ -79,7 +79,7 @@ export default function Navbar() {
       </div>
 
       {/* ── Main bar ──────────────────────────────────── */}
-      <header style={{ ...S.bar, boxShadow: solid ? "0 4px 20px rgba(15,45,94,.10)" : "0 1px 0 var(--line)" }}>
+      <header style={{ ...S.bar, boxShadow: solid ? "0 4px 20px rgba(56,11,22,.10)" : "0 1px 0 var(--line)" }}>
         <div className="shell" style={S.barInner}>
           <Link to="/" style={S.logoWrap} aria-label={BRAND.name}>
             <img src={BRAND.logoLight} alt={BRAND.name} style={S.logo} />
@@ -303,11 +303,11 @@ const S = {
     padding: 6, cursor: "pointer", alignItems: "center",
   },
   iconBtn: { background: "transparent", border: "none", color: "var(--navy)", cursor: "pointer", padding: 4 },
-  scrim: { position: "fixed", inset: 0, background: "rgba(10,31,66,.5)", zIndex: 60, backdropFilter: "blur(2px)" },
+  scrim: { position: "fixed", inset: 0, background: "rgba(26,6,13,.55)", zIndex: 60, backdropFilter: "blur(2px)" },
   drawer: {
     position: "fixed", top: 0, right: 0, bottom: 0, width: "min(360px, 88vw)",
-    background: "#fff", zIndex: 61, display: "flex", flexDirection: "column",
-    boxShadow: "-8px 0 40px rgba(10,31,66,.24)",
+    background: "var(--surface)", zIndex: 61, display: "flex", flexDirection: "column",
+    boxShadow: "-8px 0 40px rgba(26,6,13,.24)",
   },
   drawerHead: {
     display: "flex", alignItems: "center", justifyContent: "space-between",

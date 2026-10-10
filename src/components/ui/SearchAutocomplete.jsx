@@ -164,7 +164,7 @@ function Row({ item, active, onHover, onPick }) {
 const SEARCH_ICON = { position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--ink-faint)", pointerEvents: "none", zIndex: 1 };
 const CLEAR = { position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "transparent", border: "none", cursor: "pointer", color: "var(--ink-faint)", padding: 4, lineHeight: 0 };
 const SPINNER = { position: "absolute", right: 14, top: "50%", width: 14, height: 14, marginTop: -7, borderRadius: "50%", border: "2px solid var(--line)", borderTopColor: "var(--orange)", animation: "im-spin .7s linear infinite" };
-const PANEL = { position: "absolute", top: "calc(100% + 8px)", left: 0, right: 0, background: "#fff", borderRadius: 14, border: "1px solid var(--line)", boxShadow: "0 22px 48px rgba(15,45,94,.18)", zIndex: 60, overflow: "hidden", maxHeight: 400, overflowY: "auto" };
+const PANEL = { position: "absolute", top: "calc(100% + 8px)", left: 0, right: 0, background: "#fff", borderRadius: 14, border: "1px solid var(--line)", boxShadow: "0 22px 48px rgba(56,11,22,.16)", zIndex: 60, overflow: "hidden", maxHeight: 400, overflowY: "auto" };
 const GROUP = { padding: "10px 14px 6px", fontSize: 10, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--orange-dark)" };
 const ROW = { display: "flex", alignItems: "center", gap: 11, width: "100%", padding: "9px 14px", border: "none", cursor: "pointer", fontFamily: "inherit", transition: "background .12s ease" };
 const THUMB = { width: 40, height: 40, borderRadius: 9, objectFit: "cover", flexShrink: 0, background: "var(--surface-sunken)" };

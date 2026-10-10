@@ -87,8 +87,8 @@ const E = {
   },
   quickTag: {
     display: "inline-flex", alignItems: "center", gap: 5,
-    background: "rgba(249,115,22,.25)", color: "var(--orange-light)",
+    background: "rgba(194,143,50,.25)", color: "var(--orange-light)",
     fontSize: 11.5, fontWeight: 800, padding: "4px 12px", borderRadius: 999,
-    border: "1px solid rgba(249,115,22,.35)",
+    border: "1px solid rgba(194,143,50,.35)",
   },
 };

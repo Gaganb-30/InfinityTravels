@@ -18,6 +18,7 @@ const COLUMNS = [
       { label: "Ladakh Expeditions", to: "/destinations?category=Domestic&search=Ladakh" },
     ],
   },
+  /*
   {
     title: "International Tours",
     links: [
@@ -30,6 +31,7 @@ const COLUMNS = [
       { label: "Vietnam", to: "/destinations?category=International&search=Vietnam" },
     ],
   },
+  */
   {
     title: "Tour Packages",
     links: [

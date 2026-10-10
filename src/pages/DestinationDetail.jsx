@@ -207,14 +207,14 @@ const FACT_ICON = {
 };
 const SIDE_CARD = {
   background: "#fff", border: "1px solid var(--line)", borderRadius: 16,
-  padding: 22, boxShadow: "0 12px 32px rgba(15,45,94,.08)",
+  padding: 22, boxShadow: "0 12px 32px rgba(56,11,22,.08)",
 };
 const GAL_BTN = {
   padding: 0, border: "none", cursor: "pointer", borderRadius: 12,
   overflow: "hidden", aspectRatio: "4/3", background: "var(--surface-sunken)",
 };
 const LIGHTBOX = {
-  position: "fixed", inset: 0, zIndex: 90, background: "rgba(10,31,66,.94)",
+  position: "fixed", inset: 0, zIndex: 90, background: "rgba(26,6,13,.95)",
   display: "flex", alignItems: "center", justifyContent: "center", padding: 20, cursor: "zoom-out",
 };
 const LIGHTBOX_X = {

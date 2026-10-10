@@ -66,6 +66,6 @@ const B = {
   mini: {
     width: 46, height: 46, borderRadius: "50%", border: "none", cursor: "pointer",
     display: "flex", alignItems: "center", justifyContent: "center",
-    boxShadow: "0 6px 18px rgba(15,45,94,.22)", textDecoration: "none",
+    boxShadow: "0 6px 18px rgba(56,11,22,.22)", textDecoration: "none",
   },
 };

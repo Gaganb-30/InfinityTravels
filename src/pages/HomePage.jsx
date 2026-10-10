@@ -31,12 +31,14 @@ const SLIDES = [
     sub: "Shikara at first light, Gulmarg meadows, a houseboat that feels like home.",
     img: "https://images.unsplash.com/photo-1566837945700-30057527ade0?q=80&w=1800&auto=format&fit=crop",
   },
+  /*
   {
     kicker: "International Escapes",
     title: "Further than\nyou think",
     sub: "Dubai, Switzerland, Vietnam and Japan — visas and transfers handled.",
     img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1800&auto=format&fit=crop",
   },
+  */
 ];
 
 /* ── Static content (no backend model yet — edit freely) ─ */
@@ -44,7 +46,7 @@ const GROUP_DEPARTURES = [
   { tag: "Spiritual", duration: "8N/9D", title: "Char Dham Yatra by Road", date: "25 October 2026", seats: 20, booked: 14, price: 21999 },
   { tag: "Adventure", duration: "9N/10D", title: "Ladakh Motorcycle Expedition", date: "15 November 2026", seats: 15, booked: 11, price: 29999 },
   { tag: "Cultural", duration: "4N/5D", title: "Rann of Kutch Winter Festival", date: "20 December 2026", seats: 25, booked: 15, price: 17999 },
-  { tag: "Island", duration: "5N/6D", title: "Maldives Small-Group Escape", date: "18 January 2027", seats: 10, booked: 7, price: 74999 },
+  // { tag: "Island", duration: "5N/6D", title: "Maldives Small-Group Escape", date: "18 January 2027", seats: 10, booked: 7, price: 74999 },
 ];
 
 const ARTICLES = [
@@ -92,7 +94,11 @@ export default function HomePage() {
         if (!alive) return;
         setDomestic(Array.isArray(dom) ? dom : []);
         setIntl(Array.isArray(itl) ? itl : []);
-        setPackages(Array.isArray(pkgs) ? pkgs : []);
+        // Only show domestic packages
+        const domesticPkgs = (Array.isArray(pkgs) ? pkgs : []).filter(
+          (p) => !p.location || p.location.toLowerCase().includes("india") || (p.destination?.country && p.destination.country.toLowerCase() === "india")
+        );
+        setPackages(domesticPkgs);
         setTestimonials(Array.isArray(tst) ? tst : []);
       } finally {
         if (alive) setLoading(false);
@@ -271,8 +277,8 @@ export default function HomePage() {
       )}
 
       {/* ══ INTERNATIONAL ═════════════════════════════ */}
-      {(loading || intl.length > 0) && (
-  <section className="section section-muted">
+      {/* {(loading || intl.length > 0) && (
+        <section className="section section-muted">
           <div className="shell">
             <SectionHeading
               eyebrow="Beyond borders" eyebrowIcon="plane"
@@ -287,7 +293,7 @@ export default function HomePage() {
             )}
           </div>
         </section>
-      )}
+      )} */}
 
       {/* ══ POPULAR PACKAGES ══════════════════════════ */}
       {(loading || packages.length > 0) && (
@@ -642,7 +648,7 @@ export default function HomePage() {
       </section>
 
       {/* ══ BLOG ══════════════════════════════════════ */}
-      <section className="section">
+      {/* <section className="section">
         <div className="shell">
           <SectionHeading
             eyebrow="Travel journal" eyebrowIcon="doc"
@@ -674,7 +680,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ══ Responsive ════════════════════════════════ */}
       <style>{`
@@ -768,7 +774,7 @@ const H = {
   quoteWrap: {
     position: "relative", background: "#fff", borderRadius: 20, padding: "34px 32px",
     maxWidth: 720, margin: "0 auto", border: "1px solid var(--line)",
-    boxShadow: "0 14px 40px rgba(15,45,94,.08)",
+    boxShadow: "0 14px 40px rgba(56,11,22,.08)",
   },
   ratingRow: {
     display: "flex", justifyContent: "center", gap: 56,
@@ -778,7 +784,7 @@ const H = {
   whyIcon: {
     width: 44, height: 44, borderRadius: 12, display: "flex",
     alignItems: "center", justifyContent: "center",
-    background: "linear-gradient(135deg, rgba(251,146,60,.22), rgba(249,115,22,.18))",
+    background: "linear-gradient(135deg, rgba(222,178,88,.24), rgba(194,143,50,.18))",
     color: "var(--orange-dark)",
   },
   ctaBand: {
@@ -813,6 +819,6 @@ const H = {
   badgeIcon: {
     width: 34, height: 34, borderRadius: 9, flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
-    background: "rgba(249,115,22,.15)", color: "var(--orange-dark)",
+    background: "rgba(194,143,50,.15)", color: "var(--orange-dark)",
   },
 };

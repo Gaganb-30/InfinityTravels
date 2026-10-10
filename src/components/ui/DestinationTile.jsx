@@ -28,7 +28,7 @@ export default function DestinationTile({ dest, width = 300, height = 340 }) {
         </span>
       )}
 
-      <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "20px 16px 16px", background: "linear-gradient(to top, rgba(10,31,66,.95) 0%, rgba(10,31,66,0) 100%)" }}>
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "20px 16px 16px", background: "linear-gradient(to top, rgba(26,6,13,.95) 0%, rgba(26,6,13,0) 100%)" }}>
         <h3 style={{ color: "#fff", fontSize: "1.3rem", fontWeight: 900, margin: 0, lineHeight: 1.15 }}>
           {dest.name}
         </h3>
