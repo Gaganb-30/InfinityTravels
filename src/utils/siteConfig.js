@@ -13,9 +13,7 @@ export const BRAND = {
   address: "Noida, Uttar Pradesh – 201301, India",
   hours: "Mon–Sun · 9 AM – 9 PM IST",
   socials: {
-    facebook:  "https://www.facebook.com/infinitymiles",
-    instagram: "https://www.instagram.com/infinitymiles",
-    youtube:   "https://www.youtube.com/@infinitymiles",
+    instagram: "https://www.instagram.com/infinitymiles.in?cplk=MWZtMjNzYjNvbzdodw==",
     whatsapp:  `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || "917291099670"}`,
   },
 };
